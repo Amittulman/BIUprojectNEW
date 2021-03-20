@@ -1,13 +1,20 @@
 import knex from 'knex';
+import {myCredentials} from "./credentialsnew";
 
-const options = {
-    client: 'mysql2',
-    connection: {
-        host: '127.0.0.1',
-        user: 'user12',
-        password: 's$cret',
-        database: 'mydb'
+class ConnectDataBase {
+    private connection?: any; // TOSO:knex
+    createConnection() {
+        this.connection = knex({
+            client: 'mysql',
+            connection: {
+                host: myCredentials.host,
+                user: myCredentials.user,
+                password: myCredentials.password,
+                database: 'mydb' //TODO: what is the name
+            }
+        })
+        return this.connection;
     }
 }
 
-const knex = require('knex')(options);
+export const connectDataBase = new ConnectDataBase();

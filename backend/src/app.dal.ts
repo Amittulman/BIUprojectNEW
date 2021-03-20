@@ -5,12 +5,23 @@ import { Task } from "./interfaces/task.interface";
 import { ToDoList } from "./interfaces/todo.interface";
 import { CreateToDoListDto } from "./Dto's/createToDoList.dto";
 import { CreateTaskDto } from "./Dto's/createTask.sto";
+import {connectDataBase} from "./connectDataBase";
 
 @Injectable()
 export class AppDal {
+  private db: any; //TODO:knex
+
+  constructor() {
+    this.db = connectDataBase.createConnection();
+  }
+
+
   // TODO: add access to DB late
   //DAL - data access layer
   async getHello(): Promise<string> {
+    const res = await this.db.raw('SELECT 1+1 AS result');
+    console.log('!!!!!!!!! res: ', JSON.stringify(res));
+    //return res[0][0].result === '2';
     return 'Hi!';
   }
 
