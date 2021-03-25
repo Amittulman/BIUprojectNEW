@@ -18,7 +18,7 @@ export class AppDal {
   // TODO: add access to DB late
   //DAL - data access layer
   async getHello(): Promise<string> {
-    const res = await this.db.raw('SELECT 1+1 AS result');
+    const res = await this.db.from('tasks_table').select();
     console.log('!!!!!!!!! res: ', JSON.stringify(res));
     //return res[0][0].result === '2';
     return 'Hi!';
