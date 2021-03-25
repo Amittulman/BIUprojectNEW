@@ -3,5 +3,5 @@ export interface Task {
   duration: number;
   date: string;
   time: string;
-  priority: number;
+  priority: string; //Was number
 }
