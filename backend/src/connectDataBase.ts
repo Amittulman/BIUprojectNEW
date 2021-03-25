@@ -9,8 +9,8 @@ class ConnectDataBase {
             connection: {
                 host: myCredentials.host,
                 user: myCredentials.user,
-                password: myCredentials.password,
-                database: 'mydb' //TODO: what is the name
+                password: myCredentials.pass,
+                database: 'BeeZee' //TODO: what is the name
             }
         })
         return this.connection;

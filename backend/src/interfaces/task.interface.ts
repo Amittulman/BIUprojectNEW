@@ -1,7 +1,9 @@
 export interface Task {
+  taskID: number;
+  userId: number;
   title: string;
   duration: number;
-  date: string;
-  time: string;
-  priority: string; //Was number
+  priority: number;
+  categoryID: number;
+  constraints: string;
 }

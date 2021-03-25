@@ -5,6 +5,7 @@ import { CreateUserDto } from "./Dto's/createUser.dto";
 import { ToDoList } from "./interfaces/todo.interface";
 import { CreateToDoListDto } from "./Dto's/createToDoList.dto";
 import { CreateTaskDto } from "./Dto's/createTask.sto";
+import {Task} from "./interfaces/task.interface";
 
 @Injectable()
 export class AppService {
@@ -12,6 +13,10 @@ export class AppService {
 
   async getHello(): Promise<string> {
     return this.appDal.getHello();
+  }
+
+  async postTask(createTaskDto: CreateTaskDto): Promise<Task> {
+    return this.appDal.postTask(createTaskDto);
   }
 
   async getUser(): Promise<User> {

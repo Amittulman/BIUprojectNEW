@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { User } from './interfaces/user.interface';
-import { CreateUserDto } from "./Dto's/createUser.dto";
-import { Task } from "./interfaces/task.interface";
-import { ToDoList } from "./interfaces/todo.interface";
-import { CreateToDoListDto } from "./Dto's/createToDoList.dto";
-import { CreateTaskDto } from "./Dto's/createTask.sto";
+import {Injectable} from '@nestjs/common';
+import {User} from './interfaces/user.interface';
+import {CreateUserDto} from "./Dto's/createUser.dto";
+import {Task} from "./interfaces/task.interface";
+import {ToDoList} from "./interfaces/todo.interface";
+import {CreateToDoListDto} from "./Dto's/createToDoList.dto";
+import {CreateTaskDto} from "./Dto's/createTask.sto";
 import {connectDataBase} from "./connectDataBase";
 
 @Injectable()
@@ -15,7 +15,6 @@ export class AppDal {
     this.db = connectDataBase.createConnection();
   }
 
-
   // TODO: add access to DB late
   //DAL - data access layer
   async getHello(): Promise<string> {
@@ -23,6 +22,19 @@ export class AppDal {
     console.log('!!!!!!!!! res: ', JSON.stringify(res));
     //return res[0][0].result === '2';
     return 'Hi!';
+  }
+
+  async postTask(createTaskDto: CreateTaskDto): Promise<Task> {
+    console.log(createTaskDto);
+    return {
+      taskID: 10,
+      userId: 11,
+      title: 'first task',
+      duration: 40,
+      priority: 2,
+      categoryID: 3,
+      constraints: 'nothing'
+    };
   }
 
   async getUser(): Promise<User> {
@@ -40,11 +52,13 @@ export class AppDal {
 
   async GetToDoList(): Promise<ToDoList> {
     const temp_task :Task  = {
-      title: "basketball",
-      duration: 2,
-      date: "1/1/2020",
-      time: "16:00",
-      priority: 1
+      taskID: 10,
+      userId: 11,
+      title: 'first task',
+      duration: 40,
+      priority: 2,
+      categoryID: 3,
+      constraints: 'nothing'
     }
     return { tasks: [temp_task] };
   }
@@ -58,5 +72,4 @@ export class AppDal {
     console.log(createTaskDto);
     return "post TaskForToDoList success";
   }
-
 }

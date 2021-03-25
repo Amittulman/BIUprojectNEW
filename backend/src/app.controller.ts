@@ -16,6 +16,11 @@ export class AppController {
     return this.appService.getHello();
   }
 
+  @Post('TaskForToDoList')
+  postTask(@Body() createTaskDto: CreateTaskDto) {
+    return this.appService.postTask(createTaskDto);
+  }
+
   @Get('GetUser')
   async getUser(): Promise<User> {
     return this.appService.getUser();
@@ -45,6 +50,7 @@ export class AppController {
   createTask(@Body() createTaskDto: CreateTaskDto) {
     return this.appService.postTaskForToDoList(createTaskDto);
   }
+
 
   // TODO endpoints:
   //2. UpdateUser
