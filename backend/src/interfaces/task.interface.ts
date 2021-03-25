@@ -3,7 +3,7 @@ export interface Task {
   userId: number;
   title: string;
   duration: number;
+  date: string;
+  time: string;
   priority: number;
-  categoryID: number;
-  constraints: string;
 }
