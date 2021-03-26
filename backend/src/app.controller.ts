@@ -18,7 +18,7 @@ export class AppController {
 
   @Post('TaskForToDoList')
   postTask(@Body() createTaskDto: CreateTaskDto) {
-    return this.appService.postTask(createTaskDto);
+    return this.appService.postTask(createTaskDto); //TODO check DTO enforce
   }
 
   @Get('GetUser')

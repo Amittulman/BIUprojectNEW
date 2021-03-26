@@ -1,4 +1,4 @@
-import {Injectable} from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 import {User} from './interfaces/user.interface';
 import {CreateUserDto} from "./Dto's/createUser.dto";
 import {Task} from "./interfaces/task.interface";
@@ -6,44 +6,45 @@ import {ToDoList} from "./interfaces/todo.interface";
 import {CreateToDoListDto} from "./Dto's/createToDoList.dto";
 import {CreateTaskDto} from "./Dto's/createTask.sto";
 import {connectDataBase} from "./connectDataBase";
+import knex, {Knex} from "knex";
+import {OUR_DB} from "./constants";
 
+const TASK_TABLE = 'tasks_table';
 @Injectable()
 export class AppDal {
-  private db: any; //TODO:knex
 
-  constructor() {
-    this.db = connectDataBase.createConnection();
+  constructor(@Inject(OUR_DB) private db:Knex) {
   }
 
   // TODO: add access to DB late
   //DAL - data access layer
   async getHello(): Promise<string> {
-    const res = await this.db.from('tasks_table').select();
+    const res = await this.db.from(TASK_TABLE).select();
     console.log('!!!!!!!!! res: ', JSON.stringify(res));
     //return res[0][0].result === '2';
     return 'Hi!';
   }
 
-  async postTask(createTaskDto: CreateTaskDto): Promise<Task> {
-    console.log(createTaskDto);
-    return {
-      taskID: 10,
-      userId: 11,
-      title: 'first task',
-      duration: 40,
-      priority: 2,
-      categoryID: 3,
-      constraints: 'nothing'
-    };
+  async postTask(task: Task): Promise<void> {
+    console.log(task);
+    await this.db(TASK_TABLE).insert({
+      task_id: task.taskID,
+      user_id: task.userId,
+      task_title: task.title,
+      duration: task.duration,
+      priority: task.priority,
+      category_id: task.categoryID,
+      //constraints: task.constraints
+    });
   }
 
   async getUser(): Promise<User> {
     return { username: 'Amitush', id: 123 };
   }
 
-  async postUser(createUserDto: CreateUserDto): Promise<string> {
-    console.log(createUserDto);
-    return "post user success";
+  async postUser(user: User): Promise<string> {
+    //console.log(user);
+    return "post user";
   }
 
   async deleteUser(id: string): Promise<string> {
