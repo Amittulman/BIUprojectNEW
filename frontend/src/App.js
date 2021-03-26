@@ -15,7 +15,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      title: "",
+      title: "empty title",
       duration: 0,
       priority: 0,
       category_id: 0,
@@ -41,6 +41,7 @@ class App extends Component {
       })
     }).then(r => r.json())
         .then((json) => {
+          console.error("title is: " + this.state.title);
           return "test check123";
         })
         .catch((error) => {
@@ -49,7 +50,6 @@ class App extends Component {
   };
 
   handleChange = (event) => {
-    console.log("change has been made.")
     const nam = event.target.name;
     const val = event.target.value;
     this.setState({[nam]: val})
@@ -84,7 +84,7 @@ class App extends Component {
               </div>
               <input type='submit'/>
             </form> <br/>
-            <button>Get data from server.</button>
+            <button >Get data from server.</button>
           </header>
         </div>
     );

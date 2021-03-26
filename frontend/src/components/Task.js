@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-class MyComponent extends React.Component {
+class Task extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -10,8 +10,8 @@ class MyComponent extends React.Component {
         };
     }
 
-    componentDidMount() {
-        fetch("http://localhost:5000")
+    dataButtonHandler = (event) => {
+        fetch("http://localhost:5000/gethello")
             .then(res => res.json())
             .then(
                 (result) => {
@@ -20,9 +20,6 @@ class MyComponent extends React.Component {
                         items: result.message
                     });
                 },
-                // Note: it's important to handle errors here
-                // instead of a catch() block so that we don't swallow
-                // exceptions from actual bugs in components.
                 (error) => {
                     this.setState({
                         isLoaded: true,
@@ -32,26 +29,23 @@ class MyComponent extends React.Component {
             )
     }
 
+
     render() {
         const { error, isLoaded, items } = this.state;
+        let message = ''
         if (error) {
-            return <div>Error: {error.message}</div>;
+            message = "Error: " + error;
         } else if (!isLoaded) {
-            return <div>Loading...</div>;
+            message = "Waiting for task to be received...";
         } else {
-            return (
-                <div>
-                    {items}
-                </div>
-                // <ul>
-                //     {items.map(item => (
-                //         <li key={item.id}>
-                //             {item.id} - {item.employee_name}
-                //         </li>
-                //     ))}
-                // </ul>
-            );
+            message = "Data received: " + items;
         }
+        return (
+            <div>
+                <button onClick={this.dataButtonHandler}>Get data from server</button>
+                <div>{message}</div>
+            </div>
+        );
     }
 }
-export default MyComponent;
+export default Task;
