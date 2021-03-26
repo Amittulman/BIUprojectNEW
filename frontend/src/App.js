@@ -25,7 +25,6 @@ class App extends Component {
 
   onSubmitHandler = (event) => {
     event.preventDefault();
-    alert("Your task has been sent.")
     fetch('http://localhost:5000/posttask', {
       method: 'POST',
       headers: {
@@ -84,7 +83,6 @@ class App extends Component {
               </div>
               <input type='submit'/>
             </form> <br/>
-            <button >Get data from server.</button>
           </header>
         </div>
     );

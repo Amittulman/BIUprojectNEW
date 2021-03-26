@@ -17,7 +17,7 @@ class Task extends React.Component {
                 (result) => {
                     this.setState({
                         isLoaded: true,
-                        items: result.message
+                        items: JSON.stringify(result)
                     });
                 },
                 (error) => {
