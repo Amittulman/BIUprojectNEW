@@ -1,12 +1,16 @@
-import React from 'react';
+import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+import MyComponent from './components/MyComponent'
 import reportWebVitals from './reportWebVitals';
+import 'bootstrap/dist/css/bootstrap.css';
+
 
 ReactDOM.render(
   <React.StrictMode>
     <App />
+    {/*<MyComponent/>*/}
   </React.StrictMode>,
     document.getElementById('root')
 );
