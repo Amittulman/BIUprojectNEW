@@ -15,16 +15,16 @@ export class AppService {
     return this.appDal.getHello();
   }
 
-  async postTask(createTaskDto: CreateTaskDto): Promise<Task> {
-    return this.appDal.postTask(createTaskDto);
+  async postTask(task: Task): Promise<void> {
+    return this.appDal.postTask(task);
   }
 
   async getUser(): Promise<User> {
     return this.appDal.getUser();
   }
 
-  async postUser(createUserDto: CreateUserDto): Promise<string> {
-    return this.appDal.postUser(createUserDto);
+  async postUser(user: User): Promise<string> {
+    return this.appDal.postUser(user);
   }
 
   async deleteUser(id: string): Promise<string> {
