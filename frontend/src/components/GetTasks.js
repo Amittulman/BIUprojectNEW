@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
+import React from 'react';
 
-class Task extends React.Component {
+class GetTasks extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -29,8 +29,7 @@ class Task extends React.Component {
             )
     }
 
-
-    render() {
+    retrieveTasks = (event) => {
         const { error, isLoaded, items } = this.state;
         let message = ''
         if (error) {
@@ -40,12 +39,17 @@ class Task extends React.Component {
         } else {
             message = "Data received: " + items;
         }
+        return message;
+    }
+
+    render() {
+        let message = this.retrieveTasks();
         return (
             <div>
-                <button onClick={this.dataButtonHandler}>Get data from server</button>
+                <button onClick={this.dataButtonHandler}>My Tasks</button>
                 <div>{message}</div>
             </div>
         );
     }
 }
-export default Task;
+export default GetTasks;
