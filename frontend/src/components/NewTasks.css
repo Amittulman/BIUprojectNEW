@@ -9,7 +9,7 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #343a40;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -22,3 +22,41 @@
 .App-link {
   color: #61dafb;
 }
+
+input[type=text] {
+  background: linear-gradient(#FFFFFF, #FFFFFF) center bottom 5px /calc(100% - 10px) 2px no-repeat;
+  color: white;
+  border: none;
+  width: 200px;
+}
+
+input:focus {
+  outline: none;
+  color: white;
+}
+
+#nums_input {
+  width: 20%;
+}
+
+option {
+  color: white;
+  background: transparent;
+  border: none;
+  outline:0;
+}
+
+option:hover {
+  background: red !important;
+}
+
+#priority_options {
+  color: white;
+  background: #343a40;
+  border: none;
+  outline:0;
+}
+
+#task_elm {
+}
+
