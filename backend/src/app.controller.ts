@@ -9,7 +9,8 @@ import { CreateTaskDto } from "./Dto's/createTask.sto";
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly appService: AppService) {
+  }
 
   @Get('GetHello')
   async getHello(): Promise<string> {

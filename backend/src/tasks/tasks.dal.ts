@@ -37,19 +37,6 @@ export class TasksDal {
     });
   }
 
-  async getUser(): Promise<User> {
-    return { username: 'Amitush', id: 123 };
-  }
-
-  async postUser(user: User): Promise<string> {
-    //console.log(user);
-    return "post user";
-  }
-
-  async deleteUser(id: string): Promise<string> {
-    return `This action removes a #${id} user`;
-  }
-
   async GetToDoList(): Promise<ToDoList> {
     const temp_task :Task  = {
       taskID: 10,

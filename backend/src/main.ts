@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import {ValidationPipe} from "@nestjs/common";
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import {ScedualerService} from "./scedualer/scedualer.service";
 
 const cors = require('cors')
 async function bootstrap() {
@@ -18,7 +19,7 @@ async function bootstrap() {
       .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
-
   await app.listen(5000);
+
 }
 bootstrap();

@@ -5,14 +5,22 @@ import {User} from "../interfaces/user.interface";
 import {CreateUserDto} from "../Dto's/createUser.dto";
 import {ToDoList} from "../interfaces/todo.interface";
 import {CreateToDoListDto} from "../Dto's/createToDoList.dto";
+import {AppService} from "../app.service";
+import {ScedualerService} from "../scedualer/scedualer.service";
 
 @Controller('tasks')
 export class TasksController {
-  constructor(private readonly tasksService: TasksService) {}
+  constructor(private readonly tasksService: TasksService, private readonly schedulerService: ScedualerService) {
+  }
 
   @Get('GetHello')
   async getHello(): Promise<string> {
     return this.tasksService.getHello();
+  }
+
+  @Get('GetTry')
+  async getTry(): Promise<void> {
+    this.schedulerService.tryCalc();
   }
 
   @Post('TaskForToDoList')
@@ -20,20 +28,6 @@ export class TasksController {
     return this.tasksService.postTask(createTaskDto); //TODO check DTO enforce
   }
 
-  @Get('GetUser')
-  async getUser(): Promise<User> {
-    return this.tasksService.getUser();
-  }
-
-  @Post('PostUser')
-  createUser(@Body() createUserDto: CreateUserDto) {
-    return this.tasksService.postUser(createUserDto);
-  }
-
-  @Delete('DeleteUser')
-  async remove(@Param('id') id: string) {
-    return await this.tasksService.deleteUser(id);
-  }
 
   @Get('GetToDoList')
   async getToDoList(): Promise<ToDoList> {
@@ -50,12 +44,4 @@ export class TasksController {
     return this.tasksService.postTaskForToDoList(createTaskDto);
   }
 
-
-  // TODO endpoints:
-  //2. UpdateUser
-  //3 deleteUser
-  //5 add Task
-  //7 delete task
-  //8 delete tasks?
-  //9 .
 }

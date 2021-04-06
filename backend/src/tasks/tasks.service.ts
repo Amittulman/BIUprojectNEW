@@ -18,18 +18,6 @@ export class TasksService {
     return this.tasksDal.postTask(task);
   }
 
-  async getUser(): Promise<User> {
-    return this.tasksDal.getUser();
-  }
-
-  async postUser(user: User): Promise<string> {
-    return this.tasksDal.postUser(user);
-  }
-
-  async deleteUser(id: string): Promise<string> {
-    return this.tasksDal.deleteUser(id);
-  }
-
   async GetToDoList(): Promise<ToDoList> {
     return this.tasksDal.GetToDoList();
   }
