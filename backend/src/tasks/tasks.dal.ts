@@ -33,22 +33,23 @@ export class TasksDal {
       duration: task.duration,
       priority: task.priority,
       category_id: task.categoryID,
-      //constraints: task.constraints
+      constraints: task.constraints
     });
   }
 
-  async GetToDoList(): Promise<ToDoList> {
-    const temp_task :Task  = {
-      taskID: 10,
-      userId: 11,
-      title: 'first task',
-      duration: 40,
-      priority: 2,
-      categoryID: 3,
-      constraints: 'nothing'
-    }
-    return { tasks: [temp_task] };
+  async GetToDoList(user_id: string): Promise<ToDoList> {
+    const dataArr = [];
+    // console.log('param raw: ', user_id);
+    // console.log('param parsed: ', parseInt(user_id));
+
+    const res = await this.db.from(TASK_TABLE).select('*').where('user_id',parseInt(user_id));
+    // console.log(JSON.stringify(res))
+    res.forEach(function(value) {
+      dataArr.push(value)
+    });
+    return  { tasks: dataArr };
   }
+
 
   async postToDoList(createToDoListDto: CreateToDoListDto): Promise<string> {
     console.log(createToDoListDto);

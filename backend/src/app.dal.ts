@@ -22,7 +22,7 @@ export class AppDal {
     const res = await this.db.from(TASK_TABLE).select();
     console.log('!!!!!!!!! res: ', JSON.stringify(res));
     //return res[0][0].result === '2';
-    return 'Hi!';
+    return JSON.stringify(res);
   }
 
   async postTask(task: Task): Promise<void> {
@@ -48,6 +48,8 @@ export class AppDal {
   }
 
   async deleteUser(id: string): Promise<string> {
+    console.log('user id in services dal for deletion: ', id);
+
     return `This action removes a #${id} user`;
   }
 

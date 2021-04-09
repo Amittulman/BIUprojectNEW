@@ -18,8 +18,8 @@ export class TasksService {
     return this.tasksDal.postTask(task);
   }
 
-  async GetToDoList(): Promise<ToDoList> {
-    return this.tasksDal.GetToDoList();
+  async GetToDoList(user_id): Promise<ToDoList> {
+    return this.tasksDal.GetToDoList(user_id);
   }
 
   async postToDoList(createToDoListDto: CreateToDoListDto): Promise<string> {

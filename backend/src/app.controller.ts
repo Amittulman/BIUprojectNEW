@@ -34,6 +34,8 @@ export class AppController {
 
   @Delete('DeleteUser')
   async remove(@Param('id') id: string) {
+    console.log('user id in services app.contro for deletion: ', id);
+
     return await this.appService.deleteUser(id);
   }
 

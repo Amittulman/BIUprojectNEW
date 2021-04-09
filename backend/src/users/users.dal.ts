@@ -21,6 +21,8 @@ export class UsersDal {
   }
 
   async deleteUser(id: string): Promise<string> {
+    console.log('user id in services users.dal for deletion: ', id);
+
     return `This action removes a #${id} user`;
   }
 }

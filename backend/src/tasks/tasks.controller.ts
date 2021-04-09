@@ -23,25 +23,33 @@ export class TasksController {
     this.schedulerService.tryCalc();
   }
 
-  @Post('TaskForToDoList')
+  @Post('TaskForToDoList/:createTaskDto')
   postTask(@Body() createTaskDto: CreateTaskDto) {
     return this.tasksService.postTask(createTaskDto); //TODO check DTO enforce
   }
 
 
-  @Get('GetToDoList')
-  async getToDoList(): Promise<ToDoList> {
-    return this.tasksService.GetToDoList();
+  @Get('GetToDoList/:id')
+  async getToDoList(@Param('id') user_id: string): Promise<ToDoList> {
+    return this.tasksService.GetToDoList(user_id);
   }
 
-  @Post('PostToDoList')
+  @Post('PostToDoList/:createToDoListDto')
   createToDoList(@Body() createToDoListDto: CreateToDoListDto) {
     return this.tasksService.postToDoList(createToDoListDto);
   }
 
-  @Post('TaskForToDoList')
+  @Post('TaskForToDoList/:createTaskDto')
   createTask(@Body() createTaskDto: CreateTaskDto) {
     return this.tasksService.postTaskForToDoList(createTaskDto);
   }
 
+
+  // TODO endpoints:
+  //2. UpdateUser
+  //3 deleteUser
+  //5 add Task
+  //7 delete task
+  //8 delete tasks?
+  //9 .
 }

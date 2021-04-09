@@ -13,12 +13,12 @@ export class UsersController {
     return this.usersService.getUser();
   }
 
-  @Post('PostUser')
+  @Post('PostUser/:createUserDto')
   createUser(@Body() createUserDto: CreateUserDto) {
     return this.usersService.postUser(createUserDto);
   }
 
-  @Delete('DeleteUser')
+  @Delete('DeleteUser/:id')
   async remove(@Param('id') id: string) {
     return await this.usersService.deleteUser(id);
   }

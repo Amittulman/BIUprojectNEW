@@ -17,6 +17,8 @@ export class UsersService {
   }
 
   async deleteUser(id: string): Promise<string> {
+    console.log('user id in services users.service for deletion: ', id);
+
     return this.usersDal.deleteUser(id);
   }
 
