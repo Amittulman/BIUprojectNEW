@@ -43,7 +43,6 @@ export class ScedualerService {
         this.sortPriorities(tasksArray);
         const resultCalc = await this.calcBackTracking(tasksArray);
         console.log(resultCalc);
-        //console.log(slots);
     }
 
     sortPriorities(user_tasks: Array<Task>): void {
@@ -73,38 +72,42 @@ export class ScedualerService {
         //var slots = Array(672).fill(0); //2 weeks (14X24X2) - slots of 30 min
         var slots = Array(7).fill(0); //2 weeks (14X24X2) - slots of 30 min
 
+        // can't solve or the slots is full and there are stiil tasks.
+        //if ((await this.solveScedule(tasks, slots) == false) || ((await this.slotsIsFull(tasks)) && tasks.length)) {
         if (await this.solveScedule(tasks, slots) == false) {
             console.log("Full Solution does not exist");
             return false;
         }
-
-        console.log(slots);
 
         // TODO save solution to DB
         return true;
     }
 
     async solveScedule(tasks: Array<Task>, slots: any): Promise<boolean> {
-        //TODO remove index
         if (tasks.length == 0) { // success
-            console.log(slots);
             return true;
         }
         for (var taskIndex = 0; taskIndex < tasks.length; taskIndex++) {
             const tempTask = tasks[taskIndex];
-            const spotsForThisTask = await this.findSpotsForThisTask(tempTask, slots); // TODO - implement
-            if (!spotsForThisTask.length) { // there is no option for this task
-                console.log('no place to this task: ' + tasks);
-                continue;
+            const spotsForThisTask = await this.findSpotsForThisTask(tempTask, slots);
+            var isfull = await this.slotsIsFull(slots);
+            if(isfull) {
+/*
+                if(!spotsForThisTask.length) {
+                    return true;
+                }
+                continue;*/
+                return false;
             }
             for (var spotIndex = 0; spotIndex < spotsForThisTask.length; spotIndex++) {
                 slots = await this.locateTask(spotsForThisTask[spotIndex], tempTask.taskID, slots);
+                //this.logForDebug(tempTask, tasks, slots, spotsForThisTask,spotIndex);
                 tasks = await this.removeTask(tasks, taskIndex);
                 if (await this.solveScedule(tasks, slots)) {  //backtracking
                     return true;
                 }
                 slots = await this.removeFromThisSpot(spotsForThisTask[spotIndex], slots);
-                tasks.push(tempTask);
+                tasks.splice(taskIndex,0, tempTask)
             }
         }
         return false;
@@ -132,7 +135,6 @@ export class ScedualerService {
             }
             end += 1;
         }
-        //console.log(spots);
         return spots;
     }
 
@@ -144,6 +146,7 @@ export class ScedualerService {
         for (var slotNum of spots) {
             slots[slotNum] = taskID;
         }
+        //console.log(slots);
         return slots;
     }
 
@@ -160,5 +163,28 @@ export class ScedualerService {
             tasks.splice(indexOfItem, 1); //delete this task for tasks
         }
         return tasks;
+    }
+
+    private async slotsIsFull(slots: any) {
+        for(var slotIndex = 0; slotIndex < slots.length; slotIndex++) {
+            if(slots[slotIndex] == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private logForDebug(tempTask: Task, tasks: Array<Task>, slots: any, spotsForThisTask: any[], spotIndex: number) {
+        console.log('------------------------ task:');
+        console.log(tempTask);
+        console.log('------------------------ tasks:');
+        console.log(tasks);
+        console.log('------------------------ task:');
+        console.log('------------------------ slots:');
+        console.log(slots);
+        console.log('------------------------ spotsForThisTask:');
+        console.log(spotsForThisTask);
+        console.log('------------------------ spotsForThisTask[spotIndex]:');
+        console.log(spotsForThisTask[spotIndex]);
     }
 }
