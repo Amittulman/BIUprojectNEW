@@ -4,7 +4,7 @@ import {CreateUserDto} from "./Dto's/createUser.dto";
 import {Task} from "./interfaces/task.interface";
 import {ToDoList} from "./interfaces/todo.interface";
 import {CreateToDoListDto} from "./Dto's/createToDoList.dto";
-import {CreateTaskDto} from "./Dto's/createTask.sto";
+import {CreateTaskDto} from "./Dto\'s/createTask.dto";
 import {connectDataBase} from "./connectDataBase";
 import knex, {Knex} from "knex";
 import {OUR_DB} from "./constants";

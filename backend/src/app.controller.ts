@@ -4,7 +4,7 @@ import { User } from './interfaces/user.interface';
 import { CreateUserDto } from "./Dto's/createUser.dto";
 import { ToDoList } from "./interfaces/todo.interface";
 import { CreateToDoListDto } from "./Dto's/createToDoList.dto";
-import { CreateTaskDto } from "./Dto's/createTask.sto";
+import { CreateTaskDto } from "./Dto\'s/createTask.dto";
 
 
 @Controller()

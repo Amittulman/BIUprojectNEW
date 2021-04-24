@@ -3,7 +3,7 @@ import { AppDal } from './app.dal';
 import { User } from './interfaces/user.interface';
 import { ToDoList } from "./interfaces/todo.interface";
 import { CreateToDoListDto } from "./Dto's/createToDoList.dto";
-import { CreateTaskDto } from "./Dto's/createTask.sto";
+import { CreateTaskDto } from "./Dto\'s/createTask.dto";
 import {Task} from "./interfaces/task.interface";
 
 @Injectable()

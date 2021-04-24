@@ -6,9 +6,14 @@ import {User} from "../interfaces/user.interface";
 import {ToDoList} from "../interfaces/todo.interface";
 import {Task} from "../interfaces/task.interface";
 import {CreateToDoListDto} from "../Dto's/createToDoList.dto";
-import {CreateTaskDto} from "../Dto's/createTask.sto";
+import {CreateTaskDto} from "../Dto\'s/createTask.dto";
+import {Schedule} from "../interfaces/schedule.interface";
+import {CreateScheduleDto} from "../Dto's/createSchedule.dto";
+import {ScheduledTask} from "../interfaces/scheduledTask.interface";
+import {CreateScheduledTaskDto} from "../Dto's/createScheduledTask.dto";
 
 const TASK_TABLE = 'tasks_table';
+const SCHEDULE_TABLE = 'scheduled_tasks';
 @Injectable()
 export class TasksDal {
 
@@ -53,11 +58,76 @@ export class TasksDal {
 
   async postToDoList(createToDoListDto: CreateToDoListDto): Promise<string> {
     console.log(createToDoListDto);
-    return "post ToDoList success";
+    let suc = 'Success';
+    try{
+
+      const res = await  this.db(TASK_TABLE).insert(createToDoListDto);
+    }
+    catch (e){
+      suc = e
+    }
+    return suc;  }
+  //
+  // async postTaskForToDoList(createTaskDto: CreateTaskDto): Promise<string> {
+  //   console.log(createTaskDto);
+  //   let suc = 'Success';
+  //   try{
+  //
+  //     const res = await  this.db(TASK_TABLE).insert(createTaskDto);
+  //   }
+  //   catch (e){
+  //     suc = e
+  //   }
+  //   return suc;
+  // }
+
+  //Schedule
+  async getSchedule(user_id: string): Promise<Schedule> {
+    const dataArr = [];
+    // console.log('param raw: ', user_id);
+    // console.log('param parsed: ', parseInt(user_id));
+
+    const res = await this.db.from(SCHEDULE_TABLE).select('*').where('user_id',parseInt(user_id));
+    // console.log(JSON.stringify(res))
+    res.forEach(function(value) {
+      dataArr.push(value)
+    });
+    return  { slots: dataArr };
+  }
+  async getScheduleTask(user_id: string, slot_id:string): Promise<ScheduledTask> {
+    const dataArr = [];
+    let varia:ScheduledTask;
+    // console.log('param raw: ', user_id);
+    // console.log('param parsed: ', parseInt(user_id));
+
+    const res = this.db(SCHEDULE_TABLE).select('*').where({'user_id': parseInt(user_id), 'slot_id': parseInt(slot_id)});
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return res;
   }
 
-  async postTaskForToDoList(createTaskDto: CreateTaskDto): Promise<string> {
-    console.log(createTaskDto);
-    return "post TaskForToDoList success";
+  async postSchedule(schedule: CreateScheduleDto){
+    let suc = 'Success';
+    try{
+
+    const res = await  this.db(SCHEDULE_TABLE).insert(schedule);
+    }
+    catch (e){
+      suc = e
+    }
+    return suc;
+  }
+
+  async updateScheduleSlot(schedule: CreateScheduledTaskDto){
+    let suc = 'Success';
+    try{
+      // console.log(schedule);
+      // console.log("tryting to update user "+user_id+" slot "+slot_id+"with the next: "+schedule.taskID);
+      const res = await  this.db(SCHEDULE_TABLE).where({'user_id': schedule.userId, 'slot_id': schedule.slotID}).update('task_id',schedule.taskID);
+    }
+    catch (e){
+      suc = e
+    }
+    return suc;
   }
 }
