@@ -12,43 +12,43 @@ export class ScedualerService {
     async tryCalc(ToDoList) {
         //var slots = Array(7).fill(0); //2 weeks (14X24X2) - slots of 30 min
 
-        //
-        // const temp_task1: Task = {
-        //     taskID: 10,
-        //     userId: 11,
-        //     title: 'first task',
-        //     duration: 60, // 2 slots
-        //     priority: 1,
-        //     categoryID: 3,
-        //     constraints: 'nothing'
-        // }
-        // const temp_task2: Task = {
-        //     taskID: 11,
-        //     userId: 11,
-        //     title: 'second task',
-        //     duration: 120, // 4 slots
-        //     priority: 0,
-        //     categoryID: 3,
-        //     constraints: 'nothing'
-        // }
-        // const temp_task3: Task = {
-        //     taskID: 12,
-        //     userId: 11,
-        //     title: 'third task',
-        //     duration: 30, // 1 slot
-        //     priority: 2,
-        //     categoryID: 3,
-        //     constraints: 'nothing'
-        // }
-
-        const tasksArray = ToDoList.tasks;
-        // this.sortPriorities(tasksArray);
-        const resultCalc = await this.calcBackTracking(tasksArray);
+        const temp_task1: Task = {
+        taskID: 10,
+        userId: 11,
+        title: 'first task',
+        duration: 60, // 2 slots
+        priority: 1,
+        categoryID: 3,
+        constraints: 'nothing'
+        }
+        const temp_task2: Task = {
+        taskID: 11,
+        userId: 11,
+        title: 'second task',
+        duration: 120, // 4 slots
+        priority: 0,
+        categoryID: 3,
+        constraints: 'nothing'
+        }
+        const temp_task3: Task = {
+        taskID: 12,
+        userId: 11,
+        title: 'third task',
+        duration: 30, // 1 slot
+        priority: 2,
+        categoryID: 3,
+        constraints: 'nothing'
+        }
+        const tasksArray = new Array<Task>(temp_task1, temp_task2, temp_task3);
+        const tasksArray1 = ToDoList.tasks;
+        console.log(tasksArray1);
+        const prioritiesTasks =  this.sortPriorities(tasksArray1);
+        const resultCalc = await this.calcBackTracking(prioritiesTasks);
         console.log(resultCalc);
         return resultCalc;
     }
 
-    sortPriorities(user_tasks: Array<Task>): void {
+    sortPriorities(user_tasks: Array<Task>): Array<Task>[] {
         var pin_tasks = new  Array<Task>();
         var highPriority_tasks = new  Array<Task>();
         var midPriority_tasks = new  Array<Task>();
@@ -69,17 +69,18 @@ export class ScedualerService {
                 lowPriority_tasks.push(task);
             }
         }
+        return new Array<Array<Task>>(pin_tasks, highPriority_tasks, midPriority_tasks, lowPriority_tasks);
     }
 
-    async calcBackTracking(tasks: Array<Task>): Promise<Array<number>> {
+    async calcBackTracking(tasks: Array<Array<Task>>): Promise<any> {
         //var slots = Array(672).fill(0); //2 weeks (14X24X2) - slots of 30 min
         var slots = Array(999).fill(0); //2 weeks (14X24X2) - slots of 30 min
 
-        // can't solve or the slots is full and there are stiil tasks.
-        //if ((await this.solveScedule(tasks, slots) == false) || ((await this.slotsIsFull(tasks)) && tasks.length)) {
-        if (await this.solveScedule(tasks, slots) == false) {
-            console.log("Full Solution does not exist");
-            return null;
+        for(let currPriorityTasks of tasks) {
+            if (await this.solveScedule(currPriorityTasks, slots) == false) {
+                console.log("Full Solution does not exist");
+                return false;
+            }
         }
 
         // TODO save solution to DB

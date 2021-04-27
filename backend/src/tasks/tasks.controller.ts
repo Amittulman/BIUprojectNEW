@@ -24,7 +24,7 @@ export class TasksController {
 
   @Get('GetTry')
   async getTry(): Promise<void> {
-    this.schedulerService.tryCalc(null);
+    this.schedulerService.tryCalc([]);
   }
 
   @Post('TaskForToDoList/:createTaskDto')
@@ -34,14 +34,14 @@ export class TasksController {
 
   @Get('trig/:id')
   async trig(@Param('id') user_id: string): Promise<void> {
-    const tdl = this.tasksService.GetToDoList(user_id);
+    const tdl = await this.tasksService.GetToDoList(user_id);
     const res = this.schedulerService.tryCalc(tdl);
     console.log(res);
   }
 
   @Get('GetToDoList/:id')
   async getToDoList(@Param('id') user_id: string): Promise<ToDoList> {
-    return this.tasksService.GetToDoList(user_id);
+    return await this.tasksService.GetToDoList(user_id);
   }
 
   @Post('PostToDoList/:createToDoListDto')
