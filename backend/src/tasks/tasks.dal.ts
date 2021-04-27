@@ -32,8 +32,8 @@ export class TasksDal {
   async postTask(task: Task): Promise<void> {
     console.log(task);
     await this.db(TASK_TABLE).insert({
-      task_id: task.taskID,
-      user_id: task.userId,
+      task_id: task.task_id,
+      user_id: task.user_id,
       task_title: task.title,
       duration: task.duration,
       priority: task.priority,

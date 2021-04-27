@@ -2,12 +2,12 @@ import {IsNotEmpty, IsNumber} from 'class-validator';
 
 export class CreateScheduledTaskDto {
     @IsNumber()
-    taskID: number;
+    task_id: number;
     @IsNumber()
     @IsNotEmpty()
-    userId: number;
+    user_id: number;
     @IsNumber()
     @IsNotEmpty()
-    slotID: number;
+    slot_id: number;
 
 }

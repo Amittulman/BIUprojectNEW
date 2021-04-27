@@ -13,8 +13,8 @@ export class ScedualerService {
         //var slots = Array(7).fill(0); //2 weeks (14X24X2) - slots of 30 min
 
         const temp_task1: Task = {
-        taskID: 10,
-        userId: 11,
+        task_id: 10,
+        user_id: 11,
         title: 'first task',
         duration: 60, // 2 slots
         priority: 1,
@@ -22,8 +22,8 @@ export class ScedualerService {
         constraints: 'nothing'
         }
         const temp_task2: Task = {
-        taskID: 11,
-        userId: 11,
+        task_id: 11,
+        user_id: 11,
         title: 'second task',
         duration: 120, // 4 slots
         priority: 0,
@@ -31,8 +31,8 @@ export class ScedualerService {
         constraints: 'nothing'
         }
         const temp_task3: Task = {
-        taskID: 12,
-        userId: 11,
+        task_id: 12,
+        user_id: 11,
         title: 'third task',
         duration: 30, // 1 slot
         priority: 2,
@@ -104,7 +104,7 @@ export class ScedualerService {
                 return false;
             }
             for (var spotIndex = 0; spotIndex < spotsForThisTask.length; spotIndex++) {
-                slots = await this.locateTask(spotsForThisTask[spotIndex], tempTask.taskID, slots);
+                slots = await this.locateTask(spotsForThisTask[spotIndex], tempTask.task_id, slots);
                 //this.logForDebug(tempTask, tasks, slots, spotsForThisTask,spotIndex);
                 tasks = await this.removeTask(tasks, taskIndex);
                 if (await this.solveScedule(tasks, slots)) {  //backtracking

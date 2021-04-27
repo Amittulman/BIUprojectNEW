@@ -1,5 +1,5 @@
 export interface ScheduledTask {
-    taskID: number;
-    userId: number;
-    slotID: number;
+    task_id: number;
+    user_id: number;
+    slot_id: number;
 }

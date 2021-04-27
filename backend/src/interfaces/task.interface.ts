@@ -1,9 +1,9 @@
 export interface Task {
-  taskID: number;
-  userId: number;
-  title: string;
+  task_id: number;
+  user_id: number;
+  task_title: string;
   duration: number;
   priority: number;
-  categoryID: number;
+  category_id: number;
   constraints: string;
 }

@@ -4,13 +4,13 @@ import {IsNotEmpty, IsNumber, IsString} from 'class-validator';
 export class CreateTaskDto {
     @IsNumber()
     @IsNotEmpty()
-    taskID: number;
+    task_id: number;
     @IsNumber()
     @IsNotEmpty()
-    userId: number;
+    user_id: number;
     @IsString()
     @IsNotEmpty()
-    title: string;
+    task_title: string;
     @IsNumber()
     @IsNotEmpty()
     duration: number;
@@ -19,7 +19,7 @@ export class CreateTaskDto {
     priority: number;
     @IsNumber()
     @IsNotEmpty()
-    categoryID: number;
+    category_id: number;
     @IsString()
     @IsNotEmpty()
     constraints: string;

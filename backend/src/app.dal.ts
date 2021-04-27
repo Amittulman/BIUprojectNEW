@@ -28,8 +28,8 @@ export class AppDal {
   async postTask(task: Task): Promise<void> {
     console.log(task);
     await this.db(TASK_TABLE).insert({
-      task_id: task.taskID,
-      user_id: task.userId,
+      task_id: task.task_id,
+      user_id: task.user_id,
       task_title: task.title,
       duration: task.duration,
       priority: task.priority,
@@ -55,8 +55,8 @@ export class AppDal {
 
   async GetToDoList(): Promise<ToDoList> {
     const temp_task :Task  = {
-      taskID: 10,
-      userId: 11,
+      task_id: 10,
+      user_id: 11,
       title: 'first task',
       duration: 40,
       priority: 2,
