@@ -34,10 +34,10 @@ export class TasksDal {
     await this.db(TASK_TABLE).insert({
       task_id: task.task_id,
       user_id: task.user_id,
-      task_title: task.title,
+      task_title: task.task_title,
       duration: task.duration,
       priority: task.priority,
-      category_id: task.categoryID,
+      category_id: task.category_id,
       constraints: task.constraints
     });
   }
@@ -123,7 +123,7 @@ export class TasksDal {
     try{
       // console.log(schedule);
       // console.log("tryting to update user "+user_id+" slot "+slot_id+"with the next: "+schedule.taskID);
-      const res = await  this.db(SCHEDULE_TABLE).where({'user_id': schedule.userId, 'slot_id': schedule.slotID}).update('task_id',schedule.taskID);
+      const res = await  this.db(SCHEDULE_TABLE).where({'user_id': schedule.user_id, 'slot_id': schedule.slot_id}).update('task_id',schedule.task_id);
     }
     catch (e){
       suc = e

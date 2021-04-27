@@ -12,7 +12,7 @@ export class ScedualerService {
     async tryCalc(ToDoList) {
         //var slots = Array(7).fill(0); //2 weeks (14X24X2) - slots of 30 min
 
-        const temp_task1: Task = {
+        /*const temp_task1: Task = {
         task_id: 10,
         user_id: 11,
         title: 'first task',
@@ -38,8 +38,8 @@ export class ScedualerService {
         priority: 2,
         categoryID: 3,
         constraints: 'nothing'
-        }
-        const tasksArray = new Array<Task>(temp_task1, temp_task2, temp_task3);
+        }*/
+        //const tasksArray = new Array<Task>(temp_task1, temp_task2, temp_task3);
         const tasksArray1 = ToDoList.tasks;
         console.log(tasksArray1);
         const prioritiesTasks =  this.sortPriorities(tasksArray1);

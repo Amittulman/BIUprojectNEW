@@ -30,10 +30,10 @@ export class AppDal {
     await this.db(TASK_TABLE).insert({
       task_id: task.task_id,
       user_id: task.user_id,
-      task_title: task.title,
+      task_title: task.task_title,
       duration: task.duration,
       priority: task.priority,
-      category_id: task.categoryID,
+      category_id: task.category_id,
       //constraints: task.constraints
     });
   }
@@ -57,10 +57,10 @@ export class AppDal {
     const temp_task :Task  = {
       task_id: 10,
       user_id: 11,
-      title: 'first task',
+      task_title: 'first task',
       duration: 40,
       priority: 2,
-      categoryID: 3,
+      category_id: 3,
       constraints: 'nothing'
     }
     return { tasks: [temp_task] };
