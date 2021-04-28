@@ -1,6 +1,6 @@
-# Getting Started with Create React NewTasks
+# Getting Started with Create React Todo
 
-This project was bootstrapped with [Create React NewTasks](https://github.com/facebook/create-react-app).
+This project was bootstrapped with [Create React Todo](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
 
@@ -41,7 +41,7 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 
 ## Learn More
 
-You can learn more in the [Create React NewTasks documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+You can learn more in the [Create React Todo documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
 
@@ -53,7 +53,7 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/c
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
 
-### Making a Progressive Web NewTasks
+### Making a Progressive Web Todo
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
 
