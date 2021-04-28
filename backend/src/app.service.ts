@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { AppDal } from './app.dal';
 import { User } from './interfaces/user.interface';
-import { CreateUserDto } from "./Dto's/createUser.dto";
 import { ToDoList } from "./interfaces/todo.interface";
 import { CreateToDoListDto } from "./Dto's/createToDoList.dto";
-import { CreateTaskDto } from "./Dto's/createTask.sto";
+import { CreateTaskDto } from "./Dto\'s/createTask.dto";
 import {Task} from "./interfaces/task.interface";
 
 @Injectable()
@@ -28,6 +27,8 @@ export class AppService {
   }
 
   async deleteUser(id: string): Promise<string> {
+    console.log('deletion user id in  src/app.services', id);
+
     return this.appDal.deleteUser(id);
   }
 

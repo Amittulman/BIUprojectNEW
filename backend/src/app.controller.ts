@@ -4,12 +4,13 @@ import { User } from './interfaces/user.interface';
 import { CreateUserDto } from "./Dto's/createUser.dto";
 import { ToDoList } from "./interfaces/todo.interface";
 import { CreateToDoListDto } from "./Dto's/createToDoList.dto";
-import { CreateTaskDto } from "./Dto's/createTask.sto";
+import { CreateTaskDto } from "./Dto\'s/createTask.dto";
 
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly appService: AppService) {
+  }
 
   @Get('GetHello')
   async getHello(): Promise<string> {
@@ -33,6 +34,8 @@ export class AppController {
 
   @Delete('DeleteUser')
   async remove(@Param('id') id: string) {
+    console.log('user id in services app.contro for deletion: ', id);
+
     return await this.appService.deleteUser(id);
   }
 

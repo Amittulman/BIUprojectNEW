@@ -4,7 +4,7 @@ import {CreateUserDto} from "./Dto's/createUser.dto";
 import {Task} from "./interfaces/task.interface";
 import {ToDoList} from "./interfaces/todo.interface";
 import {CreateToDoListDto} from "./Dto's/createToDoList.dto";
-import {CreateTaskDto} from "./Dto's/createTask.sto";
+import {CreateTaskDto} from "./Dto\'s/createTask.dto";
 import {connectDataBase} from "./connectDataBase";
 import knex, {Knex} from "knex";
 import {OUR_DB} from "./constants";
@@ -22,18 +22,18 @@ export class AppDal {
     const res = await this.db.from(TASK_TABLE).select();
     console.log('!!!!!!!!! res: ', JSON.stringify(res));
     //return res[0][0].result === '2';
-    return 'Hi!';
+    return JSON.stringify(res);
   }
 
   async postTask(task: Task): Promise<void> {
     console.log(task);
     await this.db(TASK_TABLE).insert({
-      task_id: task.taskID,
-      user_id: task.userId,
-      task_title: task.title,
+      task_id: task.task_id,
+      user_id: task.user_id,
+      task_title: task.task_title,
       duration: task.duration,
       priority: task.priority,
-      category_id: task.categoryID,
+      category_id: task.category_id,
       //constraints: task.constraints
     });
   }
@@ -48,17 +48,19 @@ export class AppDal {
   }
 
   async deleteUser(id: string): Promise<string> {
+    console.log('user id in services dal for deletion: ', id);
+
     return `This action removes a #${id} user`;
   }
 
   async GetToDoList(): Promise<ToDoList> {
     const temp_task :Task  = {
-      taskID: 10,
-      userId: 11,
-      title: 'first task',
+      task_id: 10,
+      user_id: 11,
+      task_title: 'first task',
       duration: 40,
       priority: 2,
-      categoryID: 3,
+      category_id: 3,
       constraints: 'nothing'
     }
     return { tasks: [temp_task] };
