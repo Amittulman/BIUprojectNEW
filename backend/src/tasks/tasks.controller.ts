@@ -11,7 +11,6 @@ import {AppService} from "../app.service";
 import {ScedualerService} from "../scedualer/scedualer.service";
 import {CreateScheduleDto} from "../Dto's/createSchedule.dto";
 import {CreateScheduledTaskDto} from "../Dto's/createScheduledTask.dto";
-import {CategorySlot} from "../interfaces/categorySlot.interface";
 
 @Controller('tasks')
 export class TasksController {
@@ -61,8 +60,6 @@ export class TasksController {
 
 
   // Scheduled tasks:
-
-  // Scheduled tasks:
   @Get('GetSchedule/:id')
   async getSchedule(@Param('id') user_id: string): Promise<Schedule> {
     return this.tasksService.getSchedule(user_id);
@@ -72,29 +69,16 @@ export class TasksController {
   async getScheduleTask(@Param('id') user_id: string, @Param('slot') slot_id:string): Promise<ScheduledTask> {
     return this.tasksService.getScheduleTask(user_id,slot_id);
   }
+
   @Post('PostSchedule/')
   postSchedule(@Body() createScheduleDto: CreateScheduleDto) {
     return this.tasksService.postSchedule(createScheduleDto);
   }
-
-
   @Post('UpdateSchedule/:id/:slot')
   updateScheduleSlot(@Body() slot: CreateScheduledTaskDto) {
     console.log(slot)
     return this.tasksService.updateScheduleSlot(slot);
   }
-
-  //Categories shit
-  @Get('GetUserCategories/:id')
-  async getUserCategories(@Param('id') user_id: string): Promise<Array<number>> {
-    return this.tasksService.getUserCategories(user_id);
-  }
-  @Get('GetUserCategorySlots/:id')
-  async getUserCategorySlots(@Param('id') user_id: string): Promise<Array<CreateScheduledTaskDto>> {
-    return this.tasksService.getUserCategorySlots(user_id);
-  }
-
-
 
 
 
