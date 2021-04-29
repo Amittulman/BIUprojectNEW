@@ -1,0 +1,94 @@
+.App-header {
+    background-color:  rgba(230,230,230, .3);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: rgb(12, 13, 13);
+}
+
+table {
+    display: table;
+    width: 100%;
+    empty-cells: show;
+}
+
+th {
+    width: 100vw;
+    text-align: center;
+    background-color: white;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 20px;
+    box-shadow: 4px 8px 8px lightgray;
+}
+
+title {
+    font-weight: bold;
+    font-size: 5vw;
+    text-align: center;
+    display: block;
+}
+
+td:empty::after {
+    content: "\A0";
+}
+
+td {
+    height: 6vh;
+    width: 100%;
+    min-width: 50px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+table th {
+    text-align: center;
+}
+
+table tr {
+    display: table-cell;
+    vertical-align: top;
+}
+
+table tr td {
+    display: block;
+    border: 1px solid rgba(0,0,0,.2);
+    border-radius: 5%;
+
+    text-align: center;
+}
+
+#search_task {
+    border: 1px solid rgba(0,0,0,.2);
+    border-radius: 5%;
+    display: inline-block;
+}
+
+#site_top {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    background-color: white;
+}
+
+#tst1 {
+    background-color: blue;
+}
+
+#tst2 {
+    background-color: red;
+}
+
+#input {
+    padding-left: 25px;
+    background: url("../images/search_black_24dp.svg") no-repeat 0 1px;
+    margin-top: 28px;
+    margin-left: 80px;
+    font-size: 18px;
+    border: 1px solid rgba(0,0,0,.2);
+    width: 200px;
+    height: 27px;
+}

@@ -13,6 +13,7 @@ import {ScheduledTask} from "../interfaces/scheduledTask.interface";
 import {CreateScheduledTaskDto} from "../Dto's/createScheduledTask.dto";
 
 const TASK_TABLE = 'tasks_table';
+const CATEGORY_SLOT_TABLE = 'category_slots';
 const SCHEDULE_TABLE = 'scheduled_tasks';
 @Injectable()
 export class TasksDal {
@@ -54,8 +55,6 @@ export class TasksDal {
     });
     return  { tasks: dataArr };
   }
-
-
   async postToDoList(createToDoListDto: CreateToDoListDto): Promise<string> {
     console.log(createToDoListDto);
     let suc = 'Success';
@@ -67,6 +66,8 @@ export class TasksDal {
       suc = e
     }
     return suc;  }
+
+
   //
   // async postTaskForToDoList(createTaskDto: CreateTaskDto): Promise<string> {
   //   console.log(createTaskDto);
@@ -79,8 +80,6 @@ export class TasksDal {
   //     suc = e
   //   }
   //   return suc;
-  // }
-
   //Schedule
   async getSchedule(user_id: string): Promise<Schedule> {
     const dataArr = [];
@@ -94,6 +93,7 @@ export class TasksDal {
     });
     return  { slots: dataArr };
   }
+
   async getScheduleTask(user_id: string, slot_id:string): Promise<ScheduledTask> {
     const dataArr = [];
     let varia:ScheduledTask;
@@ -105,7 +105,6 @@ export class TasksDal {
     // @ts-ignore
     return res;
   }
-
   async postSchedule(schedule: CreateScheduleDto){
     let suc = 'Success';
     try{
@@ -129,5 +128,27 @@ export class TasksDal {
       suc = e
     }
     return suc;
+  }
+
+  // }
+
+  async getUserCategories(user_id: string): Promise<Array<number>> {
+    const dataArr = new Array<number>();
+
+    const res = await this.db.from(CATEGORY_SLOT_TABLE).distinct('category_id').where('user_id',parseInt(user_id));
+    res.forEach(function(value) {
+      dataArr.push(parseInt(value.category_id))
+    });
+    return  dataArr;
+  }
+
+  async getUserCategorySlots(user_id: string): Promise<Array<CreateScheduledTaskDto>> {
+    const dataArr = new Array<CreateScheduledTaskDto>();
+
+    const res = await this.db.from(CATEGORY_SLOT_TABLE).select('*').where('user_id',parseInt(user_id));
+    res.forEach(function(value) {
+      dataArr.push(value)
+    });
+    return  dataArr;
   }
 }
