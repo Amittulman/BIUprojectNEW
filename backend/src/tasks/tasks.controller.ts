@@ -24,7 +24,7 @@ export class TasksController {
 
   @Get('GetTry')
   async getTry(): Promise<void> {
-    this.schedulerService.tryCalc([]);
+    //this.schedulerService.tryCalc([]);
   }
 
   @Post('TaskForToDoList/:createTaskDto')
@@ -35,7 +35,11 @@ export class TasksController {
   @Get('trig/:id')
   async trig(@Param('id') user_id: string): Promise<void> {
     const tdl = await this.tasksService.GetToDoList(user_id);
-    const res = this.schedulerService.tryCalc(tdl);
+    //const categorySlots = await  this. tasksService.getCategorySlots(user_id);
+    const categorySlots = [1,1,1,1];
+    const res = await this.schedulerService.tryCalc(tdl,categorySlots);
+    //change slots to scheduledTask
+    //post slots to DB
     console.log(res);
   }
 
