@@ -16,7 +16,6 @@ class Todo extends Component {
 
 
   onSubmitHandler = (event) => {
-    console.log(this.state.tasks)
     this.setState((state) => ({tasks: state.tasks.filter((element) => element !== null) }))
     event.preventDefault();
     fetch('http://localhost:5000/taskfortodolist', {
@@ -48,9 +47,7 @@ class Todo extends Component {
     this.setState({tasks});
   }
 
-  addTask = (index, open, new_task, values) => {
-    console.log(this.state.tasks)
-    if (values == null) {
+  addTask = (index, open, new_task, values) => {if (values == null) {
       values = {'task_id':'','task_title':'empty task', 'duration':'','priority':'','category_id':'','constraints':''}
     }
     let i = index
@@ -81,7 +78,7 @@ class Todo extends Component {
     if (new_task) {
       return this.setState((state) => ({
         tasks_jsx: state.tasks_jsx.concat([task]),
-        tasks: state.tasks.concat([values]),
+        // tasks: state.tasks.concat([values]),
         task_number: state.task_number + 1,
       }));
     } else {
@@ -96,7 +93,6 @@ class Todo extends Component {
   }
 
   remove_task = (i) => {
-    console.log('removing ', this.state.tasks[i-1])
     this.setState({
       tasks_jsx: [
         ...this.state.tasks_jsx.slice(0,i-1),
@@ -109,26 +105,27 @@ class Todo extends Component {
         ...this.state.tasks.slice(i)
       ],
     });
-    console.log(this.state.tasks)
   }
 
   getTasks = (event) => {
-    fetch("http://localhost:5000/gethello")
+    fetch("http://localhost:5000/tasks/gettodolist/1")
         .then(res => res.json())
         .then(
             (result) => {
               if (result['statusCode'] === 500) throw new Error('Internal server error.');
-              let all_tasks = result.length
-              let tasks = []
-              for (let i=0; i<5; i++){
+              let all_tasks = result['tasks'].length
+              let tasks1 = []
+              for (let i=0; i<all_tasks; i++){
                 // this.addTask(this.state.task_number, false, true, result[i])
-                tasks.push(result[i])
+                tasks1.push(result['tasks'][i])
+                // console.log('a ', result['tasks'][i])
               }
               this.setState({
                 isLoaded: true,
-                items: JSON.stringify(result)
+                items: JSON.stringify(result),
+                tasks: tasks1
               });
-              return tasks
+              // return tasks1
             })
         .catch((error) => {
           console.log(error)
@@ -137,20 +134,20 @@ class Todo extends Component {
 
   componentDidMount() {
     // this.props.setTasks(['test','data']);
-    // console.log(this.props.getTasks())
+    this.getTasks()
     //TODO - get tasks from server (get getTasks to work)
     // let tasks = this.getTasks()
-    let tasks = [{'task_id':'1','task_title':'first task', 'duration':'','priority':'','category_id':'','constraints':''}];
+    // let tasks = [{'task_id':'1','task_title':'first task', 'duration':'','priority':'','category_id':'','constraints':''}];
     //Save tasks received from DB in parent, for schedule component to use.
-    this.props.setTasks(tasks)
+    // this.props.setTasks(this.state.tasks)
     let that = this;
     setTimeout(function() {
-      for (let i=0; i<tasks.length; i++){
-        that.addTask(that.state.task_number, false, true, tasks[i])
+      for (let i=0; i<3; i++){
+        that.addTask(that.state.task_number, false, true, that.state.tasks[i])
       }
       that.addTask(that.state.task_number, false, true)
-    },300)
 
+    },300)
   }
 
   render() {

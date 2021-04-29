@@ -2,7 +2,7 @@ import React from 'react';
 import './Schedule.css';
 import Menu from "./Menu";
 
-const slots_per_day = 32
+const slots_per_day = 24*2
 
 function Table(props) {
     console.log(props.getTasks())
@@ -21,11 +21,11 @@ function Table(props) {
     }
     for (let i=0; i<8; i++) {
         let content = [];
-        let hour = 8;
+        let hour;
         let minute = 0;
         if (day[i] === 'Time') {
             for (let j=0; j<slots_per_day; j++) {
-                hour = Math.floor(8+j/2);
+                hour = Math.floor(0+j/2);
                 minute = 30 * (j%2);
                 if (hour < 10) hour = '0' + hour
                 if (minute === 0) minute = '00'
