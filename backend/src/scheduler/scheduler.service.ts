@@ -1,52 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import {Task} from "../interfaces/task.interface";
 
+const SLOTS_SIZE = 336;
+
 @Injectable()
 export class SchedulerService {
     constructor() {
         //this.tryCalc();
     }
 
-    async tryCalc(ToDoList) {
-        //var slots = Array(7).fill(0); //2 weeks (14X24X2) - slots of 30 min
-
-        /*const temp_task1: Task = {
-        task_id: 10,
-        user_id: 11,
-        title: 'first task',
-        duration: 60, // 2 slots
-        priority: 1,
-        categoryID: 3,
-        constraints: 'nothing'
-        }
-        const temp_task2: Task = {
-        task_id: 11,
-        user_id: 11,
-        title: 'second task',
-        duration: 120, // 4 slots
-        priority: 0,
-        categoryID: 3,
-        constraints: 'nothing'
-        }
-        const temp_task3: Task = {
-        task_id: 12,
-        user_id: 11,
-        title: 'third task',
-        duration: 30, // 1 slot
-        priority: 2,
-        categoryID: 3,
-        constraints: 'nothing'
-        }*/
+    async tryCalc(ToDoList, categorySlots) {
         //const tasksArray = new Array<Task>(temp_task1, temp_task2, temp_task3);
+        var slots = this.createSlotsWithCategory(categorySlots);
         const tasksArray1 = ToDoList.tasks;
-        console.log(tasksArray1);
-        const prioritiesTasks =  this.sortPriorities(tasksArray1);
-        const resultCalc = await this.calcBackTracking(prioritiesTasks);
-        console.log(resultCalc);
-        return resultCalc;
+        const prioritiesTasks =  await this.sortPriorities(tasksArray1);
+        const resultCalc = await this.calcBackTracking(prioritiesTasks, slots);
+        const resultsOnlySlots = await this.createSlotsFromResult(resultCalc);
+        //console.log(resultCalc);
+        return resultsOnlySlots;
     }
 
-    sortPriorities(user_tasks: Array<Task>): Array<Task>[] {
+    async sortPriorities(user_tasks: Array<Task>): Promise<Array<Task>[]> {
         var pin_tasks = new  Array<Task>();
         var highPriority_tasks = new  Array<Task>();
         var midPriority_tasks = new  Array<Task>();
@@ -70,9 +44,8 @@ export class SchedulerService {
         return new Array<Array<Task>>(pin_tasks, highPriority_tasks, midPriority_tasks, lowPriority_tasks);
     }
 
-    async calcBackTracking(tasks: Array<Array<Task>>): Promise<any> {
-        //var slots = Array(672).fill(0); //2 weeks (14X24X2) - slots of 30 min
-        var slots = Array(999).fill(0); //2 weeks (14X24X2) - slots of 30 min
+    async calcBackTracking(tasks: Array<Array<Task>>, slots: any): Promise<any> {
+        //var slots = Array(999).fill(0); //2 weeks (14X24X2) - slots of 30 min
 
         for(let currPriorityTasks of tasks) {
             if (await this.solveScedule(currPriorityTasks, slots) == false) {
@@ -94,11 +67,6 @@ export class SchedulerService {
             const spotsForThisTask = await this.findSpotsForThisTask(tempTask, slots);
             var isfull = await this.slotsIsFull(slots);
             if(isfull) {
-/*
-                if(!spotsForThisTask.length) {
-                    return true;
-                }
-                continue;*/
                 return false;
             }
             for (var spotIndex = 0; spotIndex < spotsForThisTask.length; spotIndex++) {
@@ -122,8 +90,8 @@ export class SchedulerService {
         let end = 0; // pointer to the start of the sliding window
         var spots = []; // the result - all the options
         let currSlot = [];
-        while (end <= slots.length){
-            if (slots[end] === 0) { // this slot is empty
+        while (end < slots.length){
+            if ((slots[end][0] === -1) && (task.category_id === slots[end][1])) { // this slot is empty
                 currSlot.push(end); // we can use this slot
                 if (currSlot.length === numOfSlots) { // check if the current slot is valid to be an answer
                     const CopyForPushCurrSlot  = Object.assign([], currSlot);
@@ -141,14 +109,13 @@ export class SchedulerService {
     }
 
     async canScedualeHere(task:Array<Task> , index: number, slots: any) {
-        return slots[index] == 0;
+        return slots[index] == -1;
     }
 
     private async locateTask(spots: any, taskID: any, slots: any) {
         for (var slotNum of spots) {
-            slots[slotNum] = taskID;
+            slots[slotNum][0] = taskID;
         }
-        //console.log(slots);
         return slots;
     }
 
@@ -169,7 +136,7 @@ export class SchedulerService {
 
     private async slotsIsFull(slots: any) {
         for(var slotIndex = 0; slotIndex < slots.length; slotIndex++) {
-            if(slots[slotIndex] == 0) {
+            if(slots[slotIndex][0] == -1) {
                 return false;
             }
         }
@@ -188,5 +155,25 @@ export class SchedulerService {
         console.log(spotsForThisTask);
         console.log('------------------------ spotsForThisTask[spotIndex]:');
         console.log(spotsForThisTask[spotIndex]);
+    }
+
+    private createSlotsWithCategory(categorySlots: Array<number>) {
+        var slotsAndCatagory = Array(SLOTS_SIZE);
+        for(var i = 0;i<slotsAndCatagory.length;i++) {
+            slotsAndCatagory[i] = [-1, 1]
+        }
+
+        for (let i = 0; i < categorySlots.length; i++) {
+            slotsAndCatagory[i] = [-1, categorySlots[i]];
+        }
+        return slotsAndCatagory;
+    }
+
+    private async createSlotsFromResult(resultCalc: any) {
+        var slots = Array(SLOTS_SIZE);
+        for (let i = 0; i < resultCalc.length; i++) {
+            slots[i] = resultCalc[i][0];
+        }
+        return slots;
     }
 }
