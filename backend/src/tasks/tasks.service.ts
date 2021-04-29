@@ -1,14 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import {Task} from "../interfaces/task.interface";
-import {Schedule} from "../interfaces/schedule.interface";
 import {ScheduledTask} from "../interfaces/scheduledTask.interface";
 import {ToDoList} from "../interfaces/todo.interface";
 import {CreateToDoListDto} from "../Dto's/createToDoList.dto";
-import {CreateTaskDto} from "../Dto\'s/createTask.dto";
-import {CreateScheduleDto} from "../Dto\'s/createSchedule.dto";
 import {CreateScheduledTaskDto} from "../Dto\'s/createScheduledTask.dto";
 import {TasksDal} from "./tasks.dal";
-import {CategorySlot} from "../interfaces/categorySlot.interface";
 
 @Injectable()
 export class TasksService {
@@ -34,14 +30,14 @@ export class TasksService {
   //   return this.tasksDal.postTaskForToDoList(createTaskDto);
   // }
 
-  async getSchedule(user_id):Promise<Schedule>{
+  async getSchedule(user_id):Promise<Array<number>>{
     return this.tasksDal.getSchedule(user_id);
   }
   async getScheduleTask(user_id, slot_id):Promise<ScheduledTask>{
     return this.tasksDal.getScheduleTask(user_id, slot_id);
   }
 
-  async postSchedule(createScheduleDto: CreateScheduleDto): Promise<string>{
+  async postSchedule(createScheduleDto: Array<CreateScheduledTaskDto>): Promise<string>{
     return this.tasksDal.postSchedule(createScheduleDto);
   }
 
@@ -53,7 +49,7 @@ export class TasksService {
     return this.tasksDal.getUserCategories(user_id);
   }
 
-  async getUserCategorySlots(user_id):Promise<Array<CreateScheduledTaskDto>>{
+  async getUserCategorySlots(user_id):Promise<Array<number>>{
     return this.tasksDal.getUserCategorySlots(user_id);
   }
 }
