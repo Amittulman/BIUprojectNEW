@@ -5,6 +5,7 @@ import {ToDoList} from "../interfaces/todo.interface";
 import {CreateToDoListDto} from "../Dto's/createToDoList.dto";
 import {CreateScheduledTaskDto} from "../Dto\'s/createScheduledTask.dto";
 import {TasksDal} from "./tasks.dal";
+import {CreateTaskDto} from "../Dto's/createTask.dto";
 
 @Injectable()
 export class TasksService {
@@ -22,8 +23,8 @@ export class TasksService {
     return this.tasksDal.GetToDoList(user_id);
   }
 
-  async postToDoList(createToDoListDto: CreateToDoListDto): Promise<string> {
-    return this.tasksDal.postToDoList(createToDoListDto);
+  async postTasks(tasks: Array<CreateTaskDto>): Promise<string> {
+    return this.tasksDal.postTasks(tasks);
   }
 
   // async postTaskForToDoList(createTaskDto: CreateTaskDto): Promise<string> {
@@ -51,5 +52,8 @@ export class TasksService {
 
   async getUserCategorySlots(user_id):Promise<Array<number>>{
     return this.tasksDal.getUserCategorySlots(user_id);
+  }
+  async deleteSchedule(user_id):Promise<string>{
+    return this.tasksDal.deleteSchedule(user_id);
   }
 }

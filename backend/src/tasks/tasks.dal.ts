@@ -4,9 +4,9 @@ import knex, {Knex} from "knex";
 import {OUR_DB} from "../constants";
 import {ToDoList} from "../interfaces/todo.interface";
 import {Task} from "../interfaces/task.interface";
-import {CreateToDoListDto} from "../Dto's/createToDoList.dto";
 import {ScheduledTask} from "../interfaces/scheduledTask.interface";
 import {CreateScheduledTaskDto} from "../Dto's/createScheduledTask.dto";
+import {CreateTaskDto} from "../Dto's/createTask.dto";
 
 const TASK_TABLE = 'tasks_table';
 const CATEGORY_SLOT_TABLE = 'category_slots';
@@ -51,12 +51,12 @@ export class TasksDal {
     });
     return  { tasks: dataArr };
   }
-  async postToDoList(createToDoListDto: CreateToDoListDto): Promise<string> {
-    console.log(createToDoListDto);
+  async postTasks(tasks: Array<CreateTaskDto>): Promise<string> {
+    console.log(tasks);
     let suc = 'Success';
     try{
 
-      const res = await  this.db(TASK_TABLE).insert(createToDoListDto);
+      const res = await  this.db(TASK_TABLE).insert(tasks);
     }
     catch (e){
       suc = e
@@ -163,5 +163,19 @@ export class TasksDal {
     return dataArr;
 
 
-  }q
+  }
+
+  async deleteSchedule(user_id: string): Promise<string> {
+    let suc = 'Success';
+    try{
+      // console.log(schedule);
+      // console.log("tryting to update user "+user_id+" slot "+slot_id+"with the next: "+schedule.taskID);
+      const res = await  this.db(SCHEDULE_TABLE).where('user_id',parseInt(user_id)).del();
+    }
+    catch (e){
+      suc = e
+    }
+    return suc;
+
+  }
 }

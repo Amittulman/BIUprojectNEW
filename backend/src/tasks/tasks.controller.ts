@@ -21,21 +21,28 @@ export class TasksController {
   async getTry(): Promise<void> {
     //this.schedulerService.tryCalc([]);
   }
-
-  @Post('TaskForToDoList/:createTaskDto')
-  postTask(@Body() createTaskDto: CreateTaskDto) {
-    return this.tasksService.postTask(createTaskDto); //TODO check DTO enforce
-  }
+  //
+  // @Post('TaskForToDoList/:createTaskDto')
+  // postTask(@Body() createTaskDto: CreateTaskDto) {
+  //   return this.tasksService.postTask(createTaskDto); //TODO check DTO enforce
+  // }
 
   @Get('trig/:id')
-  async trig(@Param('id') user_id: string): Promise<void> {
+  async trig(@Param('id') user_id: string): Promise<string> {
     const tdl = await this.tasksService.GetToDoList(user_id);
     //const categorySlots = await  this. tasksService.getCategorySlots(user_id);
     const categorySlots = [1,1,1,1];
     const res = await this.schedulerService.tryCalc(tdl,categorySlots);
+
+
+    console.log(await this.deleteSchedule(user_id));
+
+
     //change slots to scheduledTask
     //post slots to DB
+    const success = await this.postSchedule(res,user_id);
     console.log(res);
+    return success;
   }
 
   @Get('GetToDoList/:id')
@@ -43,9 +50,9 @@ export class TasksController {
     return await this.tasksService.GetToDoList(user_id);
   }
 
-  @Post('PostToDoList/:createToDoListDto')
-  createToDoList(@Body() createToDoListDto: CreateToDoListDto) {
-    return this.tasksService.postToDoList(createToDoListDto);
+  @Post('PostTasks/:tasks')
+  postTasks(@Body() tasks: Array<CreateTaskDto>) {
+    return this.tasksService.postTasks(tasks);
   }
 
   // @Post('TaskForToDoList/:createTaskDto')
@@ -114,6 +121,10 @@ export class TasksController {
     return category_slots_array;
   }
 
+  @Delete('DeleteSchedule/:id')
+  async deleteSchedule(@Param('id') user_id: string): Promise<string> {
+    return this.tasksService.deleteSchedule(user_id);
+  }
 
 
 
