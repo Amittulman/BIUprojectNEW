@@ -21,7 +21,7 @@ th {
     background-color: white;
     position: -webkit-sticky;
     position: sticky;
-    top: 20px;
+    top: 55px;
     box-shadow: 4px 8px 8px lightgray;
 }
 
@@ -72,6 +72,7 @@ table tr td {
     position: sticky;
     top: 0;
     background-color: white;
+    z-index: 2;
 }
 
 #tst1 {
@@ -91,4 +92,8 @@ table tr td {
     border: 1px solid rgba(0,0,0,.2);
     width: 200px;
     height: 27px;
+}
+
+#upperPane {
+    background-color: red;
 }
