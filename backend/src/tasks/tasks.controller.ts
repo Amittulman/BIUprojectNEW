@@ -1,21 +1,15 @@
 import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
 import {TasksService} from "./tasks.service";
 import {CreateTaskDto} from "../Dto\'s/createTask.dto";
-import {User} from "../interfaces/user.interface";
-import {CreateUserDto} from "../Dto's/createUser.dto";
 import {ToDoList} from "../interfaces/todo.interface";
-import {Schedule} from "../interfaces/schedule.interface";
 import {ScheduledTask} from "../interfaces/scheduledTask.interface";
 import {CreateToDoListDto} from "../Dto's/createToDoList.dto";
-import {AppService} from "../app.service";
-import {ScedualerService} from "../scedualer/scedualer.service";
-import {CreateScheduleDto} from "../Dto's/createSchedule.dto";
+import {SchedulerService} from "../scheduler/scheduler.service";
 import {CreateScheduledTaskDto} from "../Dto's/createScheduledTask.dto";
-import {CategorySlot} from "../interfaces/categorySlot.interface";
 
 @Controller('tasks')
 export class TasksController {
-  constructor(private readonly tasksService: TasksService, private readonly schedulerService: ScedualerService) {
+  constructor(private readonly tasksService: TasksService, private readonly schedulerService: SchedulerService) {
   }
 
   @Get('GetHello')
@@ -60,17 +54,39 @@ export class TasksController {
 
   // Scheduled tasks:
   @Get('GetSchedule/:id')
-  async getSchedule(@Param('id') user_id: string): Promise<Schedule> {
-    return this.tasksService.getSchedule(user_id);
+  async getSchedule(@Param('id') user_id: string): Promise<Array<number>> {
+    const result = await this.tasksService.getSchedule(user_id);
+    const schedule_array = new Array<number>(337);
+    schedule_array.fill(-1)
+    let i;
+
+
+    for (const slot in result){
+      schedule_array[result[slot]['slot_id']]   = result[slot]['task_id']
+    }
+
+    return schedule_array;
   }
 
   @Get('GetScheduleTask/:id/:slot')
   async getScheduleTask(@Param('id') user_id: string, @Param('slot') slot_id:string): Promise<ScheduledTask> {
     return this.tasksService.getScheduleTask(user_id,slot_id);
   }
-  @Post('PostSchedule/')
-  postSchedule(@Body() createScheduleDto: CreateScheduleDto) {
-    return this.tasksService.postSchedule(createScheduleDto);
+  @Post('PostSchedule/:user_id')
+  postSchedule(@Body() tasksArray: Array<number>, @Param('user_id')user_id:string) {
+    const schedule:Array<ScheduledTask> = [];
+    for(const task in tasksArray){
+      if (tasksArray[task] != -1){
+          const schedule_task:ScheduledTask = {
+            task_id: tasksArray[task],
+            user_id : parseInt(user_id),
+            slot_id : parseInt(task)
+          };
+          schedule.push(schedule_task);
+        
+      }
+    }
+    return this.tasksService.postSchedule(schedule);
   }
 
 
@@ -86,8 +102,16 @@ export class TasksController {
     return this.tasksService.getUserCategories(user_id);
   }
   @Get('GetUserCategorySlots/:id')
-  async getUserCategorySlots(@Param('id') user_id: string): Promise<Array<CreateScheduledTaskDto>> {
-    return this.tasksService.getUserCategorySlots(user_id);
+  async getUserCategorySlots(@Param('id') user_id: string): Promise<Array<number>> {
+    const result = await this.tasksService.getUserCategorySlots(user_id);
+    // console.log(result)
+    const category_slots_array = new Array<number>(337);
+    category_slots_array.fill(-1)
+
+    for (const slot in result){
+      category_slots_array[result[slot]['slot_id']]   = result[slot]['category_id']
+    }
+    return category_slots_array;
   }
 
 

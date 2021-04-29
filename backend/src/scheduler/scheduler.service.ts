@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import {AppService} from "../app.service";
 import {Task} from "../interfaces/task.interface";
-import {retrieveCols} from "@nestjs/cli/actions";
 
 @Injectable()
-export class ScedualerService {
+export class SchedulerService {
     constructor() {
         //this.tryCalc();
     }

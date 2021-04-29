@@ -2,13 +2,9 @@ import {Inject, Injectable} from '@nestjs/common';
 
 import knex, {Knex} from "knex";
 import {OUR_DB} from "../constants";
-import {User} from "../interfaces/user.interface";
 import {ToDoList} from "../interfaces/todo.interface";
 import {Task} from "../interfaces/task.interface";
 import {CreateToDoListDto} from "../Dto's/createToDoList.dto";
-import {CreateTaskDto} from "../Dto\'s/createTask.dto";
-import {Schedule} from "../interfaces/schedule.interface";
-import {CreateScheduleDto} from "../Dto's/createSchedule.dto";
 import {ScheduledTask} from "../interfaces/scheduledTask.interface";
 import {CreateScheduledTaskDto} from "../Dto's/createScheduledTask.dto";
 
@@ -81,18 +77,18 @@ export class TasksDal {
   //   }
   //   return suc;
   //Schedule
-  async getSchedule(user_id: string): Promise<Schedule> {
-    const dataArr = [];
-    // console.log('param raw: ', user_id);
-    // console.log('param parsed: ', parseInt(user_id));
-
-    const res = await this.db.from(SCHEDULE_TABLE).select('*').where('user_id',parseInt(user_id));
-    // console.log(JSON.stringify(res))
-    res.forEach(function(value) {
-      dataArr.push(value)
-    });
-    return  { slots: dataArr };
-  }
+  // async getSchedule(user_id: string): Promise<Array<number>> {
+  //   const dataArr = [];
+  //   // console.log('param raw: ', user_id);
+  //   // console.log('param parsed: ', parseInt(user_id));
+  //
+  //   const res = await this.db.from(SCHEDULE_TABLE).select('task_id').where('user_id',parseInt(user_id));
+  //   // console.log(JSON.stringify(res))
+  //   res.forEach(function(value) {
+  //     dataArr.push(value)
+  //   });
+  //   return  dataArr;
+  // }
 
   async getScheduleTask(user_id: string, slot_id:string): Promise<ScheduledTask> {
     const dataArr = [];
@@ -105,7 +101,7 @@ export class TasksDal {
     // @ts-ignore
     return res;
   }
-  async postSchedule(schedule: CreateScheduleDto){
+  async postSchedule(schedule: Array<CreateScheduledTaskDto>){
     let suc = 'Success';
     try{
 
@@ -142,13 +138,30 @@ export class TasksDal {
     return  dataArr;
   }
 
-  async getUserCategorySlots(user_id: string): Promise<Array<CreateScheduledTaskDto>> {
-    const dataArr = new Array<CreateScheduledTaskDto>();
+  async getUserCategorySlots(user_id: string): Promise<Array<number>> {
+    const dataArr = new Array<number>();
 
     const res = await this.db.from(CATEGORY_SLOT_TABLE).select('*').where('user_id',parseInt(user_id));
     res.forEach(function(value) {
       dataArr.push(value)
     });
-    return  dataArr;
+
+
+    return dataArr;
+
+
   }
+  async getSchedule(user_id: string): Promise<Array<number>> {
+    const dataArr = new Array<number>();
+
+    const res = await this.db.from(SCHEDULE_TABLE).select('*').where('user_id',parseInt(user_id));
+    res.forEach(function(value) {
+      dataArr.push(value)
+    });
+
+
+    return dataArr;
+
+
+  }q
 }
