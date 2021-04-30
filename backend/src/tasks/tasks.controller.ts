@@ -3,7 +3,6 @@ import {TasksService} from "./tasks.service";
 import {CreateTaskDto} from "../Dto\'s/createTask.dto";
 import {ToDoList} from "../interfaces/todo.interface";
 import {ScheduledTask} from "../interfaces/scheduledTask.interface";
-import {CreateToDoListDto} from "../Dto's/createToDoList.dto";
 import {SchedulerService} from "../scheduler/scheduler.service";
 import {CreateScheduledTaskDto} from "../Dto's/createScheduledTask.dto";
 
@@ -87,7 +86,7 @@ export class TasksController {
     const schedule:Array<ScheduledTask> = [];
     for(const task in tasksArray){
       if (tasksArray[task] != -1){
-          const schedule_task:ScheduledTask = {
+          const schedule_task:CreateScheduledTaskDto = {
             task_id: tasksArray[task],
             user_id : parseInt(user_id),
             slot_id : parseInt(task)
@@ -127,6 +126,16 @@ export class TasksController {
     return this.tasksService.deleteSchedule(user_id);
   }
 
+  // @Post('DeleteTasks/:user_id')
+  // async deleteTasks(@Body('task_ids') task_ids: Array<number>, @Param('user_id') user_id: string ): Promise<string> {
+  //   return this.tasksService.deleteTasks(user_id, task_ids);
+  // }
+
+
+  @Delete('DeleteTasks/:user_id')
+  deleteTasks(@Body() tasksArray: Array<number>, @Param('user_id')user_id:string) {
+    return this.tasksService.deleteTasks(user_id, tasksArray);
+  }
 
 
 

@@ -178,4 +178,18 @@ export class TasksDal {
     return suc;
 
   }
+
+  async deleteTasks(user_id: string, task_ids: Array<number>): Promise<string> {
+    let suc = 'Success';
+    try{
+      // console.log(schedule);
+      // console.log("tryting to update user "+user_id+" slot "+slot_id+"with the next: "+schedule.taskID);
+      const res = await  this.db(TASK_TABLE).where('user_id',user_id).whereIn('task_id',task_ids).del();
+    }
+    catch (e){
+      suc = e
+    }
+    return suc;
+
+  }
 }

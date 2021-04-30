@@ -53,7 +53,12 @@ export class TasksService {
   async getUserCategorySlots(user_id):Promise<Array<number>>{
     return this.tasksDal.getUserCategorySlots(user_id);
   }
+
   async deleteSchedule(user_id):Promise<string>{
     return this.tasksDal.deleteSchedule(user_id);
+  }
+
+  async deleteTasks(user_id: string, task_ids: Array<number>):Promise<string>{
+    return this.tasksDal.deleteTasks(user_id, task_ids);
   }
 }
