@@ -1,23 +1,29 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import './Schedule.css';
 import Menu from "./Menu";
 
 const slots_per_day = 24*2
 
 function Table(props) {
-    console.log(props.getTasks())
+    let tasks_ids = props.getTasksID();
+    let tasks = props.getTasks()
+    console.log('tasks in Table: ',tasks)
+    console.log('tasksID in Table: ',tasks_ids)
     let title = <title id='title'>Your schedule for the week</title>;
     let search_input = <input onKeyPress={findTask} id='input' type='text' placeholder='Search Task...'/>;
     let search = <div>{search_input}</div>
     let day = ['Time', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     let jsx= [];
     let tasks_id = Array(slots_per_day*7).fill(null);
-    let tasks_dct = {'1':'basketball', 2:'Wash the dishes', 3:"Walk on the moon"};
+    let tasks_dct = {};
     // adding random values to tasks_id
     // TODO - get tasks_id from backend instead.
+    for (let i=0;i<tasks.length;i++) {
+        tasks_dct[tasks[i]['task_id']] = tasks[i]['task_title']
+    }
+    console.log('dictionary: ', tasks_dct)
     for (let i=0; i< slots_per_day*7;i++) {
-        if (i % 3 === 0)
-            tasks_id[i] = tasks_dct[Math.floor(Math.random() * 10)]
+        tasks_id[i] = tasks_dct[tasks_ids[i]]
     }
     for (let i=0; i<8; i++) {
         let content = [];
@@ -25,7 +31,7 @@ function Table(props) {
         let minute = 0;
         if (day[i] === 'Time') {
             for (let j=0; j<slots_per_day; j++) {
-                hour = Math.floor(0+j/2);
+                hour = Math.floor(j/2);
                 minute = 30 * (j%2);
                 if (hour < 10) hour = '0' + hour
                 if (minute === 0) minute = '00'
