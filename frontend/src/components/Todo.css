@@ -76,24 +76,14 @@ select {
   text-overflow: ellipsis;
   overflow: hidden ;
   white-space: nowrap;
-  /*-webkit-transition: box-shadow 0.1s linear;*/
   text-align: center;
   -webkit-transition: max-height 0.5s ease-out;
   -webkit-transition: min-height 0.5s ease-out;
-  /*border: rgba(129, 185, 255, .3) solid 5px;*/
-  /*background-clip: padding-box;*/
 }
-
-/*#task:hover {*/
-/*  box-shadow: 2px 2px 3px 3px #ccc;*/
-/*  max-height: 300px;*/
-/*}*/
-
 
 #task_container {
   width: 100%;
   display: flex;
-  align-items:start;
   justify-content: center;
 
 }

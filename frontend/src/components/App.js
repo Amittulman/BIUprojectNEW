@@ -17,27 +17,22 @@ export default class App extends Component {
         this.getTasksID = this.getTasksID.bind(this);
     }
     setTasks(received_tasks) {
-        console.log('before1: ', this.state.tasks)
-        console.log('received tasks: ', received_tasks)
         this.setState({
             tasks: received_tasks
 
-        },() => console.log('after:1: ', this.state.tasks));
+        });
 
     }
 
     getTasks() {
         if (this.state.tasks.length === 0) {
-            console.log('empty')
             this.fetchTasks()
         }
-        console.log('im after gettask: ', this.state.tasks)
         return this.state.tasks
     }
 
     getTasksID() {
         if (this.state.tasksID.length === 0) {
-            console.log('emptyID')
             this.fetchTasksID()
         }
         return this.state.tasksID

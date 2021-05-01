@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React from 'react';
 import './Schedule.css';
 import Menu from "./Menu";
 
@@ -35,17 +35,17 @@ function Table(props) {
                 minute = 30 * (j%2);
                 if (hour < 10) hour = '0' + hour
                 if (minute === 0) minute = '00'
-                content.push(<td>{hour}:{minute}</td>);
+                content.push(<td key={'time'+hour+':'+minute}>{hour}:{minute}</td>);
             }
         } else {
             for (let j=0; j<slots_per_day; j++) {
                 let a = tasks_id[j+(i-1)*32]
-                content.push(<td id={'cell_'+[i,j]} draggable='true' onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop} onDragLeave={leaveDropArea}>{a}</td>);
+                content.push(<td key={'cell_'+[i,j]} id={'cell_'+[i,j]} draggable='true' onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop} onDragLeave={leaveDropArea}>{a}</td>);
             }
         }
-        jsx.push(<tr><th>{day[i]}</th>{content}</tr>);
+        jsx.push(<tr key={'tr'+i}><th key={'th'+i}>{day[i]}</th>{content}</tr>);
     }
-    let table = <table>{jsx}</table>
+    let table = <table><tbody>{jsx}</tbody></table>
     return (<div><div id='site_top'><Menu/>{search}</div>{table}</div>);
 }
 

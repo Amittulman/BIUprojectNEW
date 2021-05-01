@@ -9,7 +9,7 @@ class Todo extends Component {
       tasks_jsx:[],
       tasks:[],
       tasks_to_remove:{},
-      task_number: 1,
+      task_number: 1, //TODO - figure out if necessary.
       error: null,
       isLoaded: false
     };
@@ -17,15 +17,35 @@ class Todo extends Component {
 
 
   onSubmitHandler = (event) => {
-    this.props.setTasks(this.state.tasks)
-    this.setState((state) => ({tasks: state.tasks.filter((element) => element !== null) }))
     event.preventDefault();
+    this.props.setTasks(this.state.tasks)
+    // Removes redundant (null) tasks
+    // this.setState((state) => ({tasks: state.tasks.filter((element) => element !== null)})})
     this.sendTasksToRemove();
     this.sendTasksToPost();
   };
 
   sendTasksToRemove = (event) => {
-
+    fetch('http://localhost:5000/tasks/DeleteTasks/1', {
+      method: 'DELETE',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(Object.keys(this.state.tasks_to_remove))
+    })
+        .then((response) => {
+          if (response.status === 201) {
+            console.log("User's tasks hes been removed successfully.");
+            console.log('promise of remove: ',response.text())
+          } else {
+            console.log("Request status code: " + response.status);
+          }
+        })
+        .catch((error) => {
+          console.error("Error while submitting task: " + error.message);
+        });
+    console.log('end of remove event handler.')
   }
 
   sendTasksToPost = (event) => {
@@ -35,10 +55,9 @@ class Todo extends Component {
         Accept: 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(this.state.tasks.filter((element) => element !== null))
+      body: JSON.stringify(this.state.tasks.filter((element) => !('task_id' in element)))
     })
         .then((response) => {
-          console.log('IM AFTER POST')
           if (response.status === 201) {
             console.log("User's tasks hes been sent successfully.");
             console.log(response.text())
@@ -81,23 +100,23 @@ class Todo extends Component {
       </svg>;
     }
 
-    let trash_bin = <svg id='bin_icon' onClick={() => this.remove_task(index)} height="30px" viewBox="-40 0 427 427.00131" width="30px" xmlns="http://www.w3.org/2000/svg"><path d="m232.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0"/><path d="m114.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0"/><path d="m28.398438 127.121094v246.378906c0 14.5625 5.339843 28.238281 14.667968 38.050781 9.285156 9.839844 22.207032 15.425781 35.730469 15.449219h189.203125c13.527344-.023438 26.449219-5.609375 35.730469-15.449219 9.328125-9.8125 14.667969-23.488281 14.667969-38.050781v-246.378906c18.542968-4.921875 30.558593-22.835938 28.078124-41.863282-2.484374-19.023437-18.691406-33.253906-37.878906-33.257812h-51.199218v-12.5c.058593-10.511719-4.097657-20.605469-11.539063-28.03125-7.441406-7.421875-17.550781-11.5546875-28.0625-11.46875h-88.796875c-10.511719-.0859375-20.621094 4.046875-28.0625 11.46875-7.441406 7.425781-11.597656 17.519531-11.539062 28.03125v12.5h-51.199219c-19.1875.003906-35.394531 14.234375-37.878907 33.257812-2.480468 19.027344 9.535157 36.941407 28.078126 41.863282zm239.601562 279.878906h-189.203125c-17.097656 0-30.398437-14.6875-30.398437-33.5v-245.5h250v245.5c0 18.8125-13.300782 33.5-30.398438 33.5zm-158.601562-367.5c-.066407-5.207031 1.980468-10.21875 5.675781-13.894531 3.691406-3.675781 8.714843-5.695313 13.925781-5.605469h88.796875c5.210937-.089844 10.234375 1.929688 13.925781 5.605469 3.695313 3.671875 5.742188 8.6875 5.675782 13.894531v12.5h-128zm-71.199219 32.5h270.398437c9.941406 0 18 8.058594 18 18s-8.058594 18-18 18h-270.398437c-9.941407 0-18-8.058594-18-18s8.058593-18 18-18zm0 0"/><path d="m173.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0"/></svg>
-    let task_title = <span key='task_title' id='task_elm' onChange={(e) => this.handleChange(e, i)}> <input id='title_textbox' name='task_title' type='text' defaultValue={values['task_title']}/></span>
-    let duration = <div style={{display:open ? 'block': 'none'}} key='duration' id='task_elm' onChange={(e) => this.handleChange(e, i)}> Duration:&nbsp;&nbsp;<input id={'nums_input'+i} name='duration' type='text' defaultValue={values['duration']}/></div>;
-    let priority = <div style={{display:open ? 'block': 'none'}} key='priority' id='task_elm' onChange={(e) => this.handleChange(e, i)}>Priority:&nbsp;&nbsp;
+    let trash_bin = <svg key={'trash_bin'+index} id='bin_icon' onClick={() => this.remove_task(index)} height="30px" viewBox="-40 0 427 427.00131" width="30px" xmlns="http://www.w3.org/2000/svg"><path d="m232.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0"/><path d="m114.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0"/><path d="m28.398438 127.121094v246.378906c0 14.5625 5.339843 28.238281 14.667968 38.050781 9.285156 9.839844 22.207032 15.425781 35.730469 15.449219h189.203125c13.527344-.023438 26.449219-5.609375 35.730469-15.449219 9.328125-9.8125 14.667969-23.488281 14.667969-38.050781v-246.378906c18.542968-4.921875 30.558593-22.835938 28.078124-41.863282-2.484374-19.023437-18.691406-33.253906-37.878906-33.257812h-51.199218v-12.5c.058593-10.511719-4.097657-20.605469-11.539063-28.03125-7.441406-7.421875-17.550781-11.5546875-28.0625-11.46875h-88.796875c-10.511719-.0859375-20.621094 4.046875-28.0625 11.46875-7.441406 7.425781-11.597656 17.519531-11.539062 28.03125v12.5h-51.199219c-19.1875.003906-35.394531 14.234375-37.878907 33.257812-2.480468 19.027344 9.535157 36.941407 28.078126 41.863282zm239.601562 279.878906h-189.203125c-17.097656 0-30.398437-14.6875-30.398437-33.5v-245.5h250v245.5c0 18.8125-13.300782 33.5-30.398438 33.5zm-158.601562-367.5c-.066407-5.207031 1.980468-10.21875 5.675781-13.894531 3.691406-3.675781 8.714843-5.695313 13.925781-5.605469h88.796875c5.210937-.089844 10.234375 1.929688 13.925781 5.605469 3.695313 3.671875 5.742188 8.6875 5.675782 13.894531v12.5h-128zm-71.199219 32.5h270.398437c9.941406 0 18 8.058594 18 18s-8.058594 18-18 18h-270.398437c-9.941407 0-18-8.058594-18-18s8.058593-18 18-18zm0 0"/><path d="m173.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0"/></svg>
+    let task_title = <span key={'task_title'+index} id='task_elm' onChange={(e) => this.handleChange(e, i)}> <input id='title_textbox' name='task_title' type='text' defaultValue={values['task_title']}/></span>
+    let duration = <div style={{display:open ? 'block': 'none'}} key={'duration'+index} id='task_elm' onChange={(e) => this.handleChange(e, i)}> Duration:&nbsp;&nbsp;<input id={'nums_input'+i} name='duration' type='text' defaultValue={values['duration']}/></div>;
+    let priority = <div style={{display:open ? 'block': 'none'}} key={'priority'+index} id='task_elm' onChange={(e) => this.handleChange(e, i)}>Priority:&nbsp;&nbsp;
       <select id='priority_options' name='priority' defaultValue={values['priority']} onChange={this.handleChange}>
         <option value="0">None</option>
         <option value="1">Low</option>
         <option value="2">Medium</option>
         <option value="3">High</option>
       </select></div>;
-    let category_id = <div style={{display:open ? 'block': 'none'}} key='category_id' id='task_elm' onChange={(e) => this.handleChange(e, i)}>Category:&nbsp;&nbsp;<input name='category_id' type='text' defaultValue={values['category_id']}/></div>;
-    let constraints = <div style={{display:open ? 'block': 'none'}} key='constraints' id='task_elm' onChange={(e) => this.handleChange(e, i)}>Constraints:&nbsp;&nbsp;<input name='constraints' type='text' defaultValue={values['constraints']}/></div>;
-    let task1 = <div id='task' style={{maxHeight:open ? '250px': '10000px', minHeight:open ? '0': '0px'}}>{[task_title, duration, priority, category_id, constraints]}</div>
-    let task = <div key={index} id='task_container' >{[sign, task1,trash_bin]}</div>
+    let category_id = <div style={{display:open ? 'block': 'none'}} key={'category_id'+index} id='task_elm' onChange={(e) => this.handleChange(e, i)}>Category:&nbsp;&nbsp;<input name='category_id' type='text' defaultValue={values['category_id']}/></div>;
+    let constraints = <div style={{display:open ? 'block': 'none'}} key={'constraints'+index} id='task_elm' onChange={(e) => this.handleChange(e, i)}>Constraints:&nbsp;&nbsp;<input name='constraints' type='text' defaultValue={values['constraints']}/></div>;
+    let task = <div key={'task'+index} id='task' style={{maxHeight:open ? '250px': '10000px', minHeight:open ? '0': '0px'}}>{[task_title, duration, priority, category_id, constraints]}</div>
+    let task_container = <div key={'task_container'+index} id='task_container' >{[sign, task,trash_bin]}</div>
     if (new_task) {
       return this.setState((state) => ({
-        tasks_jsx: state.tasks_jsx.concat([task]),
+        tasks_jsx: state.tasks_jsx.concat([task_container]),
         // tasks: state.tasks.concat([values]),
         task_number: state.task_number + 1,
       }));
@@ -105,7 +124,7 @@ class Todo extends Component {
       this.setState ((state) => ({
         tasks_jsx: [
           ...state.tasks_jsx.slice(0,i-1),
-          task,
+          task_container,
           ...state.tasks_jsx.slice(i)
         ],
       }));
@@ -113,14 +132,10 @@ class Todo extends Component {
   }
 
   update_task = (i) => {
-    console.log('updating task ', this.state.tasks[i-1])
-    console.log('bool ', this.state.tasks[i-1] in this.state.tasks_to_remove)
-    console.log('array ',this.state.tasks_to_remove)
-    console.log('element: ',this.state.tasks[i-1])
     if (!(this.state.tasks[i-1] in this.state.tasks_to_remove)) {
       this.setState({
         tasks_to_remove: {
-          ...this.state.tasks_to_remove, [this.state.tasks[i-1].task_id]:this.state.tasks[i-1]
+          ...this.state.tasks_to_remove, [this.state.tasks[i-1].task_id]:null
     },
       });
     }
@@ -128,6 +143,8 @@ class Todo extends Component {
   }
 
   remove_task = (i) => {
+    console.log('task to remove: ', this.state.tasks, ', and the index is: ', i-1)
+    if (i > this.state.tasks.length) return //TODO - add a message - 'cannot remove empty task'.
     this.setState({
       tasks_jsx: [
         ...this.state.tasks_jsx.slice(0,i-1),
@@ -135,11 +152,11 @@ class Todo extends Component {
         ...this.state.tasks_jsx.slice(i)
       ],
       tasks_to_remove: {
-        ...this.state.tasks_to_remove, [this.state.tasks[i-1].task_id]: this.state.tasks[i-1]
+        ...this.state.tasks_to_remove, [this.state.tasks[i-1].task_id]:null
       },
       tasks: [
         ...this.state.tasks.slice(0,i-1),
-        null,
+
         ...this.state.tasks.slice(i)
       ],
     });
