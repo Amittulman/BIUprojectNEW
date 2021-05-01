@@ -68,7 +68,7 @@ export default class App extends Component {
     }
 
     fetchTasksID() {
-        fetch("http://localhost:5000/tasks/getschedule/1")
+        fetch("http://localhost:5000/tasks/trig/1")
             .then(res => res.json())
             .then(
                 (result) => {

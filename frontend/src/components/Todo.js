@@ -8,6 +8,7 @@ class Todo extends Component {
     this.state = {
       tasks_jsx:[],
       tasks:[],
+      tasks_to_remove:{},
       task_number: 1,
       error: null,
       isLoaded: false
@@ -19,7 +20,15 @@ class Todo extends Component {
     this.props.setTasks(this.state.tasks)
     this.setState((state) => ({tasks: state.tasks.filter((element) => element !== null) }))
     event.preventDefault();
-    console.log('this.state.tasks: ', this.state.tasks)
+    this.sendTasksToRemove();
+    this.sendTasksToPost();
+  };
+
+  sendTasksToRemove = (event) => {
+
+  }
+
+  sendTasksToPost = (event) => {
     fetch('http://localhost:5000/tasks/PostTasks/{tasks}', {
       method: 'POST',
       headers: {
@@ -29,8 +38,10 @@ class Todo extends Component {
       body: JSON.stringify(this.state.tasks.filter((element) => element !== null))
     })
         .then((response) => {
+          console.log('IM AFTER POST')
           if (response.status === 201) {
             console.log("User's tasks hes been sent successfully.");
+            console.log(response.text())
           } else {
             console.log("User's tasks hes been sent. HTTP request status code: " + response.status);
           }
@@ -38,16 +49,17 @@ class Todo extends Component {
         .catch((error) => {
           console.error("Error while submitting task: " + error.message);
         });
-  };
+  }
 
   handleChange = (event, index) => {
     const nam = event.target.name;
     const val = event.target.value;
     let tasks = [...this.state.tasks]
-    if (typeof (![index-1])) {
-      let empty_dct = {'task_id':'','user_id':1,'task_title':'', 'duration':'','priority':'','category_id':'','constraints':''};
+    if (typeof (tasks[index-1]) ==='undefined') {
+      let empty_dct = {'user_id':1,'task_title':'', 'duration':'','priority':'','category_id':'','constraints':''};
       tasks[index-1] = {...empty_dct, [nam]: val}
     } else {
+      this.update_task(index)
       tasks[index-1] = {...tasks[index-1], [nam]: val}
     }
     console.log(tasks[index-1])
@@ -56,7 +68,7 @@ class Todo extends Component {
 
   addTask = (index, open, new_task, values) => {
     if (values == null) {
-      values = {'task_id':'','user_id':'','task_title':'', 'duration':'','priority':'','category_id':'','constraints':''}
+      values = {'user_id':'','task_title':'', 'duration':'','priority':'','category_id':'','constraints':''}
     }
     let i = index
     let sign;
@@ -100,6 +112,21 @@ class Todo extends Component {
     }
   }
 
+  update_task = (i) => {
+    console.log('updating task ', this.state.tasks[i-1])
+    console.log('bool ', this.state.tasks[i-1] in this.state.tasks_to_remove)
+    console.log('array ',this.state.tasks_to_remove)
+    console.log('element: ',this.state.tasks[i-1])
+    if (!(this.state.tasks[i-1] in this.state.tasks_to_remove)) {
+      this.setState({
+        tasks_to_remove: {
+          ...this.state.tasks_to_remove, [this.state.tasks[i-1].task_id]:this.state.tasks[i-1]
+    },
+      });
+    }
+    console.log('deleted array after addition: ', this.state.tasks_to_remove)
+  }
+
   remove_task = (i) => {
     this.setState({
       tasks_jsx: [
@@ -107,6 +134,9 @@ class Todo extends Component {
         [],
         ...this.state.tasks_jsx.slice(i)
       ],
+      tasks_to_remove: {
+        ...this.state.tasks_to_remove, [this.state.tasks[i-1].task_id]: this.state.tasks[i-1]
+      },
       tasks: [
         ...this.state.tasks.slice(0,i-1),
         null,

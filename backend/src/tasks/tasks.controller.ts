@@ -27,7 +27,7 @@ export class TasksController {
   // }
 
   @Get('trig/:id')
-  async trig(@Param('id') user_id: string): Promise<string> {
+  async trig(@Param('id') user_id: string): Promise<any[]> {
     const tdl = await this.tasksService.GetToDoList(user_id);
     //const categorySlots = await  this. tasksService.getCategorySlots(user_id);
     const categorySlots = [1,1,1,1];
@@ -42,7 +42,7 @@ export class TasksController {
     //post slots to DB
     const success = await this.postSchedule(res,user_id);
     console.log(res);
-    return success;
+    return res;
   }
 
   @Get('GetToDoList/:id')
