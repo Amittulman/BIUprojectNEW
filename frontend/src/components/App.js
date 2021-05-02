@@ -26,6 +26,7 @@ export default class App extends Component {
 
     getTasks() {
         if (this.state.tasks.length === 0) {
+            console.log('EMPTY')
             this.fetchTasks()
         }
         return this.state.tasks
@@ -51,11 +52,16 @@ export default class App extends Component {
                         tasks1.push(result['tasks'][i])
                         // console.log('a ', result['tasks'][i])
                     }
-                    this.setState({
-                        isLoaded: true,
-                        items: JSON.stringify(result),
-                        tasks: tasks1
-                    });
+                    // console.log('tasks: ', this.state.tasks)
+                    // console.log('tasks1: ', tasks1)
+                    // console.log('equal? ', this.state.tasks === tasks1)
+                    if (tasks1.length > 0) {
+                        this.setState({
+                            isLoaded: true,
+                            items: JSON.stringify(result),
+                            tasks: tasks1
+                        });
+                    }
                 })
             .catch((error) => {
                 console.log(error)
@@ -71,7 +77,6 @@ export default class App extends Component {
                     let all_tasks = result.length
                     let tasks1 = []
                     for (let i=0; i<all_tasks; i++){
-                        // this.addTask(this.state.task_number, false, true, result[i])
                         tasks1.push(result[i])
                     }
                     this.setState({
@@ -89,7 +94,7 @@ export default class App extends Component {
         return (
             <div className="App">
                 <Switch>
-                    <Route exact path='/' render={() => <Todo getTasks={this.getTasks} setTasks={this.setTasks}/>}/>
+                    <Route exact path='/' render={() => <Todo updating_tasks={this.state.tasks} getTasks={this.getTasks} setTasks={this.setTasks}/>}/>
                     {/*<Route handler={this.handler}  exact path='/' component={Todo}/>*/}
                     <Route path='/schedule' render={() => <Schedule getTasksID={this.getTasksID} getTasks={this.getTasks} setTasks={this.setTasks}/>}/>
                 </Switch>

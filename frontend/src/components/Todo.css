@@ -81,14 +81,14 @@ select {
   -webkit-transition: min-height 0.5s ease-out;
 }
 
-#task_container {
+.task_container {
   width: 100%;
   display: flex;
   justify-content: center;
 
 }
 
-#task_container > * {
+.task_container > * {
 }
 
 #task_elm {
@@ -115,13 +115,13 @@ select {
   margin-top:2vh;
 }
 
-#bin_icon {
+.bin_icon {
   float:left;
   cursor: pointer;
   margin-top:2vh;
 }
 
-#bin_icon:hover {
+.bin_icon:hover {
   fill: red;
   -webkit-transition: fill 0.1s linear ;
 }
