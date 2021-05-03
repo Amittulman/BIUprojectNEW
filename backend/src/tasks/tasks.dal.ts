@@ -7,6 +7,7 @@ import {Task} from "../interfaces/task.interface";
 import {ScheduledTask} from "../interfaces/scheduledTask.interface";
 import {CreateScheduledTaskDto} from "../Dto's/createScheduledTask.dto";
 import {CreateTaskDto} from "../Dto's/createTask.dto";
+import {CreateToDoListDto} from "../Dto's/createToDoList.dto";
 
 const TASK_TABLE = 'tasks_table';
 const CATEGORY_SLOT_TABLE = 'category_slots';
@@ -113,12 +114,10 @@ export class TasksDal {
     return suc;
   }
 
-  async updateScheduleSlot(schedule: CreateScheduledTaskDto){
+  async updateScheduleSlot(schedule: CreateScheduledTaskDto, slot: number){
     let suc = 'Success';
     try{
-      // console.log(schedule);
-      // console.log("tryting to update user "+user_id+" slot "+slot_id+"with the next: "+schedule.taskID);
-      const res = await  this.db(SCHEDULE_TABLE).where({'user_id': schedule.user_id, 'slot_id': schedule.slot_id}).update('task_id',schedule.task_id);
+      const res = await  this.db(SCHEDULE_TABLE).where({'user_id': schedule.user_id, 'task_id': schedule.task_id, 'slot_id':schedule.slot_id}).update('slot_id',slot);
     }
     catch (e){
       suc = e

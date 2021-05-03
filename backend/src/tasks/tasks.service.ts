@@ -42,8 +42,8 @@ export class TasksService {
     return this.tasksDal.postSchedule(createScheduleDto);
   }
 
-  async updateScheduleSlot(createScheduleDto: CreateScheduledTaskDto): Promise<string>{
-    return this.tasksDal.updateScheduleSlot(createScheduleDto);
+  async updateScheduleSlot(createScheduleDto: CreateScheduledTaskDto, slot: number): Promise<string>{
+    return this.tasksDal.updateScheduleSlot(createScheduleDto, slot);
   }
 
   async getUserCategories(user_id):Promise<Array<number>>{

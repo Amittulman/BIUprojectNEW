@@ -5,6 +5,7 @@ import {ToDoList} from "../interfaces/todo.interface";
 import {ScheduledTask} from "../interfaces/scheduledTask.interface";
 import {SchedulerService} from "../scheduler/scheduler.service";
 import {CreateScheduledTaskDto} from "../Dto's/createScheduledTask.dto";
+import {CreateToDoListDto} from "../Dto's/createToDoList.dto";
 
 @Controller('tasks')
 export class TasksController {
@@ -33,6 +34,7 @@ export class TasksController {
     const categorySlots = [1,1,1,1];
     const res = await this.schedulerService.tryCalc(tdl,categorySlots);
 
+    console.log(res);
 
 
     console.log(await this.deleteSchedule(user_id));
@@ -51,8 +53,29 @@ export class TasksController {
   }
 
   @Post('PostTasks/:tasks')
-  postTasks(@Body() tasks: Array<CreateTaskDto>) {
+  postTasks(@Body() tasksArray: Array<CreateTaskDto>) {
+    // const tasks:Array<CreateTaskDto> = tasks_array;
+    const tasks:Array<CreateTaskDto> = [];
+    for(const task in tasksArray){
+        const schedule_task:CreateTaskDto = {
+          task_id : null,
+          user_id : tasksArray[task]['user_id'],
+          task_title : tasksArray[task]['task_title'],
+          duration: tasksArray[task]['duration'],
+          priority: tasksArray[task]['priority'],
+          category_id: tasksArray[task]['category_id'],
+          constraints: tasksArray[task]['constraints']
+
+        };
+      tasks.push(schedule_task);
+
+
+    }
+
     return this.tasksService.postTasks(tasks);
+
+
+
   }
 
   // @Post('TaskForToDoList/:createTaskDto')
@@ -83,7 +106,7 @@ export class TasksController {
   }
   @Post('PostSchedule/:user_id')
   postSchedule(@Body() tasksArray: Array<number>, @Param('user_id')user_id:string) {
-    const schedule:Array<ScheduledTask> = [];
+    const schedule:Array<CreateScheduledTaskDto> = [];
     for(const task in tasksArray){
       if (tasksArray[task] != -1){
           const schedule_task:CreateScheduledTaskDto = {
@@ -97,11 +120,18 @@ export class TasksController {
     }
     return this.tasksService.postSchedule(schedule);
   }
-  @Post('UpdateSchedule/:id/:slot')
-  updateScheduleSlot(@Body() slot: CreateScheduledTaskDto) {
-    console.log(slot)
-    return this.tasksService.updateScheduleSlot(slot);
+  // @Post('UpdateSchedule/:new_slot')
+  // updateScheduleSlot(@Body() task: CreateScheduledTaskDto, @Param('new_slot')slot : number) {
+  //   console.log(task)
+  //   return this.tasksService.updateScheduleSlot(task, slot);
+  // }
+
+  @Post('UpdateSchedule/:new_slot')
+  updateScheduleSlot(@Body() task: CreateScheduledTaskDto, @Param('new_slot')slot_id:number) {
+      console.log(task)
+      return this.tasksService.updateScheduleSlot(task, slot_id);
   }
+
 
   //Categories shit
   @Get('GetUserCategories/:id')

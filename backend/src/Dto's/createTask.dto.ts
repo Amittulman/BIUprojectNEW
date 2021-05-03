@@ -3,7 +3,6 @@ import {IsNotEmpty, IsNumber, IsString} from 'class-validator';
 
 export class CreateTaskDto {
     @IsNumber()
-    @IsNotEmpty()
     task_id: number;
     @IsNumber()
     @IsNotEmpty()
