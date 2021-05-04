@@ -33,7 +33,7 @@ const Todo = (props) => {
         addTask(i+1, false, true, tasks[i])
       }
       // TODO - put it at the bottom. When loading tasks it will always be the bottom task container.
-      addTask(i+1, false, true)
+      //addTask(i+1, false, true)
       setTaskNumber(i+2)
     }
   }, [props.updating_tasks])

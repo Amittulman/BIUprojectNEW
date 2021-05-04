@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import {Task} from "../interfaces/task.interface";
 
 const SLOTS_SIZE = 336;
@@ -10,9 +10,13 @@ export class SchedulerService {
     }
 
     async tryCalc(ToDoList, categorySlots) {
-        //const tasksArray = new Array<Task>(temp_task1, temp_task2, temp_task3);
+        //create tasks for testing
+        //var temptaskss = await this.createTempTasks();
         var slots = this.createSlotsWithCategory(categorySlots);
+
+        //tasks from frontend
         const tasksArray1 = ToDoList.tasks;
+
         const prioritiesTasks =  await this.sortPriorities(tasksArray1);
         const resultCalc = await this.calcBackTracking(prioritiesTasks, slots);
         const resultsOnlySlots = await this.createSlotsFromResult(resultCalc);
@@ -85,7 +89,7 @@ export class SchedulerService {
 
     // find all the options for put the task.
     private async findSpotsForThisTask(task: Task, slots: any) {
-        const numOfSlots = task.duration/30; // calc how many slots the task needs
+        const numOfSlots = Math.ceil(task.duration/30); // calc how many slots the task needs
         let start = 0; // pointer to the end of the sliding window
         let end = 0; // pointer to the start of the sliding window
         var spots = []; // the result - all the options
@@ -175,5 +179,44 @@ export class SchedulerService {
             slots[i] = resultCalc[i][0];
         }
         return slots;
+    }
+
+    private async createTempTasks() {
+        const temp_task1: Task = {
+            task_id: 1,
+            user_id: 11, task_title: 'first task',
+            duration: 60,
+            priority: 1, category_id: 1,
+            constraints: 'nothing'
+        }
+        const temp_task2: Task = {
+            task_id: 2,
+            user_id: 11, task_title: 'second task',
+            duration: 90,
+            priority: 2, category_id: 1,
+            constraints: 'nothing'
+        }
+        const temp_task3: Task = {
+            task_id: 3,
+            user_id: 11, task_title: 'third task',
+            duration: 120,
+            priority: 1, category_id: 1,
+            constraints: 'nothing'
+        }
+        const temp_task4: Task = {
+            task_id: 4,
+            user_id: 11, task_title: 'third task',
+            duration: 320,
+            priority: 0, category_id: 1,
+            constraints: 'nothing'
+        }
+        const temp_task5: Task = {
+            task_id: 5,
+            user_id: 11, task_title: 'third task',
+            duration: 4990,
+            priority: 0, category_id: 1,
+            constraints: 'nothing'
+        }
+        return new Array<Task>(temp_task1, temp_task2, temp_task3, temp_task4, temp_task5);
     }
 }

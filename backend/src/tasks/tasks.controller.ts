@@ -39,11 +39,10 @@ export class TasksController {
 
     console.log(await this.deleteSchedule(user_id));
 
-
     //change slots to scheduledTask
     //post slots to DB
     const success = await this.postSchedule(res,user_id);
-    console.log(res);
+    console.log(success);
     return res;
   }
 
