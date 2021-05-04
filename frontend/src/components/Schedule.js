@@ -1,12 +1,22 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import './Schedule.css';
 import Menu from "./Menu";
 
 const slots_per_day = 24*2
 
-function Table(props) {
+
+const Table = (props) => {
+    const [tasks, setTasks] = useState([])
+
+    useEffect(() => {
+        props.getTasks()
+    }, [])
+
+    useEffect(() => {
+       setTasks(props.updating_tasks)
+    }, [props.updating_tasks])
+
     let tasks_ids = props.getTasksID();
-    let tasks = props.getTasks()
     console.log('tasks in Table: ',tasks)
     console.log('tasksID in Table: ',tasks_ids)
     let title = <title id='title'>Your schedule for the week</title>;
@@ -49,30 +59,30 @@ function Table(props) {
     return (<div><div id='site_top'><Menu/>{search}</div>{table}</div>);
 }
 
-function findTask(event) {
+const findTask = (event) => {
     if (event.key === 'Enter') {
         event.preventDefault()
         alert('You typed "' + event.target.value + '" in the search box.')
     }
 }
 
-function dragStart(event) {
+const dragStart = (event) => {
     event.dataTransfer.setData('text/plain', event.target.id);
 }
 
-function allowDrop(event) {
+const allowDrop = (event) => {
     event.preventDefault();
     event.target.style.boxShadow = 'rgba(0, 0, 0, 0.46) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px';
     event.target.style.transition = 'box-shadow .2s linear';
 }
 
-function leaveDropArea(event) {
+const leaveDropArea = (event) => {
     event.preventDefault();
     event.target.style.boxShadow = 'none';
     event.target.style.transition = 'box-shadow .2s linear';
 }
 
-function drop(event) {
+const drop = (event) => {
     event.preventDefault();
     let id = event.dataTransfer.getData('text/plain');
     let dragged_element = document.getElementById(id);
@@ -82,7 +92,6 @@ function drop(event) {
     if (dragged_element.textContent && !event.target.textContent && event.target !== dragged_element) {
         event.target.textContent = dragged_element.textContent;
         dragged_element.textContent = '';
-
     }
     // event.target.appendChild(element);
     event.dataTransfer.clearData();
