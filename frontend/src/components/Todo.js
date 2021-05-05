@@ -68,7 +68,7 @@ const Todo = (props) => {
         setUpdatedTasks(clone)
       }
     }
-    // TODO - remove task from tasks if exists.
+    // TODO - try to remove tasks by task_id and not index, to avoid bugs. Bug: add 2 tasks, remove first, submit, then try to remove the second. Removal is possible only after refreshing page.
     if (tasksRef.current[i - 1] !== undefined) {
       setRemovedTasks(prevArr => [...prevArr, tasksRef.current[i - 1].task_id])
     }
