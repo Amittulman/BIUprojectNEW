@@ -1,6 +1,117 @@
-.page {
-    position:absolute;
-    top: 100px;
+.App {
+    text-align: center;
+    height: 100vh;
+    width: calc(100% );
+    overflow: hidden;
+}
+
+#left {
+    float: left;
+}
+
+.gone {
+    display: none;
+}
+
+#site_top {
+    position: -webkit-sticky;
+    position: sticky;
+    background-color: white;
+    z-index: 2;
+    margin-left: 10px;
+
+}
+
+#todo_component, #schedule_component {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+
+#todo_component {
+    margin-top: 25px;
+}
+
+.todo_type {
+}
+
+
+
+#boo {
+    align-items: center;
+    margin-left: 35%;
+}
+
+
+
+
+
+/* The switch - the box around the slider */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 15px;
+    margin-top: 10px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* The slider */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
     left: 0;
     right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 13px;
+    width: 13px;
+    left: 4px;
+    bottom: 1px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input + .slide {
+    background-color: green;
+}
+
+
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(40px);
+    -ms-transform: translateX(40px);
+    transform: translateX(40px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
 }

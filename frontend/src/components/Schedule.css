@@ -1,13 +1,11 @@
-.App-header {
-    background-color:  rgba(230,230,230, .3);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: rgb(12, 13, 13);
+#test {
+    position: relative;
+    overflow-y: scroll;
+    /*height: 90%;*/
+    /*width: 100%;*/
+    max-height: 100vh;
 }
+
 
 table {
     display: table;
@@ -21,7 +19,7 @@ th {
     background-color: white;
     position: -webkit-sticky;
     position: sticky;
-    top: 55px;
+    top: 0px;
     box-shadow: 4px 8px 8px lightgray;
 }
 
@@ -67,13 +65,6 @@ table tr td {
     display: inline-block;
 }
 
-#site_top {
-    position: -webkit-sticky;
-    position: sticky;
-    top: 0;
-    background-color: white;
-    z-index: 2;
-}
 
 #tst1 {
     background-color: blue;
@@ -93,6 +84,8 @@ table tr td {
     width: 200px;
     height: 27px;
 }
+
+
 
 #upperPane {
     background-color: red;

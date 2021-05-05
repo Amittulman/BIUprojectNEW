@@ -1,13 +1,20 @@
 import Todo from "./Todo";
 import Schedule from "./Schedule";
 import {Route, Switch} from "react-router";
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import '../components/App.css';
+import Menu from "./Menu";
 
 
 const App = () => {
     const [tasks, setTasks] = useState([])
     const [tasksID, setTaskID] = useState([])
+    const [toOptimize, setToOptimize] = useState(false)
+
+    useEffect(() => {
+        // if(toOptimize)
+            // window.location.reload();
+    }, [toOptimize])
 
     //TODO - check if possible to pass setTask to child component instead.
     const taskSetter = (received_tasks) => {
@@ -15,10 +22,12 @@ const App = () => {
     }
 
     const taskGetter = () => {
-        if (tasks.length === 0) {
-            fetchTasks()
-        }
-        return tasks
+        fetchTasks()
+    }
+
+    const taskIDTrig = () => {
+        fetchTasksIDTrig()
+        return tasksID
     }
 
     const taskIDGetter = () => {
@@ -46,7 +55,7 @@ const App = () => {
             });
     }
 
-    const fetchTasksID = () => {
+    const fetchTasksIDTrig = () => {
         fetch("http://localhost:5000/tasks/trig/1")
             .then(res => res.json())
             .then(
@@ -64,12 +73,83 @@ const App = () => {
             });
     }
 
+    const fetchTasksID = () => {
+        fetch("http://localhost:5000/tasks/GetSchedule/1")
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    if (result['statusCode'] === 500) throw new Error('Internal server error.');
+                    let all_tasks = result.length
+                    let tasks1 = []
+                    for (let i=0; i<all_tasks; i++){
+                        tasks1.push(result[i])
+                    }
+                    setTaskID(tasks1)
+                })
+            .catch((error) => {
+                console.log(error)
+            });
+    }
+
+    const findTask = (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault()
+            alert('You typed "' + event.target.value + '" in the search box.')
+        }
+    }
+
+    //TODO - use this to minimize todo component.
+    const closeTaskPane = () => {
+        let todo_element = document.getElementById('todo_parent')
+        let schedule_element = document.getElementById('schedule_parent')
+        if (todo_element.className === 'col-4') {
+            todo_element.classList.remove('col-4')
+            todo_element.classList.add('gone')
+            schedule_element.classList.remove('col-8')
+            // schedule_element.classList.add('col')
+        } else {
+            todo_element.classList.remove('gone')
+            todo_element.classList.add('col-4')
+            // schedule_element.classList.remove('col')
+            // schedule_element.classList.add('col-4')
+        }
+    }
+
+    let search_input = <input onKeyPress={findTask} id='input' type='text' placeholder='Search Task...'/>;
+    let search = <div>{search_input}</div>
+
     return (
         <div className="App">
-            <Switch>
-                <Route exact path='/' render={() => <Todo updating_tasks={tasks} getTasks={taskGetter} setTasks={taskSetter}/>}/>
-                <Route path='/schedule' render={() => <Schedule getTasksID={taskIDGetter} updating_tasks={tasks} getTasks={taskGetter} setTasks={taskSetter}/>}/>
-            </Switch>
+            {/*<button onClick={closeTaskPane}>click</button>*/}
+            <div id='site_top' className='row'>
+                {/*<div><Menu/>{search}</div>*/}
+                <div>{search}</div>
+            </div>
+            <div className='row'>
+                <div id='todo_parent' className='col-4'>
+                    <div id='todo_component' className='sticky-top'>
+                        <Todo setToOptimize={setToOptimize} updating_tasks={tasks} trigTasks={taskIDTrig} getTasks={taskGetter} setTasks={taskSetter}/>
+                    </div>
+                    <div id='boo' className='row'>
+                        <span className='todo_type'>This week&nbsp;&nbsp;</span>
+                        <label className="switch">
+                            <input id='aba' type="checkbox"/>
+                            <span className="slider round"/>
+                        </label>
+                        <span className='todo_type'>&nbsp;&nbsp;Next week</span>
+                    </div>
+                </div>
+
+                <div id='schedule_parent' className='col-8'>
+                    <div id='schedule_component'>
+                        <Schedule setToOptimize={setToOptimize} toOptimize={toOptimize} tasksID={tasksID} getTasksID={taskIDGetter} trigTasksID={taskIDTrig} updating_tasks={tasks} getTasks={taskGetter} setTasks={taskSetter}/>
+                    </div>
+                </div>
+            </div>
+            {/*<Switch>*/}
+            {/*    <Route exact path='/' render={() => <Todo updating_tasks={tasks} getTasks={taskGetter} setTasks={taskSetter}/>}/>*/}
+            {/*    <Route path='/schedule' render={() => <Schedule getTasksID={taskIDGetter} updating_tasks={tasks} getTasks={taskGetter} setTasks={taskSetter}/>}/>*/}
+            {/*</Switch>*/}
         </div>
     )
 }

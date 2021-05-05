@@ -111,13 +111,16 @@ const Todo = (props) => {
   }
 
   const onSubmitHandler = (event) => {
+    console.log('submit handler')
     event.preventDefault();
     sendTasksToRemove();
     sendTasksToPost();
     props.setTasks([])
+    props.trigTasks()
     props.getTasks()
     setUpdatedTasks([])
     setRemovedTasks([])
+    props.setToOptimize(true)
     // Prevent duplicates after submitting, when user has no tasks prior to submitting new tasks.
     // if (tasks.length === 0) setIsLoaded(true)
     //Reloading page to reload updates jsx.
@@ -148,10 +151,10 @@ const Todo = (props) => {
   }
 
   const sendTasksToPost = () => {
+    console.log('tasks to send: ', updated_tasks)
     let s = 'temp_task_id'
     for (const key of Object.keys(updated_tasks))
       delete updated_tasks[key][s]
-    console.log('BEFORE POST2 ', updated_tasks)
     fetch('http://localhost:5000/tasks/PostTasks/{tasks}', {
       method: 'POST',
       headers: {
@@ -204,20 +207,14 @@ const Todo = (props) => {
 
   const task_list = tasks_jsx.map((x,index) => (x));
   return (
-      <div>
-        <Menu/>
+      <div id='todo_parent_component'>
         <header className="App-header">
-          <form id='test' onSubmit={onSubmitHandler}>
-            <h1>Enter your tasks</h1>
-            <br/>
-            <div>
-              {task_list}
-            </div>
-            <div>
-              <div onClick={() => addTask(task_number)}>Add new task</div>
-            </div>
-            <input className="btn btn-primary btn-md" type='submit'/>
+          <h1 id='header'>Enter your tasks</h1>
+          <form id='container' onSubmit={onSubmitHandler}>
+            {task_list}
           </form><br/>
+          <input id='submit_button' className="btn btn-primary btn-md" type='submit' form='container'/>
+          <div id='add_new_task' onClick={() => addTask(task_number)}/>
         </header>
       </div>
   );

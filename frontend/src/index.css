@@ -19,7 +19,7 @@ getButton {
 .overlay {
   position: absolute;
   z-index: 10;
-  background-color: rgba(255, 220, 255, 0.8);
+  /*background-color: rgba(255, 220, 255, 0.8);*/
   left: 102vw;
   top: 225vh;
   width: 502vw;

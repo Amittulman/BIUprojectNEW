@@ -1,9 +1,6 @@
-.App {
-  text-align: center;
-}
+
 
 .App-header {
-  background-color:  rgba(230,230,230, .3);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -15,6 +12,19 @@
 
 .App-link {
   color: #61dafb;
+}
+
+#add_new_task {
+  position: absolute;
+  top: 75vh;
+  width: 80px;
+  height: 80px;
+  background: url("../images/plus_sign.svg") no-repeat;
+  cursor: pointer;
+}
+
+#add_new_task:hover {
+
 }
 
 .expanded_task {
@@ -30,6 +40,11 @@
   white-space: nowrap;
   text-align: center;
   -webkit-transition: height 0.4s ease;
+}
+
+#header {
+  position: absolute;
+  top: 0;
 }
 
 input[type=text] {
@@ -116,35 +131,56 @@ select {
   -webkit-transition: text-shadow 0.1s linear;
 }
 
-#test {
+#container {
   position: absolute;
   overflow-y: auto;
-  padding-top: 10%;
-  height: 100%;
   width: 100%;
+  top: 50px;
+  height: 65vh;
+  /*height: 900px;*/
 
 }
 
 #expand_icon {
   float:left;
   cursor: pointer;
-  margin-top:2vh;
-  /*background-color: red;*/
-  width: 30px;
-  height: 30px;
-  background: url("../images/plus_sign.svg") no-repeat 5px 8px;
-  transform: scale(2);
+  width: 35px;
+  height: 35px;
+  margin-top: 15px;
+  background: url("../images/expand_more.svg") no-repeat;
+  transition: transform 0.5s;
+  transform-origin: center center;
 }
 
 #minus_icon {
   float:left;
   cursor: pointer;
-  margin-top:2vh;
   /*background-color: red;*/
-  width: 30px;
-  height: 30px;
-  background: url("../images/minus_sign.svg") no-repeat 5px 8px;
-  transform: scale(2);
+  margin-top: 15px;
+  width: 35px;
+  height: 35px;
+  background: url("../images/expand_more.svg") no-repeat;
+  /*background: url("../images/expand_less.svg") no-repeat 0 5px;*/
+  transform: rotate(180deg);
+  transition: transform 0.5s;
+  transform-origin: center center;
+  /*transform: scale(2);*/
+}
+
+@keyframes rotate_sign {
+  100% {
+    transform: rotate(180deg)
+  }
+}
+
+#submit_button {
+  position: absolute;
+  top: 75vh;
+  left: 75%;
+}
+
+#todo_parent_component {
+  background-color: white;
 }
 
 .bin_icon {
