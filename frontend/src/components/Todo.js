@@ -9,6 +9,8 @@ const Todo = (props) => {
   const [updated_tasks, setUpdatedTasks] = useState({})
   const [task_number, setTaskNumber] = useState(1)
   const [isLoaded, setIsLoaded] = useState(false)
+  const [trigger, setTrigger] = useState(false)
+  const [firstRender, setFirstRender] = useState(true)
   const firstUpdate = useRef(true)
   const firstUpdate2 = useRef(true)
   const jsxRef = useRef();
@@ -116,15 +118,14 @@ const Todo = (props) => {
     sendTasksToRemove();
     sendTasksToPost();
     props.setTasks([])
-    props.trigTasks()
-    props.getTasks()
+
     setUpdatedTasks([])
     setRemovedTasks([])
     props.setToOptimize(true)
     // Prevent duplicates after submitting, when user has no tasks prior to submitting new tasks.
     // if (tasks.length === 0) setIsLoaded(true)
     //Reloading page to reload updates jsx.
-    window.location.reload();
+    // window.location.reload();
   };
 
   const sendTasksToRemove = () => {
@@ -150,7 +151,17 @@ const Todo = (props) => {
     console.log('end of remove event handler.')
   }
 
+  useEffect(() => {
+    if (firstRender) {
+      setFirstRender(false)
+      return
+    }
+    props.trigTasks()
+    props.getTasks()
+  }, [trigger])
+
   const sendTasksToPost = () => {
+    console.log('updated tasks: ', updated_tasks)
     console.log('tasks to send: ', updated_tasks)
     let s = 'temp_task_id'
     for (const key of Object.keys(updated_tasks))
@@ -164,6 +175,7 @@ const Todo = (props) => {
       body: JSON.stringify(Object.values(updated_tasks))
     })
         .then((response) => {
+          setTrigger(!trigger)
           if (response.status === 201) {
             console.log("User's tasks hes been sent successfully.");
             console.log(response.text())

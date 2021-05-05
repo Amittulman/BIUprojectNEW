@@ -66,6 +66,9 @@ const App = () => {
                     for (let i=0; i<all_tasks; i++){
                         tasks1.push(result[i])
                     }
+                    console.log('inside trig: ', tasks1)
+                    console.log('previous value: ', tasksID)
+                    console.log('and res: ', result)
                     setTaskID(tasks1)
                 })
             .catch((error) => {
@@ -118,6 +121,23 @@ const App = () => {
     let search_input = <input onKeyPress={findTask} id='input' type='text' placeholder='Search Task...'/>;
     let search = <div>{search_input}</div>
 
+    const foo = (event) => {
+        let checkBox = event.target
+        let thisWeek = document.getElementById('this_week')
+        let nextWeek = document.getElementById('next_week')
+        if (checkBox.checked) {
+            nextWeek.classList.remove('next_week')
+            nextWeek.classList.add('next_week_chosen')
+            thisWeek.classList.remove('this_week_chosen')
+            thisWeek.classList.add('this_week')
+        } else {
+            thisWeek.classList.remove('this_week')
+            thisWeek.classList.add('this_week_chosen')
+            nextWeek.classList.remove('next_week_chosen')
+            nextWeek.classList.add('next_week')
+        }
+    }
+
     return (
         <div className="App">
             {/*<button onClick={closeTaskPane}>click</button>*/}
@@ -131,12 +151,12 @@ const App = () => {
                         <Todo setToOptimize={setToOptimize} updating_tasks={tasks} trigTasks={taskIDTrig} getTasks={taskGetter} setTasks={taskSetter}/>
                     </div>
                     <div id='boo' className='row'>
-                        <span className='todo_type'>This week&nbsp;&nbsp;</span>
+                        <span id='this_week' className='this_week'>This week&nbsp;&nbsp;</span>
                         <label className="switch">
-                            <input id='aba' type="checkbox"/>
+                            <input onChange={(e)=>foo(e)} id='aba' type="checkbox"/>
                             <span className="slider round"/>
                         </label>
-                        <span className='todo_type'>&nbsp;&nbsp;Next week</span>
+                        <span id='next_week' className='next_week'>&nbsp;&nbsp;Next week</span>
                     </div>
                 </div>
 

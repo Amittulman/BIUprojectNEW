@@ -43,6 +43,7 @@ const Table = (props) => {
     }, [tasks])
 
     useEffect(() => {
+        console.log('hello',props.tasksID)
         setTasksID(props.tasksID)
     }, [props.tasksID])
 

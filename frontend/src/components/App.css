@@ -32,22 +32,32 @@
     margin-top: 25px;
 }
 
-.todo_type {
-}
-
-
 
 #boo {
     align-items: center;
     margin-left: 35%;
 }
 
+.this_week, .next_week {
+    color: black;
+    transition: color 0.2s linear;
 
+}
 
+.this_week_chosen {
+    color: lightblue;
+    transition: color 0.2s linear;
+}
+
+.next_week_chosen {
+    color: lightgreen;
+    transition: color 0.2s linear;
+}
 
 
 /* The switch - the box around the slider */
 .switch {
+
     position: relative;
     display: inline-block;
     width: 60px;
@@ -70,7 +80,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
+    background-color: lightskyblue;
     -webkit-transition: .4s;
     transition: .4s;
 }
@@ -87,14 +97,8 @@
     transition: .4s;
 }
 
-input + .slide {
-    background-color: green;
-}
-
-
-
 input:checked + .slider {
-    background-color: #2196F3;
+    background-color: lightgreen;
 }
 
 input:focus + .slider {
