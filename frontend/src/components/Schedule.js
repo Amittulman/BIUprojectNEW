@@ -14,23 +14,11 @@ const Table = (props) => {
     const prevs = useRef({tasksID, tasksDict, tasks})
 
     useEffect(() => {
-        console.log('rendered')
         props.getTasksID();
     }, [])
 
     useEffect(() => {
         if (props.updating_tasks.length === 0) return
-        console.log('trig')
-        // props.trigTasksID()
-        // props.getTasksID();
-        // if (props.toOptimize) {
-        //     console.log('optimized = true')
-        //     props.trigTasksID()
-        //     props.setToOptimize(false)
-        // } else {
-        //     console.log('optimized = false')
-        //     props.getTasksID();
-        // }
         setTasks(props.updating_tasks)
     }, [props.updating_tasks])
 
@@ -39,62 +27,56 @@ const Table = (props) => {
         for (let i = 0; i < tasks.length; i++) {
             tasks_dct[tasks[i]['task_id']] = tasks[i]['task_title']
         }
-        console.log('tasks dct: ', tasks_dct)
         setTasksDict(tasks_dct)
     }, [tasks])
 
     useEffect(() => {
-        console.log('hello',props.tasksID)
         setTasksID(props.tasksID)
     }, [props.tasksID])
 
-    useEffect(() => {
-    }, [tasksID])
 
     useEffect(() => {
+        initialSchedule()
+        let time_jsx = [...jsx]
+        jsx = []
         if (prevs.current.tasksID.toString() !== tasksID.toString() && prevs.current.tasks.toString() !== tasks.toString()) {
             for (let i = 0; i < slots_per_day * 7; i++) {
                 if (tasks[tasksID[i]])
                     tasks_id[i] = tasks[tasksID[i]]['task_title']
             }
-            for (let i = 0; i < 8; i++) {
+            for (let i = 1; i < 8; i++) {
                 let content = [];
-                let hour;
-                let minute = 0;
-                if (day[i] === 'Time') {
-                    for (let j = 0; j < slots_per_day; j++) {
-                        hour = Math.floor(j / 2);
-                        minute = 30 * (j % 2);
-                        if (hour < 10) hour = '0' + hour
-                        if (minute === 0) minute = '00'
-                        content.push(<td key={'time' + hour + ':' + minute}>{hour}:{minute}</td>);
-                    }
-                } else {
-                    for (let j = 0; j < slots_per_day; j++) {
-                        let a = tasks_id[j + (i - 1) * slots_per_day]
-                        content.push(<td key={'cell_' + (slots_per_day * (i - 1) + j)}
-                                         id={'cell_' + (slots_per_day * (i - 1) + j) + '_taskID_' + tasksID[j + (i - 1) * slots_per_day]}
-                                         draggable='true' onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop}
-                                         onDragLeave={leaveDropArea}>{a}</td>);
-                    }
+                for (let j = 0; j < slots_per_day; j++) {
+                    let a = tasks_id[j + (i - 1) * slots_per_day]
+                    content.push(<td key={'cell_' + (slots_per_day * (i - 1) + j)}
+                                     id={'cell_' + (slots_per_day * (i - 1) + j) + '_taskID_' + tasksID[j + (i - 1) * slots_per_day]}
+                                     draggable='true' onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop}
+                                     onDragLeave={leaveDropArea}>{a}</td>);
                 }
-                jsx.push(<tr key={'tr' + i}>
-                    <th key={'th' + i}>{day[i]}</th>
-                    {content}</tr>);
+                console.log('saba, ', jsx)
+                jsx.push(<tr key={'tr' + i}><th key={'th' + i}>{day[i]}</th>{content}</tr>);
             }
-            setTable(<table>
-                <tbody>{jsx}</tbody>
-            </table>)
+            let x = [<table><tbody>{time_jsx}{jsx}</tbody></table>]
+            setTable(x)
         }
     }, [tasks, tasksID])
 
+    const initialSchedule = () => {
+        let hour;
+        let minute = 0;
+        for (let j = 0; j < slots_per_day; j++) {
+            hour = Math.floor(j / 2);
+            minute = 30 * (j % 2);
+            if (hour < 10) hour = '0' + hour
+            if (minute === 0) minute = '00'
+            content.push(<td key={'time' + hour + ':' + minute}>{hour}:{minute}</td>);
+        }
+        jsx.push(<tr key={'tr' + 0}><th key={'th' + 0}>Time</th>{content}</tr>);
+    }
 
-    // let tasks_ids = props.getTasksID();
-    let content = []
+    let content = [];
     let jsx = [];
     let day = ['Time', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
-
     let tasks_id = Array(slots_per_day * 7).fill(null);
 
     const findTask = (event) => {
@@ -135,18 +117,11 @@ const Table = (props) => {
             let src_slot = src_data[1]
             let tasks_id = tasksID
             let src_task_id = tasks_id[src_slot]
-            // console.log(tasks_id)
-            // console.log(src_data)
             tasks_id[dest_slot] = parseInt(src_task_id)
             tasks_id[src_slot] = -1
             setTasksID(tasks_id)
-            // console.log(src_slot)
-            // console.log(dest_slot)
-            // console.log(src_task_id)
-            // console.log(tasksID)
             updateTaskLocation(src_slot, dest_slot, src_task_id, 1)
         }
-        // event.target.appendChild(element);
         event.dataTransfer.clearData();
     }
 
