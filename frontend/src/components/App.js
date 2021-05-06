@@ -125,21 +125,25 @@ const App = () => {
     let search_input = <input onKeyPress={findTask} id='input' type='text' placeholder='Search Task...'/>;
     let search = <div>{search_input}</div>
 
-    const foo = (event) => {
+    const switch_weeks = (event) => {
         let checkBox = event.target
         let thisWeek = document.getElementById('this_week')
         let nextWeek = document.getElementById('next_week')
         if (checkBox.checked) {
-            nextWeek.classList.remove('next_week')
+            nextWeek.classList.remove('week')
             nextWeek.classList.add('next_week_chosen')
             thisWeek.classList.remove('this_week_chosen')
-            thisWeek.classList.add('this_week')
+            thisWeek.classList.add('week')
         } else {
-            thisWeek.classList.remove('this_week')
+            thisWeek.classList.remove('week')
             thisWeek.classList.add('this_week_chosen')
             nextWeek.classList.remove('next_week_chosen')
-            nextWeek.classList.add('next_week')
+            nextWeek.classList.add('week')
         }
+    }
+
+    const markCategories = (event) => {
+        alert('Not implemented')
     }
 
     return (
@@ -147,7 +151,7 @@ const App = () => {
             {/*<button onClick={closeTaskPane}>click</button>*/}
             <div id='site_top' className='row'>
                 <div className='col-4'>{search}</div>
-                <button className='col-2' style={{marginTop: '25px'}}>Choose category</button>
+                <button onClick={markCategories} className='col-2' style={{marginTop: '25px'}}>Choose category</button>
             </div>
             <div className='row'>
                 <div id='todo_parent' className='col-4'>
@@ -155,12 +159,12 @@ const App = () => {
                         <Todo setToOptimize={setToOptimize} updating_tasks={tasks} trigTasks={taskIDTrig} getTasks={taskGetter} setTasks={taskSetter}/>
                     </div>
                     <div id='boo' className='row'>
-                        <span id='this_week' className='this_week'>This week&nbsp;&nbsp;</span>
+                        <span id='this_week' className='this_week_chosen'>This week&nbsp;&nbsp;</span>
                         <label className="switch">
-                            <input onChange={(e)=>foo(e)} id='aba' type="checkbox"/>
+                            <input onChange={(e)=>switch_weeks(e)} id='week_switch' type="checkbox"/>
                             <span className="slider round"/>
                         </label>
-                        <span id='next_week' className='next_week'>&nbsp;&nbsp;Next week</span>
+                        <span id='next_week' className='week'>&nbsp;&nbsp;Next week</span>
                     </div>
                 </div>
 

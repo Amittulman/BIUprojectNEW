@@ -38,14 +38,14 @@
     margin-left: 35%;
 }
 
-.this_week, .next_week {
-    color: black;
+.week {
+    color: lightgrey;
     transition: color 0.2s linear;
 
 }
 
 .this_week_chosen {
-    color: lightblue;
+    color: lightskyblue;
     transition: color 0.2s linear;
 }
 
