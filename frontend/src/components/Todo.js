@@ -3,16 +3,23 @@ import React, {useState, useEffect, useRef} from 'react';
 import Menu from "./Menu";
 
 const Todo = (props) => {
-  const [tasks_jsx, setTasksJsx] = useState([])
+  const [tasks_jsx, setTasksJsx] = useState(new Set())
   const [tasks, setTasks] = useState([])
   const [removed_tasks, setRemovedTasks] = useState([])
   const [updated_tasks, setUpdatedTasks] = useState({})
-  const [task_number, setTaskNumber] = useState(1)
+  const [task_number, setTaskNumber] = useState(10000)
   const [isLoaded, setIsLoaded] = useState(false)
   const [trigger, setTrigger] = useState(false)
   const [firstRender, setFirstRender] = useState(true)
+  const [todoIDs, setTodoIDs] = useState({})
+  const todoIDRef = useRef();
+  todoIDRef.current = todoIDs;
   const firstUpdate = useRef(true)
   const firstUpdate2 = useRef(true)
+  const updatedRef = useRef();
+  updatedRef.current = updated_tasks;
+  const removedRef = useRef();
+  removedRef.current = removed_tasks;
   const jsxRef = useRef();
   jsxRef.current = tasks_jsx;
   const containerRef = useRef();
@@ -32,6 +39,8 @@ const Todo = (props) => {
       firstUpdate.current = false
       return
     }
+    if (Object.keys(props.updating_tasks).length === 0) return
+    console.log('CALLED!!')
     setTasks(props.updating_tasks)
   }, [props.updating_tasks])
 
@@ -40,37 +49,58 @@ const Todo = (props) => {
       firstUpdate2.current = false
       return
     }
-    if (!isLoaded) {
-      setIsLoaded(!isLoaded)
-      let i = 0;
-      if (tasks.length > 0) {
-        for (i = 0; i < tasks.length; i++) {
-          addTask(i + 1, tasks[i])
+    if (!isLoaded ) {
+      setIsLoaded(true)
+      console.log('before prior: ', tasks, Object.keys(tasks))
+      console.log('before prior2: ', props.updating_tasks)
+      if (Object.keys(tasks).length > 0) {
+        for (let key in tasks) {
+          console.log('prior to addtask: ', key, tasks[key])
+          addTask(key, tasks[key])
+          // if (!(key in todoIDRef.current))
         }
       }
       // TODO - put it at the bottom. When loading tasks it will always be the bottom task container.
       // addTask(i+1)
-      setTaskNumber(i+2)
+      setTaskNumber(task_number+2)
     }
   }, [tasks])
 
   useEffect(() => {
+    //TODO - think of a way of an alternative if statement 4 lines below.
+    // let element = document.getElementById('todo_status')
+    // if (Object.keys(tasks_jsx).length === 0) {
+    //   console.log('loaded?', isLoaded)
+    //   if (!isLoaded) {
+    //     element.classList.add('loader')
+    //   } else {
+    //     element.classList.remove('loader')
+    //     element.textContent = 'Empty'
+    //   }
+    // } else {
+    //   element.classList.remove('loader')
+    //   element.textContent = ''
+    // }
     console.log('JSX HAS CHANGED! it is now: ', tasks_jsx)
   },[tasks_jsx])
 
   const bin_task = (event,i) => {
     //if (i > tasks.length && !(i in updated_tasks)) return //TODO - add a message - 'cannot remove empty task'.
     setTasksJsx(jsxRef.current.filter(item => item.props.id !== 'task_container' + i))
+    console.log('falafel', updated_tasks)
     for (let [key, value] of Object.entries(updated_tasks)) {
+      console.log('keyval: ', key, value, i)
       if (value['temp_task_id'] === i) {
         let clone = updated_tasks;
         delete clone[key]
+        console.log('clone: ', clone)
         setUpdatedTasks(clone)
       }
     }
     // TODO - try to remove tasks by task_id and not index, to avoid bugs. Bug: add 2 tasks, remove first, submit, then try to remove the second. Removal is possible only after refreshing page.
-    if (tasksRef.current[i - 1] !== undefined) {
-      setRemovedTasks(prevArr => [...prevArr, tasksRef.current[i - 1].task_id])
+    if (tasksRef.current[i] !== undefined) {
+      console.log('WE FOUND IT!!', i)
+      setRemovedTasks(prevArr => [...prevArr, tasksRef.current[i].task_id])
     }
   }
 
@@ -87,6 +117,9 @@ const Todo = (props) => {
   }
 
   const addTask = (index, values) => {
+    console.log('values: ', values)
+    console.log('and index: ', index)
+    console.log('and jsx before&!: ', tasks_jsx)
     if (values == null) {
       values = {'user_id':'','task_title':'', 'duration':'','priority':'','category_id':'','constraints':''}
     }
@@ -108,25 +141,40 @@ const Todo = (props) => {
     let sign = <div id='expand_icon' onClick={(e) =>  expandTask(e, task)} key='plus_sign'/>
     let task_container = <div key={'task_container'+index} id={'task_container'+index} className='task_container' >{[sign, task,trash_bin]}</div>
     containerRef.current = task_container
-    setTasksJsx(prevArr => [...prevArr,task_container])
+    if (!(index in todoIDs)) {
+      setTasksJsx(prevArr => [...prevArr,task_container])
+      setTodoIDs({...todoIDs, [index]: 1})
+    }
+
     setTaskNumber(task_number+1)
   }
+
+  useEffect(() => {
+    console.log('todo ids: ', todoIDs)
+  }, [todoIDs])
 
   const onSubmitHandler = (event) => {
     console.log('submit handler')
     event.preventDefault();
+    setIsLoaded(false)
     sendTasksToRemove();
     sendTasksToPost();
-    props.setTasks([])
-
-    setUpdatedTasks([])
+    props.setTasks({})
+    // props.getTasks()
+    setUpdatedTasks({})
     setRemovedTasks([])
+    setTodoIDs({})
+    setTasksJsx(new Set())
     props.setToOptimize(true)
     // Prevent duplicates after submitting, when user has no tasks prior to submitting new tasks.
     // if (tasks.length === 0) setIsLoaded(true)
     //Reloading page to reload updates jsx.
     // window.location.reload();
   };
+
+  useEffect(() => {
+    console.log('is loaded was triggered! ', isLoaded)
+  },[isLoaded])
 
   const sendTasksToRemove = () => {
     fetch('http://localhost:5000/tasks/DeleteTasks/1', {
@@ -140,10 +188,10 @@ const Todo = (props) => {
         .then((response) => {
           if (response.status === 201) {
             console.log("User's tasks hes been removed successfully.");
-            console.log('promise of remove: ',response.text())
           } else {
             console.log("Request status code: " + response.status);
           }
+          console.log('promise of remove: ',response.text())
         })
         .catch((error) => {
           console.error("Error while submitting task: " + error.message);
@@ -178,52 +226,68 @@ const Todo = (props) => {
           setTrigger(!trigger)
           if (response.status === 201) {
             console.log("User's tasks hes been sent successfully.");
-            console.log(response.text())
           } else {
             console.log("User's tasks hes been sent. HTTP request status code: " + response.status);
           }
+          console.log(response.text())
         })
         .catch((error) => {
           console.error("Error while submitting task: " + error.message);
         });
   }
 
+  useEffect(() => {
+    console.log('fiziboo: ', updated_tasks )
+  }, [updated_tasks])
+
   const handleChange = (event, index) => {
     const nam = event.target.name;
     const val = event.target.value;
     let empty_task = {'temp_task_id':index,'user_id':1,'task_title':'', 'duration':'','priority':'','category_id':'','constraints':''};
-    let updated = updated_tasks
+    let updated = updatedRef.current
     // If task is new, create a new instance of it, else edit existing/
     //removes old task when submitting form.
-    if (typeof (updated[index-1]) ==='undefined') {
-      if (typeof (tasks[index-1]) ==='undefined') {
-        updated[index-1] = {...empty_task, [nam]: val}
+    console.log('socked', updated)
+    console.log('socked2', tasks)
+    console.log('socked3', tasksRef.current)
+    if (typeof (updated[index]) ==='undefined') {
+      console.log('one')
+      if (typeof (tasks[index]) ==='undefined') {
+        console.log('two ', nam, val)
+        updated[index] = {...empty_task, [nam]: val}
       } else {
         update_task(index)
         let task_copy = Object.assign({}, tasks[index-1])
         delete task_copy['task_id']
         task_copy['temp_task_id'] = index
-        updated[index-1] = {...task_copy, [nam]: val}
+        updated[index] = {...task_copy, [nam]: val}
       }
     } else {
-      updated[index-1][nam] = val
+      console.log('not undefined')
+      updated[index][nam] = val
     }
-    setUpdatedTasks(updated_tasks)
+    console.log('updated ', updated)
+    setUpdatedTasks(updated)
   }
 
   const update_task = (i) => {
-    if (!(tasks[i-1] in removed_tasks)) {
-      setRemovedTasks(prev => [...prev, tasks[i-1].task_id])
+    if (!(Object.values(removedRef.current).includes(tasks[i]['task_id']))) {
+      setRemovedTasks(prev => [...prev, tasks[i].task_id])
     }
   }
 
-  const task_list = tasks_jsx.map((x,index) => (x));
+  useEffect(() => {
+    console.log('removed now: ', removed_tasks)
+  }, [removed_tasks])
+
+  // const task_list = tasks_jsx.map((x,index) => (x));
   return (
       <div id='todo_parent_component'>
         <header className="App-header">
           <h1 id='header'>Enter your tasks</h1>
           <form id='container' onSubmit={onSubmitHandler}>
-            {task_list}
+            <div id='todo_status'></div>
+            {tasks_jsx}
           </form><br/>
           <input id='submit_button' className="btn btn-primary btn-md" type='submit' form='container'/>
           <div id='add_new_task' onClick={() => addTask(task_number)}/>

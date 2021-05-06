@@ -208,3 +208,24 @@ select {
     max-height: 6vh;
   }
 }
+
+.loader {
+  border: 7px solid #f3f3f3; /* Light grey */
+  border-top: 7px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50%;
+}
+
+.empty {
+  mso-text-: 'empty';
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

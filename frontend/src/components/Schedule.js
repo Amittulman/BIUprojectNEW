@@ -11,7 +11,7 @@ const Table = (props) => {
     const [tasksDict, setTasksDict] = useState([])
     const [table1, setTable] = useState([])
     const [boo, setBoo] = useState(false)
-    const prevs = useRef({tasksID, tasksDict})
+    const prevs = useRef({tasksID, tasksDict, tasks})
 
     useEffect(() => {
         console.log('rendered')
@@ -39,6 +39,7 @@ const Table = (props) => {
         for (let i = 0; i < tasks.length; i++) {
             tasks_dct[tasks[i]['task_id']] = tasks[i]['task_title']
         }
+        console.log('tasks dct: ', tasks_dct)
         setTasksDict(tasks_dct)
     }, [tasks])
 
@@ -51,9 +52,10 @@ const Table = (props) => {
     }, [tasksID])
 
     useEffect(() => {
-        if (prevs.current.tasksID.toString() !== tasksID.toString() && prevs.current.tasksDict.toString() !== tasksDict.toString()) {
+        if (prevs.current.tasksID.toString() !== tasksID.toString() && prevs.current.tasks.toString() !== tasks.toString()) {
             for (let i = 0; i < slots_per_day * 7; i++) {
-                tasks_id[i] = tasksDict[tasksID[i]]
+                if (tasks[tasksID[i]])
+                    tasks_id[i] = tasks[tasksID[i]]['task_title']
             }
             for (let i = 0; i < 8; i++) {
                 let content = [];
@@ -84,7 +86,7 @@ const Table = (props) => {
                 <tbody>{jsx}</tbody>
             </table>)
         }
-    }, [tasksDict, tasksID])
+    }, [tasks, tasksID])
 
 
     // let tasks_ids = props.getTasksID();
@@ -94,37 +96,6 @@ const Table = (props) => {
 
 
     let tasks_id = Array(slots_per_day * 7).fill(null);
-    // let tasks_dct = {};
-    // // adding random values to tasks_id
-    // // TODO - get tasks_id from backend instead.
-    // for (let i=0;i<tasks.length;i++) {
-    //     tasks_dct[tasks[i]['task_id']] = tasks[i]['task_title']
-    // }
-    // console.log('dictionary: ', tasks_dct)
-    // for (let i=0; i< slots_per_day*7;i++) {
-    //     tasks_id[i] = tasks_dct[tasks_ids[i]]
-    // }
-    // for (let i=0; i<8; i++) {
-    //     let content = [];
-    //     let hour;
-    //     let minute = 0;
-    //     if (day[i] === 'Time') {
-    //         for (let j=0; j<slots_per_day; j++) {
-    //             hour = Math.floor(j/2);
-    //             minute = 30 * (j%2);
-    //             if (hour < 10) hour = '0' + hour
-    //             if (minute === 0) minute = '00'
-    //             content.push(<td key={'time'+hour+':'+minute}>{hour}:{minute}</td>);
-    //         }
-    //     } else {
-    //         for (let j=0; j<slots_per_day; j++) {
-    //             let a = tasks_id[j+(i-1)*32]
-    //             content.push(<td key={'cell_'+[i,j]} id={'cell_'+[i,j]} draggable='true' onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop} onDragLeave={leaveDropArea}>{a}</td>);
-    //         }
-    //     }
-    //     jsx.push(<tr key={'tr'+i}><th key={'th'+i}>{day[i]}</th>{content}</tr>);
-    // }
-    // let table = <table><tbody>{jsx}</tbody></table>
 
     const findTask = (event) => {
         if (event.key === 'Enter') {

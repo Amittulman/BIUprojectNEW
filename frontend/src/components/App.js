@@ -45,10 +45,14 @@ const App = () => {
                     if (result['statusCode'] === 500) throw new Error('Internal server error.');
                     let all_tasks = result['tasks'].length
                     let tasks1 = []
+                    let tasks2 = {}
+                    console.log('result: ',result)
                     for (let i=0; i<all_tasks; i++){
                         tasks1.push(result['tasks'][i])
+                        tasks2[result['tasks'][i]['task_id']] = result['tasks'][i]
                     }
-                    setTasks(tasks1)
+                    console.log('tasks: ', tasks2)
+                    setTasks(tasks2)
                 })
             .catch((error) => {
                 console.log(error)
@@ -142,8 +146,8 @@ const App = () => {
         <div className="App">
             {/*<button onClick={closeTaskPane}>click</button>*/}
             <div id='site_top' className='row'>
-                {/*<div><Menu/>{search}</div>*/}
-                <div>{search}</div>
+                <div className='col-4'>{search}</div>
+                <button className='col-2' style={{marginTop: '25px'}}>Choose category</button>
             </div>
             <div className='row'>
                 <div id='todo_parent' className='col-4'>
