@@ -96,7 +96,6 @@ const Table = (props) => {
         morning.add(event.target.id.split('_')[1])
         event.target.style.backgroundColor = 'yellow'
         event.target.textContent= 'Morning'
-        console.log('morning: ', morning)
     }
 
     const leaveDropArea = (event) => {

@@ -111,7 +111,7 @@ const Todo = (props) => {
   const expandTask = (event, task) => {
     let clicked_task = document.getElementById(task.props.id)
     if (event.target.id === 'expand_icon') {
-      event.target.id = 'minus_icon'
+      event.target.id = 'collapse_icon'
       clicked_task.className = 'expanded_task'
     }
     else {
@@ -121,9 +121,6 @@ const Todo = (props) => {
   }
 
   const addTask = (index, values) => {
-    console.log('values: ', values)
-    console.log('and index: ', index)
-    console.log('and jsx before&!: ', tasks_jsx)
     if (values == null) {
       values = {'user_id':'','task_title':'', 'duration':'','priority':'','category_id':'','constraints':''}
     }
@@ -157,11 +154,9 @@ const Todo = (props) => {
   }
 
   useEffect(() => {
-    console.log('todo ids: ', todoIDs)
   }, [todoIDs])
 
   const onSubmitHandler = (event) => {
-    console.log('submit handler')
     event.preventDefault();
     setIsLoaded(false)
     sendTasksToRemove();
@@ -180,7 +175,6 @@ const Todo = (props) => {
   };
 
   useEffect(() => {
-    console.log('is loaded was triggered! ', isLoaded)
   },[isLoaded])
 
   const sendTasksToRemove = () => {
@@ -203,7 +197,6 @@ const Todo = (props) => {
         .catch((error) => {
           console.error("Error while submitting task: " + error.message);
         });
-    console.log('end of remove event handler.')
   }
 
   useEffect(() => {
@@ -244,25 +237,18 @@ const Todo = (props) => {
   }
 
   useEffect(() => {
-    console.log('fiziboo: ', updated_tasks )
   }, [updated_tasks])
 
   const handleChange = (event, index) => {
+    console.log(event.target)
     const nam = event.target.name;
     const val = event.target.value;
     let empty_task = {'temp_task_id':index,'user_id':1,'task_title':'', 'duration':'','priority':'','category_id':'','constraints':''};
     let updated = updatedRef.current
     // If task is new, create a new instance of it, else edit existing/
     //removes old task when submitting form.
-    console.log('socked', updated)
-    console.log('socked2', tasks)
-    console.log('socked3', tasksRef.current)
-    console.log('INDEX ', index)
-    console.log('ZIBI ', nam, val)
     if (typeof (updated[index]) ==='undefined') {
-      console.log('one')
       if (typeof (tasks[index]) ==='undefined') {
-        console.log('two ', nam, val)
         updated[index] = {...empty_task, [nam]: val}
       } else {
         update_task(index)
@@ -272,10 +258,8 @@ const Todo = (props) => {
         updated[index] = {...task_copy, [nam]: val}
       }
     } else {
-      console.log('not undefined')
       updated[index][nam] = val
     }
-    console.log('updated ', updated)
     setUpdatedTasks(updated)
   }
 
@@ -286,7 +270,6 @@ const Todo = (props) => {
   }
 
   useEffect(() => {
-    console.log('removed now: ', removed_tasks)
   }, [removed_tasks])
 
   // const task_list = tasks_jsx.map((x,index) => (x));

@@ -51,12 +51,10 @@ const App = () => {
                     let all_tasks = result['tasks'].length
                     let tasks1 = []
                     let tasks2 = {}
-                    console.log('result: ',result)
                     for (let i=0; i<all_tasks; i++){
                         tasks1.push(result['tasks'][i])
                         tasks2[result['tasks'][i]['task_id']] = result['tasks'][i]
                     }
-                    console.log('tasks: ', tasks2)
                     setTasks(tasks2)
                 })
             .catch((error) => {
@@ -75,9 +73,6 @@ const App = () => {
                     for (let i=0; i<all_tasks; i++){
                         tasks1.push(result[i])
                     }
-                    console.log('inside trig: ', tasks1)
-                    console.log('previous value: ', tasksID)
-                    console.log('and res: ', result)
                     setTaskID(tasks1)
                 })
             .catch((error) => {

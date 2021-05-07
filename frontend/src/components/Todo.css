@@ -215,11 +215,11 @@ select {
   transform-origin: center center;
 }
 
-#minus_icon {
+#collapse_icon {
   float:left;
   cursor: pointer;
   /*background-color: red;*/
-  margin-top: 15px;
+  margin-top: 10px;
   width: 35px;
   height: 35px;
   background: url("../images/expand_more.svg") no-repeat;
