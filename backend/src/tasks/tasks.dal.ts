@@ -8,6 +8,7 @@ import {ScheduledTask} from "../interfaces/scheduledTask.interface";
 import {CreateScheduledTaskDto} from "../Dto's/createScheduledTask.dto";
 import {CreateTaskDto} from "../Dto's/createTask.dto";
 import {CreateToDoListDto} from "../Dto's/createToDoList.dto";
+import {CreateCategorySlotDto} from "../Dto's/createCategorySlot.dto";
 
 const TASK_TABLE = 'tasks_table';
 const CATEGORY_SLOT_TABLE = 'category_slots';
@@ -114,6 +115,18 @@ export class TasksDal {
     return suc;
   }
 
+  async postCategories(categories: Array<CreateCategorySlotDto>){
+    let suc = 'Success';
+    try{
+
+    const res = await  this.db(CATEGORY_SLOT_TABLE).insert(categories);
+    }
+    catch (e){
+      suc = e
+    }
+    return suc;
+  }
+
   async updateScheduleSlot(schedule: CreateScheduledTaskDto, slot: number){
     let suc = 'Success';
     try{
@@ -170,6 +183,18 @@ export class TasksDal {
       // console.log(schedule);
       // console.log("tryting to update user "+user_id+" slot "+slot_id+"with the next: "+schedule.taskID);
       const res = await  this.db(SCHEDULE_TABLE).where('user_id',parseInt(user_id)).del();
+    }
+    catch (e){
+      suc = e
+    }
+    return suc;
+
+  }
+
+  async deleteUserCategories(user_id: string): Promise<string> {
+    let suc = 'Success';
+    try{
+      const res = await  this.db(CATEGORY_SLOT_TABLE).where('user_id',parseInt(user_id)).del();
     }
     catch (e){
       suc = e

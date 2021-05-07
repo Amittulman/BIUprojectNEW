@@ -6,6 +6,7 @@ import {ScheduledTask} from "../interfaces/scheduledTask.interface";
 import {SchedulerService} from "../scheduler/scheduler.service";
 import {CreateScheduledTaskDto} from "../Dto's/createScheduledTask.dto";
 import {CreateToDoListDto} from "../Dto's/createToDoList.dto";
+import {CreateCategorySlotDto} from "../Dto's/createCategorySlot.dto";
 
 @Controller('tasks')
 export class TasksController {
@@ -56,16 +57,16 @@ export class TasksController {
     // const tasks:Array<CreateTaskDto> = tasks_array;
     const tasks:Array<CreateTaskDto> = [];
     for(const task in tasksArray){
-        const schedule_task:CreateTaskDto = {
-          task_id : null,
-          user_id : tasksArray[task]['user_id'],
-          task_title : tasksArray[task]['task_title'],
-          duration: tasksArray[task]['duration'],
-          priority: tasksArray[task]['priority'],
-          category_id: tasksArray[task]['category_id'],
-          constraints: tasksArray[task]['constraints']
+      const schedule_task:CreateTaskDto = {
+        task_id : null,
+        user_id : tasksArray[task]['user_id'],
+        task_title : tasksArray[task]['task_title'],
+        duration: tasksArray[task]['duration'],
+        priority: tasksArray[task]['priority'],
+        category_id: tasksArray[task]['category_id'],
+        constraints: tasksArray[task]['constraints']
 
-        };
+      };
       tasks.push(schedule_task);
 
 
@@ -108,12 +109,12 @@ export class TasksController {
     const schedule:Array<CreateScheduledTaskDto> = [];
     for(const task in tasksArray){
       if (tasksArray[task] != -1){
-          const schedule_task:CreateScheduledTaskDto = {
-            task_id: tasksArray[task],
-            user_id : parseInt(user_id),
-            slot_id : parseInt(task)
-          };
-          schedule.push(schedule_task);
+        const schedule_task:CreateScheduledTaskDto = {
+          task_id: tasksArray[task],
+          user_id : parseInt(user_id),
+          slot_id : parseInt(task)
+        };
+        schedule.push(schedule_task);
 
       }
     }
@@ -127,8 +128,8 @@ export class TasksController {
 
   @Post('UpdateSchedule/:new_slot')
   updateScheduleSlot(@Body() task: CreateScheduledTaskDto, @Param('new_slot')slot_id:number) {
-      console.log(task)
-      return this.tasksService.updateScheduleSlot(task, slot_id);
+    console.log(task)
+    return this.tasksService.updateScheduleSlot(task, slot_id);
   }
 
 
@@ -137,6 +138,7 @@ export class TasksController {
   async getUserCategories(@Param('id') user_id: string): Promise<Array<number>> {
     return this.tasksService.getUserCategories(user_id);
   }
+
   @Get('GetUserCategorySlots/:id')
   async getUserCategorySlots(@Param('id') user_id: string): Promise<Array<number>> {
     const result = await this.tasksService.getUserCategorySlots(user_id);
@@ -150,15 +152,33 @@ export class TasksController {
     return category_slots_array;
   }
 
+  @Post('PostCategories/:user_id')
+  postCategories(@Body() categorySlots: Array<number>, @Param('user_id')user_id:string) {
+    const categories: Array<CreateCategorySlotDto> = [];
+    for (const slot in categorySlots) {
+      if (categorySlots[slot] != -1) {
+        const category_slot: CreateCategorySlotDto = {
+          category_id: categorySlots[slot],
+          user_id: parseInt(user_id),
+          slot_id: parseInt(slot)
+        };
+        categories.push(category_slot);
+
+      }
+    }
+    return this.tasksService.postCategories(categories);
+  }
+
   @Delete('DeleteSchedule/:id')
   async deleteSchedule(@Param('id') user_id: string): Promise<string> {
     return this.tasksService.deleteSchedule(user_id);
   }
 
-  // @Post('DeleteTasks/:user_id')
-  // async deleteTasks(@Body('task_ids') task_ids: Array<number>, @Param('user_id') user_id: string ): Promise<string> {
-  //   return this.tasksService.deleteTasks(user_id, task_ids);
-  // }
+  @Delete('DeleteUserCategories/:id')
+  async deleteUserCategories(@Param('id') user_id: string): Promise<string> {
+    return this.tasksService.deleteUserCategories(user_id);
+  }
+
 
 
   @Delete('DeleteTasks/:user_id')
