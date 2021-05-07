@@ -6,7 +6,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  font-size: calc(22px);
   color: rgb(12, 13, 13);
 }
 
@@ -14,7 +14,7 @@
   color: #61dafb;
 }
 
-#add_new_task {
+#add_a_new_task {
   position: absolute;
   top: 75vh;
   width: 80px;
@@ -27,13 +27,33 @@
 
 }
 
+.closed_task {
+  height: 45px;
+  background-color: rgba(250,250,250, .3);
+  box-shadow: 1px 0px 3px 3px #ccc;
+  border-radius: 10px;
+  margin-left: 8px;
+  margin-right: 8px;
+  /*margin-top: 10px;*/
+  padding: 5px;
+  width: 70%;
+  text-overflow: ellipsis;
+  overflow: hidden ;
+  white-space: nowrap;
+  text-align: center;
+  -webkit-transition: height 0.4s ease;
+
+}
+
 .expanded_task {
   height: 180px;
   background-color: rgba(250,250,250, .3);
   box-shadow: 1px 0px 3px 3px #ccc;
   border-radius: 10px;
-  margin: 8px;
   width: 70%;
+  margin-left: 8px;
+  margin-right: 8px;
+  /*margin-top: 10px;*/
   padding: 5px;
   text-overflow: ellipsis;
   overflow: hidden ;
@@ -97,26 +117,69 @@ select {
   background-color: blue;
 }
 
-.closed_task {
-  height: 45px;
-  background-color: rgba(250,250,250, .3);
-  box-shadow: 1px 0px 3px 3px #ccc;
-  border-radius: 10px;
-  margin: 8px;
-  width: 70%;
-  padding: 5px;
-  text-overflow: ellipsis;
-  overflow: hidden ;
-  white-space: nowrap;
-  text-align: center;
-  -webkit-transition: height 0.4s ease;
-}
 
 .task_container {
+  padding-top: 15px;
+  padding-bottom: 4px;
   width: 100%;
   display: flex;
   justify-content: center;
+  animation: expand .4s ease;
+  z-index: 100;
+  background-color: white;
+  position: relative;
+  background-clip: content-box;
 
+}
+
+.removed_container {
+  width: 100%;
+  /*display: none;*/
+  justify-content: center;
+  animation: minimize .4s ease;
+  /*background-color: red;*/
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes minimize {
+  from {
+    opacity: 1;
+
+  }
+  to {
+    opacity: 0;
+    margin-top:-65px;
+  }
+}
+
+.removed_container_expanded {
+  width: 100%;
+  /*display: none;*/
+  justify-content: center;
+  animation: minimize_expanded 0.6s ease;
+  /*background-color: red;*/
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes minimize_expanded {
+  from {
+    opacity: 1;
+
+  }
+  to {
+    opacity: 0;
+    margin-top:-200px;
+  }
+}
+
+@keyframes expand {
+  from {
+    opacity: 0;
+    margin-top: -10%;
+    z-index: 4;
+  }
 }
 
 .task_container > * {
@@ -146,7 +209,7 @@ select {
   cursor: pointer;
   width: 35px;
   height: 35px;
-  margin-top: 15px;
+  margin-top: 10px;
   background: url("../images/expand_more.svg") no-repeat;
   transition: transform 0.5s;
   transform-origin: center center;
@@ -186,7 +249,7 @@ select {
 .bin_icon {
   float:left;
   cursor: pointer;
-  margin-top:2vh;
+  margin-top:1vh;
   -webkit-transition: fill 0.1s linear ;
 
 }
@@ -228,4 +291,15 @@ select {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+.white_block {
+  padding-top: 15px;
+  padding-bottom: 4px;
+  width: 100%;
+  height: 120px;
+  display: block;
+  z-index: 2;
+  position: absolute;
+  background-color: red;
 }

@@ -40,7 +40,6 @@ const Todo = (props) => {
       return
     }
     if (Object.keys(props.updating_tasks).length === 0) return
-    console.log('CALLED!!')
     setTasks(props.updating_tasks)
   }, [props.updating_tasks])
 
@@ -51,14 +50,12 @@ const Todo = (props) => {
     }
     if (!isLoaded ) {
       setIsLoaded(true)
-      console.log('before prior: ', tasks, Object.keys(tasks))
-      console.log('before prior2: ', props.updating_tasks)
       if (Object.keys(tasks).length > 0) {
         for (let key in tasks) {
-          console.log('prior to addtask: ', key, tasks[key])
           addTask(key, tasks[key])
           // if (!(key in todoIDRef.current))
         }
+
       }
       // TODO - put it at the bottom. When loading tasks it will always be the bottom task container.
       // addTask(i+1)
@@ -81,25 +78,32 @@ const Todo = (props) => {
     //   element.classList.remove('loader')
     //   element.textContent = ''
     // }
-    console.log('JSX HAS CHANGED! it is now: ', tasks_jsx)
   },[tasks_jsx])
 
   const bin_task = (event,i) => {
+    let timer;
+    if (event.currentTarget.parentNode.childNodes[1].className.startsWith('closed')) {
+      document.getElementById('task_container'+i).classList.add('removed_container')
+      timer = 300
+      //TODO - prevent task from being seen outside of slot during animation (expanded)
+    } else {
+      document.getElementById('task_container'+i).classList.add('removed_container_expanded')
+      timer = 500
+    }
+    setTimeout(()=> {
+      setTasksJsx(jsxRef.current.filter(item => item.props.id !== 'task_container' + i))
+    }, timer)
     //if (i > tasks.length && !(i in updated_tasks)) return //TODO - add a message - 'cannot remove empty task'.
-    setTasksJsx(jsxRef.current.filter(item => item.props.id !== 'task_container' + i))
-    console.log('falafel', updated_tasks)
+
     for (let [key, value] of Object.entries(updated_tasks)) {
-      console.log('keyval: ', key, value, i)
       if (value['temp_task_id'] === i) {
         let clone = updated_tasks;
         delete clone[key]
-        console.log('clone: ', clone)
         setUpdatedTasks(clone)
       }
     }
     // TODO - try to remove tasks by task_id and not index, to avoid bugs. Bug: add 2 tasks, remove first, submit, then try to remove the second. Removal is possible only after refreshing page.
     if (tasksRef.current[i] !== undefined) {
-      console.log('WE FOUND IT!!', i)
       setRemovedTasks(prevArr => [...prevArr, tasksRef.current[i].task_id])
     }
   }
@@ -141,11 +145,14 @@ const Todo = (props) => {
     let sign = <div id='expand_icon' onClick={(e) =>  expandTask(e, task)} key='plus_sign'/>
     let task_container = <div key={'task_container'+index} id={'task_container'+index} className='task_container' >{[sign, task,trash_bin]}</div>
     containerRef.current = task_container
-    if (!(index in todoIDs)) {
-      setTasksJsx(prevArr => [...prevArr,task_container])
-      setTodoIDs({...todoIDs, [index]: 1})
-    }
 
+    setTasksJsx(prevArr => [...prevArr,task_container])
+    // if (!(index in todoIDs)) {
+    //   setTasksJsx(prevArr => [...prevArr,task_container])
+    //   setTodoIDs({...todoIDs, [index]: 1})
+    // } else {
+    //   console.log('YES')
+    // }
     setTaskNumber(task_number+1)
   }
 
@@ -292,7 +299,7 @@ const Todo = (props) => {
             {tasks_jsx}
           </form><br/>
           <input id='submit_button' className="btn btn-primary btn-md" type='submit' form='container'/>
-          <div id='add_new_task' onClick={() => addTask(task_number)}/>
+          <div id='add_a_new_task' onClick={() => addTask(task_number)}/>
         </header>
       </div>
   );

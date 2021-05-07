@@ -6,10 +6,15 @@ import '../components/App.css';
 import Menu from "./Menu";
 
 
+const time_of_day = [new Set(), new Set(), new Set()]
+const slots_per_day = 24*2
+
 const App = () => {
     const [tasks, setTasks] = useState([])
     const [tasksID, setTaskID] = useState([])
     const [toOptimize, setToOptimize] = useState(false)
+    const [categoryTable, setCategoryTable] = useState([])
+    const [table1, setTable] = useState([])
 
     useEffect(() => {
         // if(toOptimize)
@@ -124,6 +129,7 @@ const App = () => {
 
     let search_input = <input onKeyPress={findTask} id='input' type='text' placeholder='Search Task...'/>;
     let search = <div>{search_input}</div>
+    let day = ['Time', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
     const switch_weeks = (event) => {
         let checkBox = event.target
@@ -142,8 +148,74 @@ const App = () => {
         }
     }
 
-    const markCategories = (event) => {
-        alert('Not implemented')
+    const initialSchedule = () => {
+        let jsx = []
+        let hour;
+        let minute = 0;
+        let content = []
+        for (let j = 0; j < slots_per_day; j++) {
+            hour = Math.floor(j / 2);
+            minute = 30 * (j % 2);
+            if (hour < 10) hour = '0' + hour
+            if (minute === 0) minute = '00'
+            content.push(<td key={'time' + hour + ':' + minute}>{hour}:{minute}</td>);
+        }
+        jsx.push(<tr key={'tr' + 0}><th key={'th' + 0}>Time</th>{content}</tr>);
+        return jsx
+    }
+
+    const markCategories = (event, option) => {
+        let jsx = initialSchedule()
+        const slots_per_day = 24*2
+        let empty_jsx = []
+        for (let i = 1; i < 8; i++) {
+            let empty_content = []
+            for (let j = 0; j < slots_per_day; j++) {
+                empty_content.push(<td key={'cell_' + (slots_per_day * (i - 1) + j) + '_empty'}
+                                       id={'cell_' + (slots_per_day * (i - 1) + j) + '_empty'}
+                                       draggable='true' onDragStart={dragStart} onDragOver={(e) => allowDropCategory(e,option)}
+                />);
+            }
+            jsx.push(<tr key={'tr' + i + '_empty'}>
+                <th key={'th' + i + '_empty'}>{day[i]}</th>
+                {empty_content}</tr>)
+        }
+        let empty_table = [<table key='category_table' id='category_table'><tbody>{jsx}</tbody></table>]
+        setTable(empty_table)
+        let cell = document.getElementById('cell_0_empty')
+        console.log(cell)
+
+    }
+
+    const dragStart = (event) => {
+        event.dataTransfer.setData('text/plain', event.target.id);
+    }
+
+    const allowDropCategory = (event, index) => {
+        event.preventDefault();
+        switch (index){
+            case 0:
+                event.target.style.backgroundColor = 'yellow'
+                event.target.textContent= 'Type A'
+                break;
+            case 1:
+                event.target.style.backgroundColor = 'orange'
+                event.target.textContent= 'Type B'
+                break;
+            case 2:
+                event.target.style.backgroundColor = 'green'
+                event.target.textContent= 'Type C'
+                break;
+            default:
+                break;
+        }
+        time_of_day[index].add(event.target.id.split('_')[1])
+        console.log('time of day: ', time_of_day)
+    }
+
+
+    const foo = () => {
+        alert('yes')
     }
 
     return (
@@ -151,7 +223,9 @@ const App = () => {
             {/*<button onClick={closeTaskPane}>click</button>*/}
             <div id='site_top' className='row'>
                 <div className='col-4'>{search}</div>
-                <button onClick={markCategories} className='col-2' style={{marginTop: '25px'}}>Choose category</button>
+                <button onClick={(e)=>markCategories(e,0)} className='col-2' style={{marginTop: '25px'}}>Type A</button>
+                <button onClick={(e)=>markCategories(e,1)} className='col-2' style={{marginTop: '25px'}}>Type B</button>
+                <button onClick={(e)=>markCategories(e,2)} className='col-2' style={{marginTop: '25px'}}>Type C</button>
             </div>
             <div className='row'>
                 <div id='todo_parent' className='col-4'>
@@ -170,7 +244,7 @@ const App = () => {
 
                 <div id='schedule_parent' className='col-8'>
                     <div id='schedule_component'>
-                        <Schedule setToOptimize={setToOptimize} toOptimize={toOptimize} tasksID={tasksID} getTasksID={taskIDGetter} trigTasksID={taskIDTrig} updating_tasks={tasks} getTasks={taskGetter} setTasks={taskSetter}/>
+                        <Schedule initialSchedule={initialSchedule} table1={table1} setTable={setTable} getCategoryTable={categoryTable} setCategoryTable={setCategoryTable} setToOptimize={setToOptimize} toOptimize={toOptimize} tasksID={tasksID} getTasksID={taskIDGetter} trigTasksID={taskIDTrig} updating_tasks={tasks} getTasks={taskGetter} setTasks={taskSetter}/>
                     </div>
                 </div>
             </div>

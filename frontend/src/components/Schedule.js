@@ -9,7 +9,6 @@ const Table = (props) => {
     const [tasks, setTasks] = useState([])
     const [tasksID, setTasksID] = useState([])
     const [tasksDict, setTasksDict] = useState([])
-    const [table1, setTable] = useState([])
     const [boo, setBoo] = useState(false)
     const prevs = useRef({tasksID, tasksDict, tasks})
 
@@ -36,8 +35,8 @@ const Table = (props) => {
 
 
     useEffect(() => {
-        initialSchedule()
-        let time_jsx = [...jsx]
+        let empty_jsx = []
+        let time_jsx = props.initialSchedule()
         jsx = []
         if (prevs.current.tasksID.toString() !== tasksID.toString() && prevs.current.tasks.toString() !== tasks.toString()) {
             for (let i = 0; i < slots_per_day * 7; i++) {
@@ -46,37 +45,32 @@ const Table = (props) => {
             }
             for (let i = 1; i < 8; i++) {
                 let content = [];
+                let empty_content = []
                 for (let j = 0; j < slots_per_day; j++) {
-                    let a = tasks_id[j + (i - 1) * slots_per_day]
+                    let data = tasks_id[j + (i - 1) * slots_per_day]
                     content.push(<td key={'cell_' + (slots_per_day * (i - 1) + j)}
                                      id={'cell_' + (slots_per_day * (i - 1) + j) + '_taskID_' + tasksID[j + (i - 1) * slots_per_day]}
                                      draggable='true' onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop}
-                                     onDragLeave={leaveDropArea}>{a}</td>);
+                                     onDragLeave={leaveDropArea}>{data}</td>);
+                    // empty_content.push(<td key={'cell_' + (slots_per_day * (i - 1) + j)+'_empty'}
+                    //                  id={'cell_' + (slots_per_day * (i - 1) + j)+'_empty'}
+                    //                  draggable='true' onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop2}
+                    //                  />);
                 }
-                console.log('saba, ', jsx)
                 jsx.push(<tr key={'tr' + i}><th key={'th' + i}>{day[i]}</th>{content}</tr>);
+                // empty_jsx.push(<tr key={'tr' + i+'_empty'}><th key={'th' + i+'_empty'}>{day[i]}</th>{empty_content}</tr>)
             }
-            let x = [<table><tbody>{time_jsx}{jsx}</tbody></table>]
-            setTable(x)
+            let table = [<table key='table_schedule'><tbody key='tbody_schedule'>{time_jsx}{jsx}</tbody></table>]
+            // let empty_table = [<table id='category_table'><tbody>{time_jsx}{empty_jsx}</tbody></table>]
+            props.setTable(table)
+            // props.setCategoryTable(empty_table)
         }
     }, [tasks, tasksID])
-
-    const initialSchedule = () => {
-        let hour;
-        let minute = 0;
-        for (let j = 0; j < slots_per_day; j++) {
-            hour = Math.floor(j / 2);
-            minute = 30 * (j % 2);
-            if (hour < 10) hour = '0' + hour
-            if (minute === 0) minute = '00'
-            content.push(<td key={'time' + hour + ':' + minute}>{hour}:{minute}</td>);
-        }
-        jsx.push(<tr key={'tr' + 0}><th key={'th' + 0}>Time</th>{content}</tr>);
-    }
 
     let content = [];
     let jsx = [];
     let day = ['Time', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    let morning = new Set()
     let tasks_id = Array(slots_per_day * 7).fill(null);
 
     const findTask = (event) => {
@@ -94,6 +88,15 @@ const Table = (props) => {
         event.preventDefault();
         event.target.style.boxShadow = 'rgba(0, 0, 0, 0.46) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px';
         event.target.style.transition = 'box-shadow .2s linear';
+    }
+
+    const allowDrop2 = (event) => {
+        event.preventDefault();
+        console.log(event.target.id)
+        morning.add(event.target.id.split('_')[1])
+        event.target.style.backgroundColor = 'yellow'
+        event.target.textContent= 'Morning'
+        console.log('morning: ', morning)
     }
 
     const leaveDropArea = (event) => {
@@ -149,7 +152,7 @@ const Table = (props) => {
                 console.error("Error while submitting task: " + error.message);
             });
     }
-    return (<div id='test'>{table1}</div>);
+    return (<div id='test'>{props.table1}</div>);
 }
 
 export default Table;
