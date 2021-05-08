@@ -32,18 +32,23 @@ export class TasksController {
   async trig(@Param('id') user_id: string): Promise<any[]> {
     const tdl = await this.tasksService.GetToDoList(user_id);
     //const categorySlots = await  this. tasksService.getCategorySlots(user_id);
-    const categorySlots = [1,1,1,1];
-    const res = await this.schedulerService.tryCalc(tdl,categorySlots);
+    const categorySlots = [1,1,1,1,1,1,1];
+    const result = await this.schedulerService.tryCalc(tdl,categorySlots);
 
-    console.log(res);
-
-
-    console.log(await this.deleteSchedule(user_id));
+    console.log(result);
+    var res;
 
     //change slots to scheduledTask
     //post slots to DB
-    const success = await this.postSchedule(res,user_id);
-    console.log(success);
+    if (result != null) {
+      console.log(await this.deleteSchedule(user_id));
+      const success = await this.postSchedule(result,user_id);
+      console.log(success);
+      res = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, ... result];
+    }
+    else {
+      res = null;
+    }
     return res;
   }
 

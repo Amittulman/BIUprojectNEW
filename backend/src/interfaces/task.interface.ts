@@ -5,5 +5,5 @@ export interface Task {
   duration: number;
   priority: number;
   category_id: number;
-  constraints: string;
+  constraints: any;
 }

@@ -12,12 +12,13 @@ export class SchedulerService {
     async tryCalc(ToDoList, categorySlots) {
         //create tasks for testing
         //var temptaskss = await this.createTempTasks();
-        var slots = this.createSlotsWithCategory(categorySlots);
+        var slots = await this.createSlotsWithCategory(categorySlots);
 
+        var mockTasks = await this.createTempTasks();
         //tasks from frontend
-        const tasksArray1 = ToDoList.tasks;
+        const tasksFromUser = ToDoList.tasks;
 
-        const prioritiesTasks =  await this.sortPriorities(tasksArray1);
+        const prioritiesTasks =  await this.sortPriorities(mockTasks);
         const resultCalc = await this.calcBackTracking(prioritiesTasks, slots);
         const resultsOnlySlots = await this.createSlotsFromResult(resultCalc);
         //console.log(resultCalc);
@@ -54,7 +55,7 @@ export class SchedulerService {
         for(let currPriorityTasks of tasks) {
             if (await this.solveScedule(currPriorityTasks, slots) == false) {
                 console.log("Full Solution does not exist");
-                return false;
+                return null;
             }
         }
 
@@ -95,7 +96,7 @@ export class SchedulerService {
         var spots = []; // the result - all the options
         let currSlot = [];
         while (end < slots.length){
-            if ((slots[end][0] === -1) && (task.category_id === slots[end][1])) { // this slot is empty
+            if (await this.canScedualeHere(task, end, slots)) { // this slot is empty
                 currSlot.push(end); // we can use this slot
                 if (currSlot.length === numOfSlots) { // check if the current slot is valid to be an answer
                     const CopyForPushCurrSlot  = Object.assign([], currSlot);
@@ -112,8 +113,17 @@ export class SchedulerService {
         return spots;
     }
 
-    async canScedualeHere(task:Array<Task> , index: number, slots: any) {
-        return slots[index] == -1;
+    async canScedualeHere(task:Task , index: number, slots: any) {
+        var isEmpty = (slots[index][0] === -1);
+        var isRightCategory = (task.category_id === slots[index][1]);
+        var constraint = await this.slotToConstraint(index);
+        var day = constraint[0];
+        var hour = constraint[1];
+        if (hour == 3) {
+            hour = 2;
+        }
+        var isOkbyConstaint = (task.constraints[day][hour] == 1);
+        return (isEmpty && isRightCategory && isOkbyConstaint);
     }
 
     private async locateTask(spots: any, taskID: any, slots: any) {
@@ -174,6 +184,9 @@ export class SchedulerService {
     }
 
     private async createSlotsFromResult(resultCalc: any) {
+        if (resultCalc === null) {
+            return null;
+        }
         var slots = Array(SLOTS_SIZE);
         for (let i = 0; i < resultCalc.length; i++) {
             slots[i] = resultCalc[i][0];
@@ -185,16 +198,16 @@ export class SchedulerService {
         const temp_task1: Task = {
             task_id: 1,
             user_id: 11, task_title: 'first task',
-            duration: 60,
+            duration: 90,
             priority: 1, category_id: 1,
-            constraints: 'nothing'
+            constraints: [[1,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
         }
         const temp_task2: Task = {
             task_id: 2,
             user_id: 11, task_title: 'second task',
             duration: 90,
             priority: 2, category_id: 1,
-            constraints: 'nothing'
+            constraints: [[0,1,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
         }
         const temp_task3: Task = {
             task_id: 3,
@@ -217,6 +230,16 @@ export class SchedulerService {
             priority: 0, category_id: 1,
             constraints: 'nothing'
         }
-        return new Array<Task>(temp_task1, temp_task2, temp_task3, temp_task4, temp_task5);
+        return new Array<Task>(temp_task1, temp_task2);
+    }
+
+    private async slotToConstraint(slot: any) {
+        var day = Math.floor(slot/48);
+        var toMinus = day*48;
+        var temp = slot-toMinus;
+        var partOfTheDay = Math.floor(temp/12);
+
+        return [day, partOfTheDay];
+
     }
 }
