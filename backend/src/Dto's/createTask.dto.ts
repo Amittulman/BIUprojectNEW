@@ -19,7 +19,5 @@ export class CreateTaskDto {
     @IsNumber()
     @IsNotEmpty()
     category_id: number;
-    @IsString()
-    @IsNotEmpty()
-    constraints: string;
+    constraints: number[][];
 }

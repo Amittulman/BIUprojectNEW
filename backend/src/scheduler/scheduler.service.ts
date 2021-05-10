@@ -12,9 +12,9 @@ export class SchedulerService {
     async tryCalc(ToDoList, categorySlots) {
         //create tasks for testing
         //var temptaskss = await this.createTempTasks();
-        var slots = await this.createSlotsWithCategory(categorySlots);
+        const slots = await this.createSlotsWithCategory(categorySlots);
 
-        var mockTasks = await this.createTempTasks();
+        const mockTasks = await this.createTempTasks();
         //tasks from frontend
         const tasksFromUser = ToDoList.tasks;
 
@@ -26,13 +26,13 @@ export class SchedulerService {
     }
 
     async sortPriorities(user_tasks: Array<Task>): Promise<Array<Task>[]> {
-        var pin_tasks = new  Array<Task>();
-        var highPriority_tasks = new  Array<Task>();
-        var midPriority_tasks = new  Array<Task>();
-        var lowPriority_tasks = new  Array<Task>();
-        var allTasks = new  Array<Task>();
+        const pin_tasks = new  Array<Task>();
+        const highPriority_tasks = new  Array<Task>();
+        const midPriority_tasks = new  Array<Task>();
+        const lowPriority_tasks = new  Array<Task>();
+        const allTasks = new  Array<Task>();
 
-        for (let task of user_tasks) {
+        for (const task of user_tasks) {
             if(task.priority == 0) {
                 pin_tasks.push(task);
             }
@@ -52,7 +52,7 @@ export class SchedulerService {
     async calcBackTracking(tasks: Array<Array<Task>>, slots: any): Promise<any> {
         //var slots = Array(999).fill(0); //2 weeks (14X24X2) - slots of 30 min
 
-        for(let currPriorityTasks of tasks) {
+        for(const currPriorityTasks of tasks) {
             if (await this.solveScedule(currPriorityTasks, slots) == false) {
                 console.log("Full Solution does not exist");
                 return null;
@@ -67,14 +67,14 @@ export class SchedulerService {
         if (tasks.length == 0) { // success
             return true;
         }
-        for (var taskIndex = 0; taskIndex < tasks.length; taskIndex++) {
+        for (let taskIndex = 0; taskIndex < tasks.length; taskIndex++) {
             const tempTask = tasks[taskIndex];
             const spotsForThisTask = await this.findSpotsForThisTask(tempTask, slots);
-            var isfull = await this.slotsIsFull(slots);
+            const isfull = await this.slotsIsFull(slots);
             if(isfull) {
                 return false;
             }
-            for (var spotIndex = 0; spotIndex < spotsForThisTask.length; spotIndex++) {
+            for (let spotIndex = 0; spotIndex < spotsForThisTask.length; spotIndex++) {
                 slots = await this.locateTask(spotsForThisTask[spotIndex], tempTask.task_id, slots);
                 //this.logForDebug(tempTask, tasks, slots, spotsForThisTask,spotIndex);
                 tasks = await this.removeTask(tasks, taskIndex);
@@ -93,7 +93,7 @@ export class SchedulerService {
         const numOfSlots = Math.ceil(task.duration/30); // calc how many slots the task needs
         let start = 0; // pointer to the end of the sliding window
         let end = 0; // pointer to the start of the sliding window
-        var spots = []; // the result - all the options
+        const spots = []; // the result - all the options
         let currSlot = [];
         while (end < slots.length){
             if (await this.canScedualeHere(task, end, slots)) { // this slot is empty
@@ -114,27 +114,27 @@ export class SchedulerService {
     }
 
     async canScedualeHere(task:Task , index: number, slots: any) {
-        var isEmpty = (slots[index][0] === -1);
-        var isRightCategory = (task.category_id === slots[index][1]);
-        var constraint = await this.slotToConstraint(index);
-        var day = constraint[0];
-        var hour = constraint[1];
+        const isEmpty = (slots[index][0] === -1);
+        const isRightCategory = (task.category_id === slots[index][1]);
+        const constraint = await this.slotToConstraint(index);
+        const day = constraint[0];
+        let hour = constraint[1];
         if (hour == 3) {
             hour = 2;
         }
-        var isOkbyConstaint = (task.constraints[day][hour] == 1);
+        const isOkbyConstaint = (task.constraints[day][hour] == 1);
         return (isEmpty && isRightCategory && isOkbyConstaint);
     }
 
     private async locateTask(spots: any, taskID: any, slots: any) {
-        for (var slotNum of spots) {
+        for (const slotNum of spots) {
             slots[slotNum][0] = taskID;
         }
         return slots;
     }
 
     private async removeFromThisSpot(slotsToReset: any, slots: any) {
-        for (var slotNum of slotsToReset) {
+        for (const slotNum of slotsToReset) {
             slots[slotNum] = 0;
         }
         return slots;
@@ -149,7 +149,7 @@ export class SchedulerService {
     }
 
     private async slotsIsFull(slots: any) {
-        for(var slotIndex = 0; slotIndex < slots.length; slotIndex++) {
+        for(let slotIndex = 0; slotIndex < slots.length; slotIndex++) {
             if(slots[slotIndex][0] == -1) {
                 return false;
             }
@@ -172,8 +172,8 @@ export class SchedulerService {
     }
 
     private createSlotsWithCategory(categorySlots: Array<number>) {
-        var slotsAndCatagory = Array(SLOTS_SIZE);
-        for(var i = 0;i<slotsAndCatagory.length;i++) {
+        const slotsAndCatagory = Array(SLOTS_SIZE);
+        for(let i = 0;i<slotsAndCatagory.length;i++) {
             slotsAndCatagory[i] = [-1, 1]
         }
 
@@ -187,7 +187,7 @@ export class SchedulerService {
         if (resultCalc === null) {
             return null;
         }
-        var slots = Array(SLOTS_SIZE);
+        const slots = Array(SLOTS_SIZE);
         for (let i = 0; i < resultCalc.length; i++) {
             slots[i] = resultCalc[i][0];
         }
@@ -214,30 +214,30 @@ export class SchedulerService {
             user_id: 11, task_title: 'third task',
             duration: 120,
             priority: 1, category_id: 1,
-            constraints: 'nothing'
+            constraints: null
         }
         const temp_task4: Task = {
             task_id: 4,
             user_id: 11, task_title: 'third task',
             duration: 320,
             priority: 0, category_id: 1,
-            constraints: 'nothing'
+            constraints: null
         }
         const temp_task5: Task = {
             task_id: 5,
             user_id: 11, task_title: 'third task',
             duration: 4990,
             priority: 0, category_id: 1,
-            constraints: 'nothing'
+            constraints: null
         }
         return new Array<Task>(temp_task1, temp_task2);
     }
 
     private async slotToConstraint(slot: any) {
-        var day = Math.floor(slot/48);
-        var toMinus = day*48;
-        var temp = slot-toMinus;
-        var partOfTheDay = Math.floor(temp/12);
+        const day = Math.floor(slot/48);
+        const toMinus = day*48;
+        const temp = slot-toMinus;
+        const partOfTheDay = Math.floor(temp/12);
 
         return [day, partOfTheDay];
 

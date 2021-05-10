@@ -49,13 +49,45 @@ export class TasksDal {
     const res = await this.db.from(TASK_TABLE).select('*').where('user_id',parseInt(user_id));
     // console.log(JSON.stringify(res))
     res.forEach(function(value) {
+      //Constraints data is saved as a string of 21 chars, where each 3 chars (morning,noon,evening)
+      // represent user's preference to assign task to the corresponding time of day.
+      if (value.constraints.length != 21){
+        value.constraints = null;
+      } else {
+        const all_constraints = [];
+        for (let i = 0; i<21; i++){
+          const day_constraint = []
+          day_constraint.push(parseInt(value.constraints[i]));
+          i++;          
+          day_constraint.push(parseInt(value.constraints[i]));
+          i++;          
+          day_constraint.push(parseInt(value.constraints[i]));
+          all_constraints.push(day_constraint);
+        }
+        value.constraints = all_constraints;
+      }
       dataArr.push(value)
     });
     return  { tasks: dataArr };
   }
-  async postTasks(tasks: Array<CreateTaskDto>): Promise<string> {
+
+  async postTasks(tasks: any): Promise<string> {
     console.log(tasks);
     let suc = 'Success';
+    for (const task in tasks){
+      let str_constraints = "";
+
+
+      const constraints = tasks[task].constraints
+      for (const day in constraints){
+        for (const day_part in constraints[day]){
+          str_constraints+=constraints[day][day_part];
+        }
+
+
+      }
+      tasks[task].constraints = str_constraints;
+    }
     try{
 
       const res = await  this.db(TASK_TABLE).insert(tasks);
