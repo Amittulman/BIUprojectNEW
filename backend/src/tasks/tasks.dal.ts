@@ -74,20 +74,20 @@ export class TasksDal {
   async postTasks(tasks: any): Promise<string> {
     console.log(tasks);
     let suc = 'Success';
-    for (const task in tasks){
-      let str_constraints = "";
-
-
-      const constraints = tasks[task].constraints
-      for (const day in constraints){
-        for (const day_part in constraints[day]){
-          str_constraints+=constraints[day][day_part];
-        }
-
-
-      }
-      tasks[task].constraints = str_constraints;
-    }
+    // for (const task in tasks){
+    //   let str_constraints = "";
+    //
+    //
+    //   const constraints = tasks[task].constraints
+    //   for (const day in constraints){
+    //     for (const day_part in constraints[day]){
+    //       str_constraints+=constraints[day][day_part];
+    //     }
+    //
+    //
+    //   }
+    //   tasks[task].constraints = str_constraints;
+    // }
     try{
 
       const res = await  this.db(TASK_TABLE).insert(tasks);
