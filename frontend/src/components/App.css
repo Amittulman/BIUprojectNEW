@@ -30,14 +30,6 @@
     transition: background-color 0.2s ease-out;
 }
 
-/*.col-8 {*/
-/*    animation: slide-aside_a_reverse 0.4s ease;*/
-/*}*/
-
-/*.gone {*/
-/*    animation: opac 1.4s ease;*/
-/*}*/
-
 .col-4 {
     animation: appear 0.7s ease-out;
 }
@@ -51,9 +43,7 @@
 
 .category_button_clicked {
     margin-top: 25px;
-    /*background: url("../images/close.svg") no-repeat 50% 50%;*/
     background: url("../images/close.svg") 50% 50% no-repeat;
-    /*border: 1px solid black;*/
     border-radius: 50%;
     height: 30px;
     width: 30px;
@@ -162,6 +152,12 @@
     margin-top: 25px;
 }
 
+.empty_slot {
+    background-color: transparent;
+    transition: background-color 0.2s ease;
+
+}
+
 .type_a {
     background-color: #D6FFB7;
     content: 'type a';
@@ -170,8 +166,8 @@
 }
 
 .type_a:before {
-    content:'TYPE A';
-    transition: opacity 0.2s ease;
+    /*content:'TYPE A';*/
+    /*transition: opacity 0.2s ease;*/
 }
 
 #type_a_button {
@@ -248,7 +244,6 @@
 }
 
 .type_b:before {
-    content:'TYPE B';
 }
 
 #type_b_button {
@@ -290,7 +285,6 @@
 }
 
 .type_c:before {
-    content:'TYPE C';
 }
 
 #type_c_button {
@@ -436,7 +430,6 @@
 }
 
 
-/* The switch - the box around the slider */
 .switch {
 
     position: relative;
@@ -446,14 +439,12 @@
     margin-top: 10px;
 }
 
-/* Hide default HTML checkbox */
 .switch input {
     opacity: 0;
     width: 0;
     height: 0;
 }
 
-/* The slider */
 .slider {
     position: absolute;
     cursor: pointer;
@@ -492,7 +483,6 @@ input:checked + .slider:before {
     transform: translateX(40px);
 }
 
-/* Rounded sliders */
 .slider.round {
     border-radius: 34px;
 }

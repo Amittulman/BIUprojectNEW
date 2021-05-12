@@ -14,7 +14,7 @@ const Categories = (props) => {
     }, []);
 
     useEffect(() => {
-        if(!props.scheduleJsx) return
+        if(!props.scheduleJsx.length) return
         markCategories()
     }, [props.timeOfDay,props.scheduleTrigger])
 
@@ -33,7 +33,7 @@ const Categories = (props) => {
     }
 
     const markCategories = () => {
-        if (!props.scheduleJsx) return
+        if (!props.scheduleJsx.length) return
         const slots_per_day = 24*2
         for (let i = 1; i < 8; i++) {
             let empty_content = []
@@ -79,21 +79,20 @@ const Categories = (props) => {
     }
 
     useEffect(() => {
-        console.log('jsx: ', props.scheduleJsx)
         props.setCategoryTable( [<table key='category_table' id='category_table'><tbody>{props.scheduleJsx}</tbody></table>])
 
     }, [props.scheduleJsx])
 
     const getCategories = () => {
         // TODO - get categories from server
-        let user_id = 1
+        let user_id = 2
         fetchCategories('GetUserCategorySlots', user_id)
         // TODO - after that, call markCategories and add classname to relevant slots, based on slot value received.
         props.setTable(props.categoryTable)
     }
 
 
-    const fetchCategories = (type, user_id=1) => {
+    const fetchCategories = (type, user_id=2) => {
         fetch("http://localhost:5000/tasks/"+type+"/"+user_id)
             .then(res => res.json())
             .then(

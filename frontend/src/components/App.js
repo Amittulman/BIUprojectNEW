@@ -11,8 +11,10 @@ const App = () => {
     const [tasks, setTasks] = useState([])
     const [tasksID, setTaskID] = useState([])
     const [toOptimize, setToOptimize] = useState(false)
+    const [categoryTrigger, setCategoryTrigger] = useState(false)
     const [categoryTable, setCategoryTable] = useState([])
     const [option, setOption] = useState(0)
+    const [test, setTest] = useState(true);
     const optionRef = useRef();
     optionRef.current = option;
     const [scheduleTrigger, setScheduleTrigger] = useState(false)
@@ -22,7 +24,7 @@ const App = () => {
     const timeRef = useRef();
     timeRef.current = timeOfDay;
     const [scheduleJsx, setScheduleJsx] = useState([])
-    const user_id = 1
+    const user_id = 2
 
     //TODO - check if possible to pass setTask to child component instead.
     const taskSetter = (received_tasks) => {
@@ -45,8 +47,15 @@ const App = () => {
         return tasksID
     }
 
-    useEffect(() => {
-    },[timeOfDay])
+    // useEffect(() => {
+    //     let i, j;
+    //     let cls = []
+    //     for (i=1 ; i<8;i++) {
+    //         for (j = 1; j < slots_per_day + 1; j++) {
+    //             cls.push(timeOfDay[slots_per_day * (i - 1) + (j - 1)])
+    //         }
+    //     }
+    // },[timeOfDay])
 
     const fetchTasks = (type, user_id) => {
         fetch("http://localhost:5000/tasks/"+type+"/"+user_id)
@@ -85,7 +94,7 @@ const App = () => {
     }
 
     const removeCategories = () => {
-        let user_id = 1
+        let user_id = 2
         fetch('http://localhost:5000/tasks/DeleteUserCategories/'+user_id, {
             method: 'DELETE',
             headers: {
@@ -110,7 +119,7 @@ const App = () => {
     }
 
     //TODO - check how to send the data without receiving an error.
-    const postCategories = (event, user_id = 1) => {
+    const postCategories = (event, user_id = 2) => {
         fetch('http://localhost:5000/tasks/PostCategories/'+user_id, {
             method: 'POST',
             headers: {
@@ -170,13 +179,153 @@ const App = () => {
             }
         }
         if (display_type === 'block') {
-            sched.style.display = 'none'
-            cat.style.display = 'block'
+            setTest(false)
+            paintSlots(sched)
         }
         else {
-            sched.style.display = 'block'
-            cat.style.display = 'none'
+            setTest(true)
+            unpaintSlots(sched)
+            // TODO - prevent dragging scheduled tasks when marking categories.
         }
+    }
+
+    const getClass = (number) => {
+        switch(number) {
+            case 0:
+                return 'type_a'
+            case 1:
+                return 'type_b'
+            case 2:
+                return 'type_c'
+            default:
+                return 'empty_slot'
+        }
+    }
+
+    const paintSlots = (sched) => {
+        let i, j;
+        for (i=1 ; i<8;i++) {
+            for (j=1 ; j < slots_per_day+1 ; j++) {
+                let class_name = getClass(timeOfDay[slots_per_day * (i - 1) + (j-1)])
+                let node = sched.childNodes.item(0).childNodes.item(0).childNodes.item(0).childNodes.item(i).childNodes.item(j)
+                node.className = class_name//class_name
+                node.ondragstart = dragStartCat
+                node.ondragover = allowDropCat
+                node.onclick = allowDropCat
+                node.ondrop = null
+                node.ondragleave = null
+                node.draggable = true
+            }
+        }
+    }
+
+    const unpaintSlots = (sched) => {
+        let i, j;
+        console.log(sched.length)
+        for (i=1 ; i<8;i++) {
+            for (j=1 ; j < slots_per_day+1 ; j++) {
+                let node = sched.childNodes.item(0).childNodes.item(0).childNodes.item(0).childNodes.item(i).childNodes.item(j)
+                node.className = 'empty_slot';
+                node.ondragstart = dragStartSched
+                node.ondragover = allowDropSched
+                node.onclick = null
+                node.ondrop = dropSched
+                node.ondragleave = leaveDropAreaSched
+                node.draggable = true
+            }
+        }
+    }
+
+
+    const dragStartCat = (event) => {
+        event.dataTransfer.setData('text/plain', event.target.id);
+    }
+
+    const allowDropCat = (event) => {
+        let ref = optionRef.current
+        event.preventDefault();
+        switch (optionRef.current){
+            case 0:
+                event.target.className = 'type_a'
+                break;
+            case 1:
+                event.target.className = 'type_b'
+                break;
+            case 2:
+                event.target.className = 'type_c'
+                break;
+            default:
+                event.target.className = 'empty_slot'
+                break;
+        }
+        let event_slot = event.target.id.split('_')[1]
+        timeOfDay[event_slot] = ref
+        setTimeOfDay(timeOfDay)
+    }
+
+    const dragStartSched = (event) => {
+        event.dataTransfer.setData('text/plain', event.target.id);
+    }
+
+    const allowDropSched = (event) => {
+        event.preventDefault();
+        event.target.style.boxShadow = 'rgba(0, 0, 0, 0.46) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px';
+        event.target.style.transition = 'box-shadow .2s linear';
+    }
+
+
+    const leaveDropAreaSched = (event) => {
+        event.preventDefault();
+        event.target.style.boxShadow = 'none';
+        event.target.style.transition = 'box-shadow .2s linear';
+    }
+
+    const dropSched = (event) => {
+        event.preventDefault();
+        let id = event.dataTransfer.getData('text/plain');
+        let dragged_element = document.getElementById(id);
+        event.target.style.boxShadow = 'none';
+        event.target.style.transition = 'box-shadow .2s linear';
+        // TODO: remove second condition, so it will be possible to drag into an occupied slot.
+        if (dragged_element.textContent && !event.target.textContent && event.target !== dragged_element) {
+            event.target.textContent = dragged_element.textContent;
+            dragged_element.textContent = '';
+            let src_data = id.split('_')
+            let dest_slot = event.target.id.split('_')[1]
+            let src_slot = src_data[1]
+            let tasks_id = tasksID
+            let src_task_id = tasks_id[src_slot]
+            tasks_id[dest_slot] = parseInt(src_task_id)
+            tasks_id[src_slot] = -1
+            setTaskID(tasks_id)
+            updateTaskLocation(src_slot, dest_slot, src_task_id, 2)
+        }
+        event.dataTransfer.clearData();
+    }
+
+    const updateTaskLocation = (src_slot, dest_slot, task_id, user_id) => {
+        let data_to_send = {'slot_id': parseInt(src_slot), 'task_id': parseInt(task_id), 'user_id': user_id}
+        fetch('http://localhost:5000/tasks/UpdateSchedule/' + dest_slot, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data_to_send)
+        })
+            .then((response) => {
+                if (response.status === 201) {
+                    console.log("User's tasks hes been sent successfully.");
+                    console.log(response.text())
+                } else {
+                    console.log("User's tasks hes been sent. HTTP request status code: " + response.status);
+                    console.log(response.text())
+                }
+                console.log('respones: ', response)
+            })
+            .catch((error) => {
+                console.error("Error while submitting task: " + error.message);
+            });
     }
 
     const findTask = (event) => {
@@ -194,7 +343,6 @@ const App = () => {
         if (todo_element.className === 'col-4') {
             todo_element.classList.remove('col-4')
             todo_element.classList.add('gone')
-            // todo_element.classList.add('disappear')
             schedule_element.classList.remove('col-8')
             schedule_element.classList.add('col-12_2')
             schedule_element.classList.add('col-12')
@@ -203,7 +351,6 @@ const App = () => {
             show_hide_todo.classList.add('show_hide_todo_reverse')
         } else {
             todo_element.classList.remove('gone')
-            // todo_element.classList.remove('disappear')
             todo_element.classList.add('col-4')
             schedule_element.classList.remove('col-12_2')
             schedule_element.classList.remove('col-12')
@@ -250,7 +397,6 @@ const App = () => {
         return jsx
     }
 
-
     return (
         <div className="App">
             <div id='site_top' className='row'>
@@ -261,7 +407,7 @@ const App = () => {
                 <div data-toggle="tooltip" title="Type C" id='type_c_button' onClick={()=>setOption(2)} className='category_option'/>
                 <div data-toggle="tooltip" title="Clear" id='clear_category_button' onClick={()=>setOption(-1)} className='category_option'/>
                 {/*TODO:show indicator of sending category.*/}
-                <div data-toggle="tooltip" title="Send" id='category_send_button' onClick={()=>{handleCategoriesSubmission(); showCategories();}} className='category_option'/>
+                <div data-toggle="tooltip" title="Send" id='category_send_button' onClick={()=>{handleCategoriesSubmission(); showCategories(); setCategoryTrigger(!categoryTrigger)}} className='category_option'/>
             </div>
             <div className='row'>
                 <div id='show_hide_todo' className='show_hide_todo' onClick={closeTaskPane}/>
@@ -282,11 +428,11 @@ const App = () => {
                 </div>
                 <div id='schedule_parent' className='col-8 col-8_start'>
                     <div id='schedule_component'>
-                        <Schedule setScheduleTable={setScheduleTable} setScheduleJsx={setScheduleJsx} scheduleJsx={scheduleJsx} initialSchedule={initialSchedule} table1={table1} setTable={setTable} getCategoryTable={categoryTable} setCategoryTable={setCategoryTable} setToOptimize={setToOptimize} toOptimize={toOptimize} tasksID={tasksID} getTasksID={taskIDGetter} trigTasksID={taskIDTrig} updating_tasks={tasks} getTasks={taskGetter} setTasks={taskSetter}/>
+                        <Schedule test123={test} setTimeOfDay={setTimeOfDay} timeOfDay={timeOfDay} setScheduleTable={setScheduleTable} setScheduleJsx={setScheduleJsx} scheduleJsx={scheduleJsx} initialSchedule={initialSchedule} table1={table1} setTable={setTable} getCategoryTable={categoryTable} setCategoryTable={setCategoryTable} setToOptimize={setToOptimize} toOptimize={toOptimize} tasksID={tasksID} getTasksID={taskIDGetter} trigTasksID={taskIDTrig} updating_tasks={tasks} getTasks={taskGetter} setTasks={taskSetter}/>
                     </div>
-                    <div id='category_component'>
-                        <Categories scheduleTrigger={scheduleTrigger} table1={table1} categoryTable={categoryTable} setTable={setTable} optionRef={optionRef} setCategoryTable={setCategoryTable} setTimeOfDay={setTimeOfDay} timeOfDay={timeOfDay} initialScedule={initialSchedule} scheduleJsx={scheduleJsx} setScheduleJsx={setScheduleJsx} />
-                    </div>
+                    {/*<div id='category_component'>*/}
+                    {/*    <Categories categoryTrigger={categoryTrigger} scheduleTrigger={scheduleTrigger} table1={table1} categoryTable={categoryTable} setTable={setTable} optionRef={optionRef} setCategoryTable={setCategoryTable} setTimeOfDay={setTimeOfDay} timeOfDay={timeOfDay} initialScedule={initialSchedule} scheduleJsx={scheduleJsx} setScheduleJsx={setScheduleJsx} />*/}
+                    {/*</div>*/}
                 </div>
             </div>
         </div>
