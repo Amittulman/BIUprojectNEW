@@ -18,7 +18,7 @@ export class SchedulerService {
         //tasks from frontend
         const tasksFromUser = ToDoList.tasks;
 
-        const prioritiesTasks =  await this.sortPriorities(mockTasks);
+        const prioritiesTasks =  await this.sortPriorities(tasksFromUser);
         const resultCalc = await this.calcBackTracking(prioritiesTasks, slots);
         const resultsOnlySlots = await this.createSlotsFromResult(resultCalc);
         //console.log(resultCalc);
@@ -96,6 +96,9 @@ export class SchedulerService {
         const spots = []; // the result - all the options
         let currSlot = [];
         while (end < slots.length){
+            if (end===336){
+                console.log("+slots.length: "+slots.length);
+            }
             if (await this.canScedualeHere(task, end, slots)) { // this slot is empty
                 currSlot.push(end); // we can use this slot
                 if (currSlot.length === numOfSlots) { // check if the current slot is valid to be an answer
@@ -115,14 +118,28 @@ export class SchedulerService {
 
     async canScedualeHere(task:Task , index: number, slots: any) {
         const isEmpty = (slots[index][0] === -1);
+        if(slots[index] === undefined || slots[index][1] === undefined){
+            console.log('slots[index] ' + slots[index]);
+            console.log('slots[index][1] ' + slots[index][1]);
+        }
         const isRightCategory = (task.category_id === slots[index][1]);
+
         const constraint = await this.slotToConstraint(index);
         const day = constraint[0];
         let hour = constraint[1];
-        if (hour == 3) {
+        if (hour === 3) {
             hour = 2;
         }
-        const isOkbyConstaint = (task.constraints[day][hour] == 1);
+        // console.log("task:" + task);
+        if(task === undefined || task.constraints === undefined || task.constraints[day] === undefined || task.constraints[day][hour] === undefined ){
+            console.log('Hi!');
+            console.log('task ' + task);
+            console.log(' task.constraints ' +  task.constraints);
+            console.log('task.constraints[day] ' + day);
+            console.log('task.constraints[day][hour] ' + day + ', hour:'+hour);
+
+        }
+        const isOkbyConstaint = (task.constraints[day][hour] === 1);
         return (isEmpty && isRightCategory && isOkbyConstaint);
     }
 
@@ -235,10 +252,15 @@ export class SchedulerService {
     }
 
     private async slotToConstraint(slot: any) {
-        const day = Math.floor(slot/48);
+        let day = Math.floor(slot/48);
+        // const sheerit = day-Math.floor(day);
+        // if (sheerit<0.25 && Math.floor(day)>0){
+        //     day--;
+        // }
         const toMinus = day*48;
         const temp = slot-toMinus;
         const partOfTheDay = Math.floor(temp/12);
+
 
         return [day, partOfTheDay];
 

@@ -30,13 +30,13 @@ export class TasksController {
 
   @Get('trig/:id')
   async trig(@Param('id') user_id: string): Promise<any[]> {
-    const tdl = await this.tasksService.GetToDoList(user_id);
-    //const categorySlots = await  this. tasksService.getCategorySlots(user_id);
-    const categorySlots = [1,1,1,1,1,1,1];
+    const tdl = await this.getToDoList(user_id);
+    const categorySlots = await  this.getUserCategorySlots(user_id);
+    // const categorySlots = [1,1,1,1,1,1,1];
     const result = await this.schedulerService.tryCalc(tdl,categorySlots);
 
     console.log(result);
-    var res;
+    let res;
 
     //change slots to scheduledTask
     //post slots to DB
@@ -93,7 +93,7 @@ export class TasksController {
   @Get('GetSchedule/:id')
   async getSchedule(@Param('id') user_id: string): Promise<Array<number>> {
     const result = await this.tasksService.getSchedule(user_id);
-    const schedule_array = new Array<number>(337);
+    const schedule_array = new Array<number>(336);
     schedule_array.fill(-1)
     let i;
 
@@ -148,7 +148,7 @@ export class TasksController {
   async getUserCategorySlots(@Param('id') user_id: string): Promise<Array<number>> {
     const result = await this.tasksService.getUserCategorySlots(user_id);
     // console.log(result)
-    const category_slots_array = new Array<number>(337);
+    const category_slots_array = new Array<number>(336);
     category_slots_array.fill(-1)
 
     for (const slot in result){
