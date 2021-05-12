@@ -74,6 +74,12 @@ export class TasksDal {
   async postTasks(tasks: any): Promise<string> {
     console.log(tasks);
     let suc = 'Success';
+
+    for (const task in tasks){
+      if (tasks[task].constraints === "000000000000000000000"){
+        tasks[task].constraints = "111111111111111111111"
+      }
+    }
     // for (const task in tasks){
     //   let str_constraints = "";
     //

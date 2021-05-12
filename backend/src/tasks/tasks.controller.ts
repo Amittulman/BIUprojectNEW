@@ -35,7 +35,7 @@ export class TasksController {
     // const categorySlots = [1,1,1,1,1,1,1];
     const result = await this.schedulerService.tryCalc(tdl,categorySlots);
 
-    console.log(result);
+    //console.log(result);
     let res;
 
     //change slots to scheduledTask

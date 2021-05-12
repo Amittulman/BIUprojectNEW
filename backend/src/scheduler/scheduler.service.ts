@@ -96,10 +96,7 @@ export class SchedulerService {
         const spots = []; // the result - all the options
         let currSlot = [];
         while (end < slots.length){
-            if (end===336){
-                console.log("+slots.length: "+slots.length);
-            }
-            if (await this.canScedualeHere(task, end, slots)) { // this slot is empty
+            if (await this.canScheduleHere(task, end, slots)) { // this slot is empty
                 currSlot.push(end); // we can use this slot
                 if (currSlot.length === numOfSlots) { // check if the current slot is valid to be an answer
                     const CopyForPushCurrSlot  = Object.assign([], currSlot);
@@ -116,10 +113,10 @@ export class SchedulerService {
         return spots;
     }
 
-    async canScedualeHere(task:Task , index: number, slots: any) {
+    async canScheduleHere(task:Task , index: number, slots: any) {
         const isEmpty = (slots[index][0] === -1);
         if(slots[index] === undefined || slots[index][1] === undefined){
-            console.log('slots[index] ' + slots[index]);
+            console.log('slots[index] ' + slots[index]+", index:"+ index);
             console.log('slots[index][1] ' + slots[index][1]);
         }
         const isRightCategory = (task.category_id === slots[index][1]);
@@ -196,6 +193,7 @@ export class SchedulerService {
 
         for (let i = 0; i < categorySlots.length; i++) {
             slotsAndCatagory[i] = [-1, categorySlots[i]];
+            console.log("categorySlots[i]: " + categorySlots[i])
         }
         return slotsAndCatagory;
     }
