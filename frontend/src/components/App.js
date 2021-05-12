@@ -1,12 +1,10 @@
 import Todo from "./Todo";
 import Schedule from "./Schedule";
-import {Route, Switch} from "react-router";
-import React, {useState, useEffect} from 'react';
+import Categories from "./Categories";
+import React, {useState, useEffect, useRef} from 'react';
 import '../components/App.css';
-import Menu from "./Menu";
 
 
-const time_of_day = [new Set(), new Set(), new Set()]
 const slots_per_day = 24*2
 
 const App = () => {
@@ -14,12 +12,17 @@ const App = () => {
     const [tasksID, setTaskID] = useState([])
     const [toOptimize, setToOptimize] = useState(false)
     const [categoryTable, setCategoryTable] = useState([])
+    const [option, setOption] = useState(0)
+    const optionRef = useRef();
+    optionRef.current = option;
+    const [scheduleTrigger, setScheduleTrigger] = useState(false)
     const [table1, setTable] = useState([])
-
-    useEffect(() => {
-        // if(toOptimize)
-            // window.location.reload();
-    }, [toOptimize])
+    const [scheduleTable, setScheduleTable] = useState([])
+    const [timeOfDay, setTimeOfDay] = useState(Array(slots_per_day*7).fill(-1))
+    const timeRef = useRef();
+    timeRef.current = timeOfDay;
+    const [scheduleJsx, setScheduleJsx] = useState([])
+    const user_id = 1
 
     //TODO - check if possible to pass setTask to child component instead.
     const taskSetter = (received_tasks) => {
@@ -27,32 +30,32 @@ const App = () => {
     }
 
     const taskGetter = () => {
-        fetchTasks()
+        fetchTasks('gettodolist', user_id)
     }
 
     const taskIDTrig = () => {
-        fetchTasksIDTrig()
+        fetchTaskID('trig', user_id)
         return tasksID
     }
 
     const taskIDGetter = () => {
         if (tasksID.length === 0) {
-            fetchTasksID()
+            fetchTaskID('GetSchedule', user_id)
         }
         return tasksID
     }
 
-    const fetchTasks = () => {
-        fetch("http://localhost:5000/tasks/gettodolist/1")
+    useEffect(() => {
+    },[timeOfDay])
+
+    const fetchTasks = (type, user_id) => {
+        fetch("http://localhost:5000/tasks/"+type+"/"+user_id)
             .then(res => res.json())
             .then(
                 (result) => {
                     if (result['statusCode'] === 500) throw new Error('Internal server error.');
-                    let all_tasks = result['tasks'].length
-                    let tasks1 = []
                     let tasks2 = {}
-                    for (let i=0; i<all_tasks; i++){
-                        tasks1.push(result['tasks'][i])
+                    for (let i=0; i<result['tasks'].length; i++){
                         tasks2[result['tasks'][i]['task_id']] = result['tasks'][i]
                     }
                     setTasks(tasks2)
@@ -62,40 +65,118 @@ const App = () => {
             });
     }
 
-    const fetchTasksIDTrig = () => {
-        fetch("http://localhost:5000/tasks/trig/1")
+    const fetchTaskID = (type, user_id) => {
+        fetch("http://localhost:5000/tasks/"+type+"/"+user_id)
             .then(res => res.json())
             .then(
                 (result) => {
                     if (result['statusCode'] === 500) throw new Error('Internal server error.');
-                    let all_tasks = result.length
-                    let tasks1 = []
-                    for (let i=0; i<all_tasks; i++){
-                        tasks1.push(result[i])
-                    }
-                    setTaskID(tasks1)
+                    setTaskID(result)
                 })
             .catch((error) => {
                 console.log(error)
             });
     }
 
-    const fetchTasksID = () => {
-        fetch("http://localhost:5000/tasks/GetSchedule/1")
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    if (result['statusCode'] === 500) throw new Error('Internal server error.');
-                    let all_tasks = result.length
-                    let tasks1 = []
-                    for (let i=0; i<all_tasks; i++){
-                        tasks1.push(result[i])
-                    }
-                    setTaskID(tasks1)
-                })
+    const handleCategoriesSubmission = () => {
+        removeCategories()
+        setScheduleJsx(initialSchedule())
+        setScheduleTrigger(!scheduleTrigger)
+    }
+
+    const removeCategories = () => {
+        let user_id = 1
+        fetch('http://localhost:5000/tasks/DeleteUserCategories/'+user_id, {
+            method: 'DELETE',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+        })
+            .then((response) => {
+                if (response.status === 200) {
+                    console.log("User's tasks hes been removed successfully.");
+                    // setTimeOfDay([])
+                    postCategories()
+                    // setCategoryTable()
+                } else {
+                    console.log("Request status code: " + response.status);
+                }
+                console.log('promise of remove: ',response.text())
+            })
             .catch((error) => {
-                console.log(error)
+                console.error("Error while submitting task: " + error.message);
             });
+    }
+
+    //TODO - check how to send the data without receiving an error.
+    const postCategories = (event, user_id = 1) => {
+        fetch('http://localhost:5000/tasks/PostCategories/'+user_id, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(timeOfDay)
+        })
+            .then((response) => {
+                // setCategoryTable(response)
+                if (response.status === 201) {
+                    console.log("User's tasks hes been sent successfully.");
+                } else {
+                    console.log("User's tasks hes been sent. HTTP request status code: " + response.status);
+                }
+                console.log(response.text())
+            })
+            .catch((error) => {
+                console.error("Error while submitting task: " + error.message);
+            });
+    }
+
+    const changeCategoryButton = () => {
+        let category_button = document.getElementById('category_button')
+        if (category_button.className === 'category_button') {
+            category_button.classList.remove('category_button')
+            category_button.classList.add('category_button_clicked')
+            category_button.title ='Back'
+        } else {
+            category_button.classList.remove('category_button_clicked')
+            category_button.classList.add('category_button')
+            category_button.title ='Modify Categories'
+        }
+    }
+
+    const showCategories = () => {
+        changeCategoryButton()
+        let category_options = document.getElementsByClassName('category_option')
+        let category_button = document.getElementById('category_button')
+        let sched = document.getElementById('schedule_component')
+        let cat = document.getElementById('category_component')
+        let display_type;
+        if (category_options[0].style.opacity === '0' || !category_options[0].style.opacity) {
+            display_type = 'block'
+        }
+        else {
+            display_type = 'none'
+        }
+        for (let i=0; i < category_options.length; i++) {
+            // category_options[i].style.display = display_type;
+            if (category_button.className === 'category_button') {
+                category_options[i].style.opacity = '0';
+                category_options[i].style.marginLeft = '-30px';
+            } else {
+                category_options[i].style.opacity = '1';
+                category_options[i].style.marginLeft = '2px';
+            }
+        }
+        if (display_type === 'block') {
+            sched.style.display = 'none'
+            cat.style.display = 'block'
+        }
+        else {
+            sched.style.display = 'block'
+            cat.style.display = 'none'
+        }
     }
 
     const findTask = (event) => {
@@ -109,22 +190,32 @@ const App = () => {
     const closeTaskPane = () => {
         let todo_element = document.getElementById('todo_parent')
         let schedule_element = document.getElementById('schedule_parent')
+        let show_hide_todo = document.getElementById('show_hide_todo')
         if (todo_element.className === 'col-4') {
             todo_element.classList.remove('col-4')
             todo_element.classList.add('gone')
+            // todo_element.classList.add('disappear')
             schedule_element.classList.remove('col-8')
-            // schedule_element.classList.add('col')
+            schedule_element.classList.add('col-12_2')
+            schedule_element.classList.add('col-12')
+            schedule_element.classList.add('schedule_parent_expanded')
+            show_hide_todo.classList.remove('show_hide_todo')
+            show_hide_todo.classList.add('show_hide_todo_reverse')
         } else {
             todo_element.classList.remove('gone')
+            // todo_element.classList.remove('disappear')
             todo_element.classList.add('col-4')
-            // schedule_element.classList.remove('col')
-            // schedule_element.classList.add('col-4')
+            schedule_element.classList.remove('col-12_2')
+            schedule_element.classList.remove('col-12')
+            schedule_element.classList.remove('schedule_parent_expanded')
+            schedule_element.classList.add('col-8')
+            show_hide_todo.classList.remove('show_hide_todo_reverse')
+            show_hide_todo.classList.add('show_hide_todo')
         }
     }
 
     let search_input = <input onKeyPress={findTask} id='input' type='text' placeholder='Search Task...'/>;
     let search = <div>{search_input}</div>
-    let day = ['Time', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
     const switch_weeks = (event) => {
         let checkBox = event.target
@@ -159,73 +250,26 @@ const App = () => {
         return jsx
     }
 
-    const markCategories = (event, option) => {
-        let jsx = initialSchedule()
-        const slots_per_day = 24*2
-        let empty_jsx = []
-        for (let i = 1; i < 8; i++) {
-            let empty_content = []
-            for (let j = 0; j < slots_per_day; j++) {
-                empty_content.push(<td key={'cell_' + (slots_per_day * (i - 1) + j) + '_empty'}
-                                       id={'cell_' + (slots_per_day * (i - 1) + j) + '_empty'}
-                                       draggable='true' onDragStart={dragStart} onDragOver={(e) => allowDropCategory(e,option)}
-                />);
-            }
-            jsx.push(<tr key={'tr' + i + '_empty'}>
-                <th key={'th' + i + '_empty'}>{day[i]}</th>
-                {empty_content}</tr>)
-        }
-        let empty_table = [<table key='category_table' id='category_table'><tbody>{jsx}</tbody></table>]
-        setTable(empty_table)
-        let cell = document.getElementById('cell_0_empty')
-        console.log(cell)
-
-    }
-
-    const dragStart = (event) => {
-        event.dataTransfer.setData('text/plain', event.target.id);
-    }
-
-    const allowDropCategory = (event, index) => {
-        event.preventDefault();
-        switch (index){
-            case 0:
-                event.target.style.backgroundColor = 'yellow'
-                event.target.textContent= 'Type A'
-                break;
-            case 1:
-                event.target.style.backgroundColor = 'orange'
-                event.target.textContent= 'Type B'
-                break;
-            case 2:
-                event.target.style.backgroundColor = 'green'
-                event.target.textContent= 'Type C'
-                break;
-            default:
-                break;
-        }
-        time_of_day[index].add(event.target.id.split('_')[1])
-        console.log('time of day: ', time_of_day)
-    }
-
-
-    const foo = () => {
-        alert('yes')
-    }
 
     return (
         <div className="App">
-            {/*<button onClick={closeTaskPane}>click</button>*/}
             <div id='site_top' className='row'>
                 <div className='col-4'>{search}</div>
-                <button onClick={(e)=>markCategories(e,0)} className='col-2' style={{marginTop: '25px'}}>Type A</button>
-                <button onClick={(e)=>markCategories(e,1)} className='col-2' style={{marginTop: '25px'}}>Type B</button>
-                <button onClick={(e)=>markCategories(e,2)} className='col-2' style={{marginTop: '25px'}}>Type C</button>
+                <div data-toggle="tooltip" title="Modify Categories" onClick={showCategories} id='category_button' className='category_button'/>
+                <div data-toggle="tooltip" title="Type A" id='type_a_button' onClick={()=>setOption(0)} className='category_option'/>
+                <div data-toggle="tooltip" title="Type B" id='type_b_button' onClick={()=>setOption(1)} className='category_option'/>
+                <div data-toggle="tooltip" title="Type C" id='type_c_button' onClick={()=>setOption(2)} className='category_option'/>
+                <div data-toggle="tooltip" title="Clear" id='clear_category_button' onClick={()=>setOption(-1)} className='category_option'/>
+                {/*TODO:show indicator of sending category.*/}
+                <div data-toggle="tooltip" title="Send" id='category_send_button' onClick={()=>{handleCategoriesSubmission(); showCategories();}} className='category_option'/>
             </div>
             <div className='row'>
+                <div id='show_hide_todo' className='show_hide_todo' onClick={closeTaskPane}/>
                 <div id='todo_parent' className='col-4'>
-                    <div id='todo_component' className='sticky-top'>
-                        <Todo setToOptimize={setToOptimize} updating_tasks={tasks} trigTasks={taskIDTrig} getTasks={taskGetter} setTasks={taskSetter}/>
+                    <div id='todo_component' className='sticky-top row'>
+                        <div className='col-12'>
+                            <Todo setToOptimize={setToOptimize} updating_tasks={tasks} trigTasks={taskIDTrig} getTasks={taskGetter} setTasks={taskSetter}/>
+                        </div>
                     </div>
                     <div id='boo' className='row'>
                         <span id='this_week' className='this_week_chosen'>This week&nbsp;&nbsp;</span>
@@ -236,17 +280,15 @@ const App = () => {
                         <span id='next_week' className='week'>&nbsp;&nbsp;Next week</span>
                     </div>
                 </div>
-
-                <div id='schedule_parent' className='col-8'>
+                <div id='schedule_parent' className='col-8 col-8_start'>
                     <div id='schedule_component'>
-                        <Schedule initialSchedule={initialSchedule} table1={table1} setTable={setTable} getCategoryTable={categoryTable} setCategoryTable={setCategoryTable} setToOptimize={setToOptimize} toOptimize={toOptimize} tasksID={tasksID} getTasksID={taskIDGetter} trigTasksID={taskIDTrig} updating_tasks={tasks} getTasks={taskGetter} setTasks={taskSetter}/>
+                        <Schedule setScheduleTable={setScheduleTable} setScheduleJsx={setScheduleJsx} scheduleJsx={scheduleJsx} initialSchedule={initialSchedule} table1={table1} setTable={setTable} getCategoryTable={categoryTable} setCategoryTable={setCategoryTable} setToOptimize={setToOptimize} toOptimize={toOptimize} tasksID={tasksID} getTasksID={taskIDGetter} trigTasksID={taskIDTrig} updating_tasks={tasks} getTasks={taskGetter} setTasks={taskSetter}/>
+                    </div>
+                    <div id='category_component'>
+                        <Categories scheduleTrigger={scheduleTrigger} table1={table1} categoryTable={categoryTable} setTable={setTable} optionRef={optionRef} setCategoryTable={setCategoryTable} setTimeOfDay={setTimeOfDay} timeOfDay={timeOfDay} initialScedule={initialSchedule} scheduleJsx={scheduleJsx} setScheduleJsx={setScheduleJsx} />
                     </div>
                 </div>
             </div>
-            {/*<Switch>*/}
-            {/*    <Route exact path='/' render={() => <Todo updating_tasks={tasks} getTasks={taskGetter} setTasks={taskSetter}/>}/>*/}
-            {/*    <Route path='/schedule' render={() => <Schedule getTasksID={taskIDGetter} updating_tasks={tasks} getTasks={taskGetter} setTasks={taskSetter}/>}/>*/}
-            {/*</Switch>*/}
         </div>
     )
 }

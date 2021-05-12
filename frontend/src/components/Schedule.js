@@ -11,6 +11,7 @@ const Table = (props) => {
     const [tasksDict, setTasksDict] = useState([])
     const [boo, setBoo] = useState(false)
     const prevs = useRef({tasksID, tasksDict, tasks})
+    let day = ['Time', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
     useEffect(() => {
         props.getTasksID();
@@ -31,14 +32,18 @@ const Table = (props) => {
 
     useEffect(() => {
         setTasksID(props.tasksID)
+        console.log ('tasks id: ', props.tasksID)
     }, [props.tasksID])
-
 
     useEffect(() => {
         let empty_jsx = []
         let time_jsx = props.initialSchedule()
         jsx = []
         if (prevs.current.tasksID.toString() !== tasksID.toString() && prevs.current.tasks.toString() !== tasks.toString()) {
+            console.log('tasks: ', tasks)
+            console.log('tasks_id: ', tasks_id)
+            console.log('tasksID: ', tasksID)
+            console.log('slots per day: ', slots_per_day*7)
             for (let i = 0; i < slots_per_day * 7; i++) {
                 if (tasks[tasksID[i]])
                     tasks_id[i] = tasks[tasksID[i]]['task_title']
@@ -52,24 +57,17 @@ const Table = (props) => {
                                      id={'cell_' + (slots_per_day * (i - 1) + j) + '_taskID_' + tasksID[j + (i - 1) * slots_per_day]}
                                      draggable='true' onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop}
                                      onDragLeave={leaveDropArea}>{data}</td>);
-                    // empty_content.push(<td key={'cell_' + (slots_per_day * (i - 1) + j)+'_empty'}
-                    //                  id={'cell_' + (slots_per_day * (i - 1) + j)+'_empty'}
-                    //                  draggable='true' onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop2}
-                    //                  />);
                 }
                 jsx.push(<tr key={'tr' + i}><th key={'th' + i}>{day[i]}</th>{content}</tr>);
-                // empty_jsx.push(<tr key={'tr' + i+'_empty'}><th key={'th' + i+'_empty'}>{day[i]}</th>{empty_content}</tr>)
             }
             let table = [<table key='table_schedule'><tbody key='tbody_schedule'>{time_jsx}{jsx}</tbody></table>]
-            // let empty_table = [<table id='category_table'><tbody>{time_jsx}{empty_jsx}</tbody></table>]
+            props.setScheduleTable(table)
             props.setTable(table)
-            // props.setCategoryTable(empty_table)
         }
     }, [tasks, tasksID])
 
     let content = [];
     let jsx = [];
-    let day = ['Time', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     let morning = new Set()
     let tasks_id = Array(slots_per_day * 7).fill(null);
 
@@ -151,7 +149,7 @@ const Table = (props) => {
                 console.error("Error while submitting task: " + error.message);
             });
     }
-    return (<div id='test'>{props.table1}</div>);
+    return (<div id='schedule_component1'>{props.table1}</div>);
 }
 
 export default Table;

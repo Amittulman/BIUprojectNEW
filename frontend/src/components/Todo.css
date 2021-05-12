@@ -46,7 +46,8 @@
 }
 
 .expanded_task {
-  height: 180px;
+  /*height: 180px;*/
+  height: 450px;
   background-color: rgba(250,250,250, .3);
   box-shadow: 1px 0px 3px 3px #ccc;
   border-radius: 10px;
@@ -185,11 +186,11 @@ select {
 .task_container > * {
 }
 
-#task_elm {
+.task_elm {
   text-align: left;
 }
 
-#task_elm:hover {
+.task_elm:hover {
   text-shadow: 0 0 1px black;
   -webkit-transition: text-shadow 0.1s linear;
 }

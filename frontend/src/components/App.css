@@ -5,6 +5,84 @@
     overflow: hidden;
 }
 
+.category_button {
+    margin-top: 25px;
+    background: url("../images/paint.svg") 50% 50% no-repeat;
+    /*background: url("../images/paint.svg") no-repeat 50% 50%;*/
+    /*border: 1px solid black;*/
+    border-radius: 50%;
+    height: 30px;
+    width: 30px;
+    cursor: pointer;
+    z-index: 2;
+    transition: background-color 0.2s ease-out;
+}
+
+.category_button:hover {
+    border-radius: 50%;
+    background-color: #E5E5E5;
+    transition: background-color 0.2s ease-out;
+}
+
+.category_button:active {
+    border-radius: 50%;
+    background-color: #C5C4C4;
+    transition: background-color 0.2s ease-out;
+}
+
+/*.col-8 {*/
+/*    animation: slide-aside_a_reverse 0.4s ease;*/
+/*}*/
+
+/*.gone {*/
+/*    animation: opac 1.4s ease;*/
+/*}*/
+
+.col-4 {
+    animation: appear 0.7s ease-out;
+}
+.col-8_start {
+    animation: appear_from_right 0.7s cubic-bezier(.55,.19,.46,1.06), opac 1.5s ease-out;
+}
+.disappear {
+    animation: disappear 0.4s ease;
+    opacity: 1;
+}
+
+.category_button_clicked {
+    margin-top: 25px;
+    /*background: url("../images/close.svg") no-repeat 50% 50%;*/
+    background: url("../images/close.svg") 50% 50% no-repeat;
+    /*border: 1px solid black;*/
+    border-radius: 50%;
+    height: 30px;
+    width: 30px;
+    cursor: pointer;
+    z-index: 2;
+    transition: background-color 0.2s ease-out;
+}
+
+.category_button_clicked:hover {
+    border-radius: 50%;
+    background-color: #E5E5E5;
+    transition: background-color 0.2s ease-out;
+}
+
+.category_button_clicked:active {
+    border-radius: 50%;
+    background-color: #C5C4C4;
+    transition: background-color 0.2s ease-out;
+}
+
+.category_option {
+    margin-top: 25px;
+    display: block;
+    transition: background-color 2s ease-out;
+    /*transition: opacity 2s ease-out;*/
+    opacity: 0;
+    margin-left: -30px;
+}
+
 #left {
     float: left;
 }
@@ -28,10 +106,313 @@
     width: 100%;
 }
 
+#category_component {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    display: none;
+    cursor: url("../images/paint.svg") 2 2, pointer;
+}
+
+.schedule_parent_expanded {
+    margin-left: 30px;
+}
+
+.show_hide_todo, .show_hide_todo_reverse {
+    height: 30px;
+    width: 30px;
+    position: absolute;
+    top: 10%;
+    left: 32.2%;
+    z-index: 10000;
+    background: url("../images/left_sign.svg") 110% 50% no-repeat;
+    cursor: pointer;
+
+}
+
+.show_hide_todo {
+    animation: show_hiding_arrow 1s ease forwards;
+}
+
+.show_hide_todo_reverse {
+    background: url("../images/right_sign.svg") 50% 50% no-repeat;
+    left: 0;
+    animation: show_expanding_arrow 0.4s ease forwards;
+}
+
+@keyframes show_expanding_arrow {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes show_hiding_arrow {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
 #todo_component {
     margin-top: 25px;
 }
 
+.type_a {
+    background-color: #D6FFB7;
+    content: 'type a';
+    transition: background-color 0.2s ease;
+
+}
+
+.type_a:before {
+    content:'TYPE A';
+    transition: opacity 0.2s ease;
+}
+
+#type_a_button {
+    background-color: #D6FFB7;
+    border-radius: 50%;
+    transition: background-color 0.2s ease-out, margin-left 0.5s ease-out, opacity 0.5s ease-out;
+    height: 30px;
+    width: 30px;
+    cursor: pointer;
+
+    /*animation: slide-aside_a 0.4s ease;*/
+
+}
+
+@keyframes slide-aside_a {
+    0% {
+        transform: translateX(400px);
+    }
+    100% {
+        transform: translateX(0px);
+    }
+}
+@keyframes slide-aside_a_reverse {
+    0% {
+        transform: translateX(-300px);
+    }
+    100% {
+        transform: translateX(0px);
+    }
+}
+@keyframes appear {
+    0% {
+        transform: translateX(-300px);
+    }
+    100% {
+        transform: translateX(0px);
+    }
+}
+@keyframes appear_from_right {
+    0% {
+        opacity: 0;
+        transform: translateX(800px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0px);
+    }
+}
+@keyframes opac {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+#type_a_button:hover {
+    border-radius: 50%;
+    background-color: #C8FCA1;
+    transition: background-color 0.5s ease-out;
+}
+
+#type_a_button:active {
+    border-radius: 50%;
+    background-color: #B9FE86;
+    transition: background-color 0.5s ease-out;
+}
+
+.type_b {
+    background-color: #FFE6AD;
+    content: 'type b';
+    transition: background-color 0.2s ease;
+}
+
+.type_b:before {
+    content:'TYPE B';
+}
+
+#type_b_button {
+    background-color: #FFE6AD;
+    border-radius: 50%;
+    transition: background-color 0.2s ease-out, margin-left 0.5s ease-out, opacity 0.5s ease-out;
+    height: 30px;
+    width: 30px;
+    cursor: pointer;
+    /*animation: slide-aside_b 0.4s ease;*/
+
+}
+
+#type_b_button:hover {
+    border-radius: 50%;
+    background-color: #FCD784;
+    transition: background-color 0.2s ease-out;
+}
+
+#type_b_button:active {
+    border-radius: 50%;
+    background-color: #FFCC5B;
+    transition: background-color 0.2s ease-out;
+}
+@keyframes slide-aside_b {
+    0% {
+        opacity: 0;
+        transform: translateX(-60px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0px);
+    }
+}
+
+.type_c {
+    background-color: #BED2FE;
+    transition: background-color 0.2s ease;
+}
+
+.type_c:before {
+    content:'TYPE C';
+}
+
+#type_c_button {
+    background-color: #BED2FE;
+    border-radius: 50%;
+    transition: background-color 0.2s ease-out, margin-left 0.5s ease-out, opacity 0.5s ease-out;
+    height: 30px;
+    width: 30px;
+    cursor: pointer;
+    /*animation: slide-aside_c 0.4s ease;*/
+
+}
+
+#type_c_button:hover {
+    border-radius: 50%;
+    background-color: #8BAFFE;
+    transition: background-color 0.2s ease-out;
+}
+
+#type_c_button:active {
+    border-radius: 50%;
+    background-color: #5087FF;
+    transition: background-color 0.2s ease-out;
+}
+
+@keyframes slide-aside_c {
+    0% {
+        opacity: 0;
+        transform: translateX(-90px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0px);
+    }
+}
+
+#clear_category_button {
+    /*background-color: #BED2FE;*/
+    border-radius: 50%;
+    transition: background-color 0.2s ease-out, margin-left 0.5s ease-out, opacity 0.5s ease-out;
+    height: 30px;
+    width: 30px;
+    cursor: pointer;
+    background: url("../images/sweep.svg") no-repeat 50% 50%;
+    /*animation: slide-aside_clear 0.4s ease;*/
+}
+
+@keyframes slide-aside_clear {
+    0% {
+        opacity: 0;
+        transform: translateX(-120px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0px);
+    }
+}
+
+#clear_category_button:hover, .show_hide_todo:hover, .show_hide_todo_reverse:hover {
+    border-radius: 50%;
+    background-color: #E5E5E5;
+    transition: background-color 0.2s ease-out;
+}
+
+#clear_category_button:active, .show_hide_todo:active, .show_hide_todo_reverse:active {
+    border-radius: 50%;
+    background-color: #C5C4C4;
+    transition: background-color 0.2s ease-out;
+}
+
+#category_send_button {
+    /*background-color: #BED2FE;*/
+    border-radius: 50%;
+    transition: background-color 0.2s ease-out, margin-left 0.5s ease-out, opacity 0.5s ease-out;
+    height: 30px;
+    width: 30px;
+    cursor: pointer;
+    background: url("../images/done.svg") no-repeat 50% 50%;
+    /*animation: slide-aside_send 0.4s ease;*/
+}
+
+@keyframes slide-aside_send {
+    0% {
+        opacity: 0;
+        transform: translateX(-150px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0px);
+    }
+}
+
+#category_send_button:hover {
+    border-radius: 50%;
+    background-color: #E5E5E5;
+    transition: background-color 0.2s ease-out;
+}
+
+#category_send_button:active {
+    border-radius: 50%;
+    background-color: #C5C4C4;
+    transition: background-color 0.2s ease-out;
+}
+
+.empty_slot {
+    background-color: white;
+    transition: background-color 0.2s ease;
+}
+
+.empty_slot:before {
+    content:'';
+}
+
+#hidden_button {
+    opacity: 0;
+    margin-left: -30px;
+}
+
+#presented_button {
+    opacity: 1;
+    margin-left: 0;
+}
 
 #boo {
     align-items: center;

@@ -1,4 +1,4 @@
-#test {
+#schedule_component1 {
     position: relative;
     overflow-y: scroll;
     /*height: 90%;*/
@@ -23,7 +23,12 @@ th {
     box-shadow: 4px 8px 8px lightgray;
 }
 
-#category_table {
+#category_component1 {
+    position: relative;
+    overflow-y: scroll;
+    /*height: 90%;*/
+    /*width: 100%;*/
+    max-height: 100vh;
 }
 
 title {

@@ -196,36 +196,37 @@ export class SchedulerService {
 
     private async createTempTasks() {
         const temp_task1: Task = {
-            task_id: 1,
-            user_id: 11, task_title: 'first task',
+            task_id: 1333,
+            user_id: 1, task_title: 'first task',
             duration: 90,
             priority: 1, category_id: 1,
-            constraints: [[1,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
+            // constraints: [[1,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
+            constraints: '010000000000000110100'
         }
         const temp_task2: Task = {
             task_id: 2,
-            user_id: 11, task_title: 'second task',
+            user_id: 1, task_title: 'second task',
             duration: 90,
             priority: 2, category_id: 1,
             constraints: [[0,1,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
         }
         const temp_task3: Task = {
             task_id: 3,
-            user_id: 11, task_title: 'third task',
+            user_id: 1, task_title: 'third task',
             duration: 120,
             priority: 1, category_id: 1,
             constraints: null
         }
         const temp_task4: Task = {
             task_id: 4,
-            user_id: 11, task_title: 'third task',
+            user_id: 1, task_title: 'third task',
             duration: 320,
             priority: 0, category_id: 1,
             constraints: null
         }
         const temp_task5: Task = {
             task_id: 5,
-            user_id: 11, task_title: 'third task',
+            user_id: 1, task_title: 'third task',
             duration: 4990,
             priority: 0, category_id: 1,
             constraints: null
