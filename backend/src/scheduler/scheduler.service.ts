@@ -200,8 +200,8 @@ export class SchedulerService {
             user_id: 1, task_title: 'first task',
             duration: 90,
             priority: 1, category_id: 1,
-            // constraints: [[1,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
-            constraints: '010000000000000110100'
+            constraints: [[1,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
+            // constraints: '010000000000000110100'
         }
         const temp_task2: Task = {
             task_id: 2,
