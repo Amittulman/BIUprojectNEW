@@ -149,7 +149,7 @@ export class SchedulerService {
 
     private async removeFromThisSpot(slotsToReset: any, slots: any) {
         for (const slotNum of slotsToReset) {
-            slots[slotNum] = 0;
+            slots[slotNum] = [-1,-1];
         }
         return slots;
     }
