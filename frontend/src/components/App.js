@@ -32,7 +32,7 @@ const App = () => {
     }
 
     const taskGetter = () => {
-        fetchTasks('gettodolist', user_id)
+        fetchTasks('gettasks', user_id)
     }
 
     const taskIDTrig = () => {
