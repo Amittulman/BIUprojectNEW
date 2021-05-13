@@ -34,6 +34,8 @@ const Table = (props) => {
     }, [props.tasksID])
 
     useEffect(() => {
+        console.log(props.categoryTrigger)
+        if (!props.categoryTrigger) return
         let time_jsx = props.initialSchedule()
         jsx = []
         if (prevs.current.tasksID.toString() !== tasksID.toString() && prevs.current.tasks.toString() !== tasks.toString()) {
@@ -45,7 +47,8 @@ const Table = (props) => {
                 let content = [];
                 for (let j = 0; j < slots_per_day; j++) {
                     let data = tasks_id[j + (i - 1) * slots_per_day]
-                    content.push(<td key={'cell_' + (slots_per_day * (i - 1) + j)}
+                    let class_name = getClass(props.timeOfDay[slots_per_day * (i - 1) + j])
+                    content.push(<td key={'cell_' + (slots_per_day * (i - 1) + j)} className={class_name}
                                      id={'cell_' + (slots_per_day * (i - 1) + j) + '_taskID_' + tasksID[j + (i - 1) * slots_per_day]}
                                      draggable='true' onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop}
                                      onDragLeave={leaveDropArea}>{data}</td>);//{data}
@@ -56,7 +59,7 @@ const Table = (props) => {
             props.setScheduleTable(table)
             props.setTable(table)
         }
-    }, [tasks, tasksID])
+    }, [tasks, tasksID, props.categoryTrigger])
 
     let content = [];
     let jsx = [];
@@ -105,6 +108,7 @@ const Table = (props) => {
         let dragged_element = document.getElementById(id);
         event.target.style.boxShadow = 'none';
         event.target.style.transition = 'box-shadow .2s linear';
+        if (dragged_element.ondragover !== null) return
         if (dragged_element.textContent && !event.target.textContent && event.target !== dragged_element) {
             event.target.textContent = dragged_element.textContent;
             dragged_element.textContent = '';
@@ -123,6 +127,7 @@ const Table = (props) => {
 
     const updateTaskLocation = (src_slot, dest_slot, task_id) => {
         let data_to_send = {'slot_id': parseInt(src_slot), 'task_id': parseInt(task_id), 'user_id': props.userID}
+        console.log('a!!! ', data_to_send)
         fetch('http://localhost:5000/tasks/UpdateSchedule/' + dest_slot, {
             method: 'POST',
             headers: {

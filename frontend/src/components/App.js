@@ -208,14 +208,14 @@ const App = () => {
         let i, j;
         for (i=1 ; i<8;i++) {
             for (j=1 ; j < slots_per_day+1 ; j++) {
-                let class_name = getClass(timeOfDay[slots_per_day * (i - 1) + (j-1)])
+                // let class_name = getClass(timeOfDay[slots_per_day * (i - 1) + (j-1)])
                 let node = sched.childNodes.item(0).childNodes.item(0).childNodes.item(0).childNodes.item(i).childNodes.item(j)
-                node.className = class_name//class_name
+                // node.className = class_name//class_name
                 node.ondragstart = dragStartCat
                 node.ondragover = allowDropCat
                 node.onclick = allowDropCat
-                node.ondrop = null
-                node.ondragleave = null
+                // node.ondrop = null
+                // node.ondragleave = null
                 node.draggable = true
             }
         }
@@ -227,7 +227,7 @@ const App = () => {
         for (i=1 ; i<8;i++) {
             for (j=1 ; j < slots_per_day+1 ; j++) {
                 let node = sched.childNodes.item(0).childNodes.item(0).childNodes.item(0).childNodes.item(i).childNodes.item(j)
-                node.className = 'empty_slot';
+                // node.className = 'empty_slot';
                 node.ondragstart = dragStartSched
                 node.ondragover = allowDropSched
                 node.onclick = null
@@ -308,6 +308,7 @@ const App = () => {
 
     const updateTaskLocation = (src_slot, dest_slot, task_id) => {
         let data_to_send = {'slot_id': parseInt(src_slot), 'task_id': parseInt(task_id), 'user_id': userID}
+        console.log('b!!! ', data_to_send)
         fetch('http://localhost:5000/tasks/UpdateSchedule/' + dest_slot, {
             method: 'POST',
             headers: {
@@ -365,7 +366,7 @@ const App = () => {
     }
 
     const userIDHandler = (event) => {
-        setUserID(event.target.parentElement.childNodes[0].childNodes[0].value)
+        setUserID(parseInt(event.target.parentElement.childNodes[0].childNodes[0].value))
     }
 
     let search_input = <input onKeyPress={findTask} id='input' type='text' placeholder='Search Task...'/>;
@@ -439,10 +440,10 @@ const App = () => {
                 </div>
                 <div id='schedule_parent' className='col-8 col-8_start'>
                     <div id='schedule_component'>
-                        <Schedule userID={userID} test123={test} setTimeOfDay={setTimeOfDay} timeOfDay={timeOfDay} setScheduleTable={setScheduleTable} setScheduleJsx={setScheduleJsx} scheduleJsx={scheduleJsx} initialSchedule={initialSchedule} table1={table1} setTable={setTable} getCategoryTable={categoryTable} setCategoryTable={setCategoryTable} setToOptimize={setToOptimize} toOptimize={toOptimize} tasksID={tasksID} getTasksID={taskIDGetter} trigTasksID={taskIDTrig} updating_tasks={tasks} getTasks={taskGetter} setTasks={taskSetter}/>
+                        <Schedule userID={userID} categoryTrigger={categoryTrigger} test123={test} setTimeOfDay={setTimeOfDay} timeOfDay={timeOfDay} setScheduleTable={setScheduleTable} setScheduleJsx={setScheduleJsx} scheduleJsx={scheduleJsx} initialSchedule={initialSchedule} table1={table1} setTable={setTable} getCategoryTable={categoryTable} setCategoryTable={setCategoryTable} setToOptimize={setToOptimize} toOptimize={toOptimize} tasksID={tasksID} getTasksID={taskIDGetter} trigTasksID={taskIDTrig} updating_tasks={tasks} getTasks={taskGetter} setTasks={taskSetter}/>
                     </div>
                     <div id='category_component'>
-                        <Categories userID={userID} categoryTrigger={categoryTrigger} scheduleTrigger={scheduleTrigger} table1={table1} categoryTable={categoryTable} setTable={setTable} optionRef={optionRef} setCategoryTable={setCategoryTable} setTimeOfDay={setTimeOfDay} timeOfDay={timeOfDay} initialScedule={initialSchedule} scheduleJsx={scheduleJsx} setScheduleJsx={setScheduleJsx} />
+                        <Categories userID={userID} setCategoryTrigger={setCategoryTrigger} categoryTrigger={categoryTrigger} scheduleTrigger={scheduleTrigger} table1={table1} categoryTable={categoryTable} setTable={setTable} optionRef={optionRef} setCategoryTable={setCategoryTable} setTimeOfDay={setTimeOfDay} timeOfDay={timeOfDay} initialScedule={initialSchedule} scheduleJsx={scheduleJsx} setScheduleJsx={setScheduleJsx} />
                     </div>
                 </div>
             </div>

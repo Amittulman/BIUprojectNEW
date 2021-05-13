@@ -104,6 +104,7 @@ const Categories = (props) => {
                     console.log(result)
                     if (result['statusCode'] === 500) throw new Error('Internal server error.');
                     props.setTimeOfDay(result)
+                    props.setCategoryTrigger(true)
                     // setCategoryTable(result)
                 })
             .catch((error) => {
