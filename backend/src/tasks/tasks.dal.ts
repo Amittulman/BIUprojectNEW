@@ -70,6 +70,14 @@ export class TasksDal {
     });
     return  { tasks: dataArr };
   }
+  async getTasks(user_id: string): Promise<ToDoList> {
+    const dataArr = [];
+     const res = await this.db.from(TASK_TABLE).select('*').where('user_id',parseInt(user_id));
+    res.forEach(function(value) {
+      dataArr.push(value)
+    });
+    return  { tasks: dataArr };
+  }
 
   async postTasks(tasks: any): Promise<string> {
     console.log(tasks);

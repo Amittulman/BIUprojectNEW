@@ -24,6 +24,10 @@ export class TasksService {
     return this.tasksDal.GetToDoList(user_id);
   }
 
+  async getTasks(user_id): Promise<ToDoList> {
+    return this.tasksDal.getTasks(user_id);
+  }
+
   async postTasks(tasks: Array<CreateTaskDto>): Promise<string> {
     return this.tasksDal.postTasks(tasks);
   }

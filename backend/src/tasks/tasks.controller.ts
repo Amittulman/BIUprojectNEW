@@ -56,6 +56,10 @@ export class TasksController {
   async getToDoList(@Param('id') user_id: string): Promise<ToDoList> {
     return await this.tasksService.GetToDoList(user_id);
   }
+  @Get('GetTasks/:id')
+  async getTasks(@Param('id') user_id: string): Promise<ToDoList> {
+    return await this.tasksService.getTasks(user_id);
+  }
 
   @Post('PostTasks/:tasks')
   postTasks(@Body() tasksArray: Array<CreateTaskDto>) {
