@@ -30,21 +30,18 @@ export class TasksController {
 
   @Get('trig/:id')
   async trig(@Param('id') user_id: string): Promise<any[]> {
-    const tdl = await this.getToDoList(user_id);
+    const tasks = await this.getToDoList(user_id);
+    // if recurring task - need to duplicate here.
     const categorySlots = await  this.getUserCategorySlots(user_id);
-    // const categorySlots = [1,1,1,1,1,1,1];
-    const result = await this.schedulerService.tryCalc(tdl,categorySlots);
-
-    //console.log(result);
+    const result = await this.schedulerService.tryCalc(tasks,categorySlots);
     let res;
-
     //change slots to scheduledTask
     //post slots to DB
-    if (result != null) {
+    if (result != null) { // there is a solution
       console.log(await this.deleteSchedule(user_id));
       const success = await this.postSchedule(result,user_id);
       console.log(success);
-      res = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, ... result];
+      res = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, ...result];
     }
     else {
       res = null;

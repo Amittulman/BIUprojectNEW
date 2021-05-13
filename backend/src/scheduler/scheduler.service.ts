@@ -13,15 +13,12 @@ export class SchedulerService {
         //create tasks for testing
         //var temptaskss = await this.createTempTasks();
         const slots = await this.createSlotsWithCategory(categorySlots);
-
         const mockTasks = await this.createTempTasks();
         //tasks from frontend
         const tasksFromUser = ToDoList.tasks;
-
         const prioritiesTasks =  await this.sortPriorities(tasksFromUser);
         const resultCalc = await this.calcBackTracking(prioritiesTasks, slots);
         const resultsOnlySlots = await this.createSlotsFromResult(resultCalc);
-        //console.log(resultCalc);
         return resultsOnlySlots;
     }
 
@@ -30,20 +27,24 @@ export class SchedulerService {
         const highPriority_tasks = new  Array<Task>();
         const midPriority_tasks = new  Array<Task>();
         const lowPriority_tasks = new  Array<Task>();
+        const NonePriority_tasks = new  Array<Task>();
         const allTasks = new  Array<Task>();
 
         for (const task of user_tasks) {
             if(task.priority == 0) {
-                pin_tasks.push(task);
+                midPriority_tasks.push(task);
             }
-            else if(task.priority == 1) {
+            else if(task.priority == 3) {
                 highPriority_tasks.push(task);
             }
             else if(task.priority == 2) {
                 midPriority_tasks.push(task);
             }
-            else {
+            else if(task.priority == 1) {
                 lowPriority_tasks.push(task);
+            }
+            else {
+                pin_tasks.push(task);
             }
         }
         return new Array<Array<Task>>(pin_tasks, highPriority_tasks, midPriority_tasks, lowPriority_tasks);
@@ -148,7 +149,7 @@ export class SchedulerService {
     }
 
     private async removeFromThisSpot(slotsToReset: any, slots: any) {
-        for (const slotNum of slotsToReset) {
+        for (const slotNum of slotsToReset) { // TODO : ask from db the categories
             slots[slotNum] = [-1,-1];
         }
         return slots;
@@ -193,7 +194,6 @@ export class SchedulerService {
 
         for (let i = 0; i < categorySlots.length; i++) {
             slotsAndCatagory[i] = [-1, categorySlots[i]];
-            console.log("categorySlots[i]: " + categorySlots[i])
         }
         return slotsAndCatagory;
     }
