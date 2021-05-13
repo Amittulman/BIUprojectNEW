@@ -12,8 +12,9 @@ const Table = (props) => {
     let day = ['Time', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
     useEffect(() => {
+        if (!props.userID) return
         props.getTasksID();
-    }, [])
+    }, [props.userID])
 
     useEffect(() => {
         if (props.updating_tasks.length === 0) return
@@ -115,13 +116,13 @@ const Table = (props) => {
             tasks_id[dest_slot] = parseInt(src_task_id)
             tasks_id[src_slot] = -1
             setTasksID(tasks_id)
-            updateTaskLocation(src_slot, dest_slot, src_task_id, 2)
+            updateTaskLocation(src_slot, dest_slot, src_task_id)
         }
         event.dataTransfer.clearData();
     }
 
-    const updateTaskLocation = (src_slot, dest_slot, task_id, user_id) => {
-        let data_to_send = {'slot_id': parseInt(src_slot), 'task_id': parseInt(task_id), 'user_id': user_id}
+    const updateTaskLocation = (src_slot, dest_slot, task_id) => {
+        let data_to_send = {'slot_id': parseInt(src_slot), 'task_id': parseInt(task_id), 'user_id': props.userID}
         fetch('http://localhost:5000/tasks/UpdateSchedule/' + dest_slot, {
             method: 'POST',
             headers: {

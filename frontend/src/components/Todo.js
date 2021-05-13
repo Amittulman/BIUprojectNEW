@@ -29,8 +29,9 @@ const Todo = (props) => {
 
   //Adding JSX
   useEffect(() => {
+    if (!props.userID) return
     props.getTasks()
-  }, []);
+  }, [props.userID]);
 
 
   useEffect(() => {
@@ -122,7 +123,7 @@ const Todo = (props) => {
 
   const addTask = (index, values) => {
     if (values == null) {
-      values = {'user_id':'','task_title':'', 'duration':'','priority':'','category_id':'','constraints':'000000000000000000000'}
+      values = {'user_id':props.userID,'task_title':'', 'duration':'','priority':'','category_id':'','constraints':'000000000000000000000'}
     }
       let constraints_params = getConstraints(index, values['constraints']);
     let i = index
@@ -194,7 +195,8 @@ const Todo = (props) => {
   }
 
   const sendTasksToRemove = () => {
-    fetch('http://localhost:5000/tasks/DeleteTasks/2', {
+    // let user_id = 2
+    fetch('http://localhost:5000/tasks/DeleteTasks/'+props.userID, {
       method: 'DELETE',
       headers: {
         Accept: 'application/json',
@@ -265,7 +267,7 @@ const Todo = (props) => {
       handleConstraints(event, index)
       return
     }
-    let empty_task = {'temp_task_id':index,'user_id':2,'task_title':'', 'duration':'','priority':'','category_id':-1,'constraints':'000000000000000000000'};
+    let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'','priority':'','category_id':-1,'constraints':'000000000000000000000'};
     let updated = updatedRef.current
     // If task is new, create a new instance of it, else edit existing/
     //removes old task when submitting form.
@@ -291,7 +293,7 @@ const Todo = (props) => {
     let checked_num = 0;
     if (event.target.checked)
       checked_num = 1;
-    let empty_task = {'temp_task_id':index,'user_id':2,'task_title':'', 'duration':'','priority':'','category_id':-1,'constraints':'000000000000000000000'};
+    let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'','priority':'','category_id':-1,'constraints':'000000000000000000000'};
     let updated = updatedRef.current
     // If task is new, create a new instance of it, else edit existing/
     //removes old task when submitting form.

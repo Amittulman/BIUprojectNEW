@@ -24,7 +24,8 @@ const App = () => {
     const timeRef = useRef();
     timeRef.current = timeOfDay;
     const [scheduleJsx, setScheduleJsx] = useState([])
-    const user_id = 2
+    const [userID, setUserID] = useState()
+    // const user_id = 2
 
     //TODO - check if possible to pass setTask to child component instead.
     const taskSetter = (received_tasks) => {
@@ -32,17 +33,17 @@ const App = () => {
     }
 
     const taskGetter = () => {
-        fetchTasks('gettasks', user_id)
+        fetchTasks('gettasks', userID)
     }
 
     const taskIDTrig = () => {
-        fetchTaskID('trig', user_id)
+        fetchTaskID('trig', userID)
         return tasksID
     }
 
     const taskIDGetter = () => {
         if (tasksID.length === 0) {
-            fetchTaskID('GetSchedule', user_id)
+            fetchTaskID('GetSchedule', userID)
         }
         return tasksID
     }
@@ -57,8 +58,8 @@ const App = () => {
     //     }
     // },[timeOfDay])
 
-    const fetchTasks = (type, user_id) => {
-        fetch("http://localhost:5000/tasks/"+type+"/"+user_id)
+    const fetchTasks = (type, userID) => {
+        fetch("http://localhost:5000/tasks/"+type+"/"+userID)
             .then(res => res.json())
             .then(
                 (result) => {
@@ -74,8 +75,9 @@ const App = () => {
             });
     }
 
-    const fetchTaskID = (type, user_id) => {
-        fetch("http://localhost:5000/tasks/"+type+"/"+user_id)
+    const fetchTaskID = (type, userID) => {
+        console.log('taskid getter')
+        fetch("http://localhost:5000/tasks/"+type+"/"+userID)
             .then(res => res.json())
             .then(
                 (result) => {
@@ -94,8 +96,8 @@ const App = () => {
     }
 
     const removeCategories = () => {
-        let user_id = 2
-        fetch('http://localhost:5000/tasks/DeleteUserCategories/'+user_id, {
+        // let user_id = 2
+        fetch('http://localhost:5000/tasks/DeleteUserCategories/'+userID, {
             method: 'DELETE',
             headers: {
                 Accept: 'application/json',
@@ -119,8 +121,8 @@ const App = () => {
     }
 
     //TODO - check how to send the data without receiving an error.
-    const postCategories = (event, user_id = 2) => {
-        fetch('http://localhost:5000/tasks/PostCategories/'+user_id, {
+    const postCategories = (event) => {
+        fetch('http://localhost:5000/tasks/PostCategories/'+userID, {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -298,13 +300,14 @@ const App = () => {
             tasks_id[dest_slot] = parseInt(src_task_id)
             tasks_id[src_slot] = -1
             setTaskID(tasks_id)
-            updateTaskLocation(src_slot, dest_slot, src_task_id, 2)
+            // let user_id = 2
+            updateTaskLocation(src_slot, dest_slot, src_task_id)
         }
         event.dataTransfer.clearData();
     }
 
-    const updateTaskLocation = (src_slot, dest_slot, task_id, user_id) => {
-        let data_to_send = {'slot_id': parseInt(src_slot), 'task_id': parseInt(task_id), 'user_id': user_id}
+    const updateTaskLocation = (src_slot, dest_slot, task_id) => {
+        let data_to_send = {'slot_id': parseInt(src_slot), 'task_id': parseInt(task_id), 'user_id': userID}
         fetch('http://localhost:5000/tasks/UpdateSchedule/' + dest_slot, {
             method: 'POST',
             headers: {
@@ -361,8 +364,15 @@ const App = () => {
         }
     }
 
+    const userIDHandler = (event) => {
+        setUserID(event.target.parentElement.childNodes[0].childNodes[0].value)
+    }
+
     let search_input = <input onKeyPress={findTask} id='input' type='text' placeholder='Search Task...'/>;
     let search = <div>{search_input}</div>
+    let login_input = <input onKeyPress={findTask} id='input' name='user_id_input' type='text' placeholder='Enter ID number'/>;
+    let login = <div className='row'><div>{login_input}</div><button onClick={userIDHandler}>Log in</button></div>
+
 
     const switch_weeks = (event) => {
         let checkBox = event.target
@@ -408,13 +418,14 @@ const App = () => {
                 <div data-toggle="tooltip" title="Clear" id='clear_category_button' onClick={()=>setOption(-1)} className='category_option'/>
                 {/*TODO:show indicator of sending category.*/}
                 <div data-toggle="tooltip" title="Send" id='category_send_button' onClick={()=>{handleCategoriesSubmission(); showCategories(); setCategoryTrigger(!categoryTrigger)}} className='category_option'/>
+                <div className='col-4'>{login}</div>
             </div>
             <div className='row'>
                 <div id='show_hide_todo' className='show_hide_todo' onClick={closeTaskPane}/>
                 <div id='todo_parent' className='col-4'>
                     <div id='todo_component' className='sticky-top row'>
                         <div className='col-12'>
-                            <Todo setToOptimize={setToOptimize} updating_tasks={tasks} trigTasks={taskIDTrig} getTasks={taskGetter} setTasks={taskSetter}/>
+                            <Todo userID={userID} setToOptimize={setToOptimize} updating_tasks={tasks} trigTasks={taskIDTrig} getTasks={taskGetter} setTasks={taskSetter}/>
                         </div>
                     </div>
                     <div id='boo' className='row'>
@@ -428,11 +439,11 @@ const App = () => {
                 </div>
                 <div id='schedule_parent' className='col-8 col-8_start'>
                     <div id='schedule_component'>
-                        <Schedule test123={test} setTimeOfDay={setTimeOfDay} timeOfDay={timeOfDay} setScheduleTable={setScheduleTable} setScheduleJsx={setScheduleJsx} scheduleJsx={scheduleJsx} initialSchedule={initialSchedule} table1={table1} setTable={setTable} getCategoryTable={categoryTable} setCategoryTable={setCategoryTable} setToOptimize={setToOptimize} toOptimize={toOptimize} tasksID={tasksID} getTasksID={taskIDGetter} trigTasksID={taskIDTrig} updating_tasks={tasks} getTasks={taskGetter} setTasks={taskSetter}/>
+                        <Schedule userID={userID} test123={test} setTimeOfDay={setTimeOfDay} timeOfDay={timeOfDay} setScheduleTable={setScheduleTable} setScheduleJsx={setScheduleJsx} scheduleJsx={scheduleJsx} initialSchedule={initialSchedule} table1={table1} setTable={setTable} getCategoryTable={categoryTable} setCategoryTable={setCategoryTable} setToOptimize={setToOptimize} toOptimize={toOptimize} tasksID={tasksID} getTasksID={taskIDGetter} trigTasksID={taskIDTrig} updating_tasks={tasks} getTasks={taskGetter} setTasks={taskSetter}/>
                     </div>
-                    {/*<div id='category_component'>*/}
-                    {/*    <Categories categoryTrigger={categoryTrigger} scheduleTrigger={scheduleTrigger} table1={table1} categoryTable={categoryTable} setTable={setTable} optionRef={optionRef} setCategoryTable={setCategoryTable} setTimeOfDay={setTimeOfDay} timeOfDay={timeOfDay} initialScedule={initialSchedule} scheduleJsx={scheduleJsx} setScheduleJsx={setScheduleJsx} />*/}
-                    {/*</div>*/}
+                    <div id='category_component'>
+                        <Categories userID={userID} categoryTrigger={categoryTrigger} scheduleTrigger={scheduleTrigger} table1={table1} categoryTable={categoryTable} setTable={setTable} optionRef={optionRef} setCategoryTable={setCategoryTable} setTimeOfDay={setTimeOfDay} timeOfDay={timeOfDay} initialScedule={initialSchedule} scheduleJsx={scheduleJsx} setScheduleJsx={setScheduleJsx} />
+                    </div>
                 </div>
             </div>
         </div>

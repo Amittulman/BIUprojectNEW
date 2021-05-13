@@ -9,9 +9,12 @@ const Categories = (props) => {
 
 
     useEffect(() => {
+        console.log('hello')
+        if (!props.userID) return
+        console.log('hello2, ', props.userID)
         getCategories()
         props.setScheduleJsx(props.initialScedule())
-    }, []);
+    }, [props.userID]);
 
     useEffect(() => {
         if(!props.scheduleJsx.length) return
@@ -85,18 +88,20 @@ const Categories = (props) => {
 
     const getCategories = () => {
         // TODO - get categories from server
-        let user_id = 2
-        fetchCategories('GetUserCategorySlots', user_id)
+        // let user_id = 2
+        fetchCategories('GetUserCategorySlots')
         // TODO - after that, call markCategories and add classname to relevant slots, based on slot value received.
         props.setTable(props.categoryTable)
     }
 
 
-    const fetchCategories = (type, user_id=2) => {
-        fetch("http://localhost:5000/tasks/"+type+"/"+user_id)
+    const fetchCategories = (type) => {
+        fetch("http://localhost:5000/tasks/"+type+"/"+props.userID)
             .then(res => res.json())
             .then(
                 (result) => {
+                    console.log('in fetch categories')
+                    console.log(result)
                     if (result['statusCode'] === 500) throw new Error('Internal server error.');
                     props.setTimeOfDay(result)
                     // setCategoryTable(result)
