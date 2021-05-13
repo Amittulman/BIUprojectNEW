@@ -70,9 +70,13 @@ export class TasksController {
         duration: tasksArray[task]['duration'],
         priority: tasksArray[task]['priority'],
         category_id: tasksArray[task]['category_id'],
-        constraints: tasksArray[task]['constraints']
+        constraints: tasksArray[task]['constraints'],
+        recurrings: tasksArray[task]['recurrings']
 
       };
+      if (tasksArray[task]['recurrings'] === undefined){
+        schedule_task.recurrings = 1;
+      }
       tasks.push(schedule_task);
 
 

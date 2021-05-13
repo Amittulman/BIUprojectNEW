@@ -6,4 +6,6 @@ export interface Task {
   priority: number;
   category_id: number;
   constraints: number[][];
+  recurrings: number;
+
 }

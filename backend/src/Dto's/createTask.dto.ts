@@ -20,4 +20,6 @@ export class CreateTaskDto {
     @IsNotEmpty()
     category_id: number;
     constraints: number[][];
+    @IsNumber()
+    recurrings: number;
 }

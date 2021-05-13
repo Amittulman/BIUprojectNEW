@@ -215,6 +215,7 @@ export class SchedulerService {
             user_id: 1, task_title: 'first task',
             duration: 90,
             priority: 1, category_id: 1,
+            recurrings: 1,
             constraints: [[1,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
             // constraints: '010000000000000110100'
         }
@@ -223,38 +224,42 @@ export class SchedulerService {
             user_id: 1, task_title: 'second task',
             duration: 90,
             priority: 2, category_id: 1,
-            constraints: [[0,1,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
+            constraints: [[0,1,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
+            recurrings: 1
+
         }
         const temp_task3: Task = {
             task_id: 3,
             user_id: 1, task_title: 'third task',
             duration: 120,
             priority: 1, category_id: 1,
-            constraints: null
+            constraints: null,
+            recurrings: 1,
+
         }
         const temp_task4: Task = {
             task_id: 4,
             user_id: 1, task_title: 'third task',
             duration: 320,
             priority: 0, category_id: 1,
-            constraints: null
+            constraints: null,
+            recurrings: 1,
+
         }
         const temp_task5: Task = {
             task_id: 5,
             user_id: 1, task_title: 'third task',
             duration: 4990,
             priority: 0, category_id: 1,
-            constraints: null
+            constraints: null,
+            recurrings: 1,
+
         }
         return new Array<Task>(temp_task1, temp_task2);
     }
 
     private async slotToConstraint(slot: any) {
-        let day = Math.floor(slot/48);
-        // const sheerit = day-Math.floor(day);
-        // if (sheerit<0.25 && Math.floor(day)>0){
-        //     day--;
-        // }
+        const day = Math.floor(slot/48);
         const toMinus = day*48;
         const temp = slot-toMinus;
         const partOfTheDay = Math.floor(temp/12);

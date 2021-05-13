@@ -61,7 +61,9 @@ export class AppDal {
       duration: 40,
       priority: 2,
       category_id: 3,
-      constraints: null
+      constraints: null,
+      recurrings: 1
+
     }
     return { tasks: [temp_task] };
   }
