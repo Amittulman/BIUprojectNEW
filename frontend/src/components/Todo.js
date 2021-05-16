@@ -1,6 +1,5 @@
 import './Todo.css';
 import React, {useState, useEffect, useRef} from 'react';
-import Menu from "./Menu";
 
 const Todo = (props) => {
   const [tasks_jsx, setTasksJsx] = useState(new Set())
@@ -45,6 +44,7 @@ const Todo = (props) => {
   }, [props.updating_tasks])
 
   useEffect(() => {
+    console.log('tasks: ', tasks)
     if (firstUpdate2.current) {
       firstUpdate2.current = false
       return
@@ -87,7 +87,9 @@ const Todo = (props) => {
   // }
 
   const bin_task = (event,i) => {
+    console.log('bin task')
     let timer;
+    // Deletion animation, depending on closed/opened task.
     if (event.currentTarget.parentNode.childNodes[1].className.startsWith('closed')) {
       document.getElementById('task_container'+i).classList.add('removed_container')
       timer = 300
@@ -129,7 +131,7 @@ const Todo = (props) => {
   const addTask = (index, values) => {
     console.log('values : ', values)
     if (values == null) {
-      values = {'user_id':'','task_title':'', 'duration':'','priority':'','category_id':'','constraints':'000000000000000000000'}
+      values = {'user_id':props.userID,'task_title':'', 'duration':'','priority':'', 'recurrings':'1', 'category_id':'','constraints':'000000000000000000000'}
     }
       let constraints_params = getConstraints(index, values['constraints']);
     let i = index
@@ -145,8 +147,9 @@ const Todo = (props) => {
         <option value="3">High</option>
       </select></div>;
     let category_id = <div key={'category_id'+index} className='task_elm' onChange={(e) => handleChange(e, i)}>Category:&nbsp;&nbsp;<input name='category_id' type='text' defaultValue={values['category_id']}/></div>;
+    let recurrings = <div key={'recurrings'+index} className='task_elm' onChange={(e) => handleChange(e, i)}>Recurrences:&nbsp;&nbsp;<input name='recurrings' type='text' defaultValue={values['recurrings']}/></div>;
     let constraints = <div key={'constraints'+index} id={'constraints'+index} className='task_elm' onChange={(e) => handleChange(e, i)}>Constraints:&nbsp;&nbsp;{constraints_params}<input name='constraints' type='text'/></div>;
-    let task = <div key={'task'+index} id={'task'+index} className='closed_task'>{[task_title, duration, priority, category_id, constraints]}</div>
+    let task = <div key={'task'+index} id={'task'+index} className='closed_task'>{[task_title, duration, priority, category_id, recurrings, constraints]}</div>
     let sign = <div id='expand_icon' onClick={(e) =>  expandTask(e, task)} key='plus_sign'/>
     let task_container = <div key={'task_container'+index} id={'task_container'+index} className='task_container' >{[sign, task,trash_bin]}</div>
     containerRef.current = task_container
@@ -162,7 +165,7 @@ const Todo = (props) => {
   }
 
   const getConstraints = (index, values) => {
-    let i, j;
+    let i;
     let int_values = []
     let days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     for (i=0;i<values.length;i++)
@@ -189,6 +192,7 @@ const Todo = (props) => {
   // }, [checked])
 
   const onSubmitHandler = (event) => {
+    console.log('removed tasks: ', removed_tasks)
     event.preventDefault();
     setIsLoaded(false)
     sendTasksToRemove();
@@ -210,7 +214,7 @@ const Todo = (props) => {
   },[isLoaded])
 
   const sendTasksToRemove = () => {
-    fetch('http://localhost:5000/tasks/DeleteTasks/1', {
+    fetch('http://localhost:5000/tasks/DeleteTasks/'+props.userID, {
       method: 'DELETE',
       headers: {
         Accept: 'application/json',
@@ -219,7 +223,7 @@ const Todo = (props) => {
       body: JSON.stringify(removed_tasks)
     })
         .then((response) => {
-          if (response.status === 201) {
+          if (response.status === 200) {
             console.log("User's tasks hes been removed successfully.");
           } else {
             console.log("Request status code: " + response.status);
@@ -241,11 +245,11 @@ const Todo = (props) => {
   }, [trigger])
 
   const sendTasksToPost = () => {
-    console.log('updated tasks: ', updated_tasks)
-    console.log('tasks to send: ', updated_tasks)
+    console.log('updated tasks(before post): ', updated_tasks)
     let s = 'temp_task_id'
     for (const key of Object.keys(updated_tasks))
       delete updated_tasks[key][s]
+    console.log('updated tasks(before post)2: ', Object.values(updated_tasks))
     fetch('http://localhost:5000/tasks/PostTasks/{tasks}', {
       method: 'POST',
       headers: {
@@ -276,11 +280,13 @@ const Todo = (props) => {
     console.log('handlechange: ',event.target)
     const nam = event.target.name;
     const val = event.target.value;
+    console.log('nam: ', nam)
+    console.log('val: ', val)
     if (nam === 'constraints') {
       handleConstraints(event, index)
       return
     }
-    let empty_task = {'temp_task_id':index,'user_id':1,'task_title':'', 'duration':'','priority':'','category_id':'','constraints':'000000000000000000000'};
+    let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'','priority':'', 'recurrings':'', 'category_id':'','constraints':'000000000000000000000'};
     let updated = updatedRef.current
     // If task is new, create a new instance of it, else edit existing/
     //removes old task when submitting form.
@@ -311,7 +317,7 @@ const Todo = (props) => {
     console.log('nam: ',nam)
     console.log('val: ',val)
     // console.log('print: ', '1'.repeat(val) + '0' + '1'.repeat(20-val))
-    let empty_task = {'temp_task_id':index,'user_id':1,'task_title':'', 'duration':'','priority':'','category_id':'','constraints':'000000000000000000000'};
+    let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'','priority':'', 'recurrings':'', 'category_id':'','constraints':'000000000000000000000'};
     let updated = updatedRef.current
     // If task is new, create a new instance of it, else edit existing/
     //removes old task when submitting form.

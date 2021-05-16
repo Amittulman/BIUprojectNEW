@@ -8,6 +8,7 @@ const Table = (props) => {
     const [tasks, setTasks] = useState([])
     const [tasksID, setTasksID] = useState([])
     const [tasksDict, setTasksDict] = useState([])
+    const [draggedGroup, setDraggedGroup] = useState([])
     const prevs = useRef({tasksID, tasksDict, tasks})
     let day = ['Time', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -47,7 +48,7 @@ const Table = (props) => {
                 let content = [];
                 for (let j = 0; j < slots_per_day; j++) {
                     let data = tasks_id[j + (i - 1) * slots_per_day]
-                    let class_name = getClass(props.timeOfDay[slots_per_day * (i - 1) + j])
+                    let class_name = getClass(props.categoryTypes[slots_per_day * (i - 1) + j])
                     content.push(<td key={'cell_' + (slots_per_day * (i - 1) + j)} className={class_name}
                                      id={'cell_' + (slots_per_day * (i - 1) + j) + '_taskID_' + tasksID[j + (i - 1) * slots_per_day]}
                                      draggable='true' onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop}
@@ -86,31 +87,68 @@ const Table = (props) => {
         }
     }
 
-    const dragStart = (event) => {
+    const dragStart_old = (event) => {
         event.dataTransfer.setData('text/plain', event.target.id);
+    }
+
+    const getSimilarTasks = (id) => {
+        let index = parseInt(id.split('_')[1])
+        let targetID = parseInt(id.split('_')[3])
+        let res = []
+        let toPush;
+        console.log(tasksID[index], targetID)
+        console.log(tasksID)
+        //iterate prev. tasks ids, add to arr while identical to id's id.
+        while (tasksID[index] === targetID) {
+            toPush = 'cell_'+index+'_taskID_'+targetID
+            res.push(toPush);
+            index--;
+        }
+        index = parseInt(id.split('_')[1]) + 1
+        //iterate next tasks ids, add to arr while identical to id's id.
+        while (tasksID[index] === targetID) {
+            toPush = 'cell_'+index+'_taskID_'+targetID
+            res.push(toPush);
+            index++;
+        }
+        setDraggedGroup(res)
+        return res
+    }
+
+    const dragStart = (event) => {
+        //create an array of all ids in an increasing slots order (starting from event.target.id backward and forward).
+        let similarTasks = JSON.stringify(getSimilarTasks(event.target.id))
+        console.log('similarTasks: ',similarTasks)
+        //putting it as second parameter in setData.
+        event.dataTransfer.setData('text/plain', similarTasks);
     }
 
     const allowDrop = (event) => {
         event.preventDefault();
+        // do the same for all moved slots
         event.target.style.boxShadow = 'rgba(0, 0, 0, 0.46) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px';
         event.target.style.transition = 'box-shadow .2s linear';
     }
 
     const leaveDropArea = (event) => {
         event.preventDefault();
+        // do the same for all moved slots.
         event.target.style.boxShadow = 'none';
         event.target.style.transition = 'box-shadow .2s linear';
     }
 
-    const drop = (event) => {
+    const drop_old = (event) => {
         event.preventDefault();
         let id = event.dataTransfer.getData('text/plain');
         let dragged_element = document.getElementById(id);
         event.target.style.boxShadow = 'none';
         event.target.style.transition = 'box-shadow .2s linear';
+        // If dragged slots are in paint mode, do not drop.
         if (dragged_element.ondragover !== null) return
         if (dragged_element.textContent && !event.target.textContent && event.target !== dragged_element) {
+            // Moving content to target slot
             event.target.textContent = dragged_element.textContent;
+            // Emptying source slot.
             dragged_element.textContent = '';
             let src_data = id.split('_')
             let dest_slot = event.target.id.split('_')[1]
@@ -121,6 +159,40 @@ const Table = (props) => {
             tasks_id[src_slot] = -1
             setTasksID(tasks_id)
             updateTaskLocation(src_slot, dest_slot, src_task_id)
+        }
+        event.dataTransfer.clearData();
+    }
+
+    const drop = (event) => {
+        event.preventDefault();
+        let ids = event.dataTransfer.getData('text/plain').slice(1,-1).split(",");
+        //Drop all slots with the same ID.
+        for (let i=0; i<ids.length; i++) {
+            ids[i] = ids[i].replaceAll('"', '')
+            console.log('dragged single id: ', ids[i])
+            let dragged_element = document.getElementById(ids[i]);
+            event.target.style.boxShadow = 'none';
+            event.target.style.transition = 'box-shadow .2s linear';
+            if (dragged_element.ondragover !== null) return
+            if (dragged_element.textContent && !event.target.textContent && event.target !== dragged_element) {
+                let testing = props.schedRef.current;
+                // console.log('testing1: ', testing)
+                // testing[0].readOnly = false
+                // testing[0]['props']['children']['props']['children'][1][2]['props']['children'][1][0]['props']['id'] = 5
+                // console.log('testing2: ', testing[0]['props']['children']['props']['children'][1][2]['props']['children'][1][0]['props']['id'])
+                props.setTable(props.schedRef.current)
+                event.target.textContent = dragged_element.textContent;
+                dragged_element.textContent = '';
+                let src_data = ids[i].split('_')
+                let dest_slot = event.target.id.split('_')[1]
+                let src_slot = src_data[1]
+                let tasks_id = tasksID
+                let src_task_id = tasks_id[src_slot]
+                tasks_id[dest_slot] = parseInt(src_task_id)
+                tasks_id[src_slot] = -1
+                setTasksID(tasks_id)
+                updateTaskLocation(src_slot, dest_slot, src_task_id)
+            }
         }
         event.dataTransfer.clearData();
     }

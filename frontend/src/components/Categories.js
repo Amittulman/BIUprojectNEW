@@ -19,8 +19,7 @@ const Categories = (props) => {
     useEffect(() => {
         if(!props.scheduleJsx.length) return
         markCategories()
-    }, [props.timeOfDay,props.scheduleTrigger])
-
+    }, [props.categoryTypes,props.scheduleTrigger])
 
     const getClass = (number) => {
         switch(number) {
@@ -41,7 +40,7 @@ const Categories = (props) => {
         for (let i = 1; i < 8; i++) {
             let empty_content = []
             for (let j = 0; j < slots_per_day; j++) {
-                let class_name = getClass(props.timeOfDay[slots_per_day * (i - 1) + j])
+                let class_name = getClass(props.categoryTypes[slots_per_day * (i - 1) + j])
                 empty_content.push(<td key={'cell_' + (slots_per_day * (i - 1) + j) + '_empty'}
                                        id={'cell_' + (slots_per_day * (i - 1) + j) + '_empty'} className={class_name}
                                        draggable='true' onDragStart={dragStart} onClick={allowDropCategory} onDragOver={allowDropCategory}
@@ -77,8 +76,8 @@ const Categories = (props) => {
                 break;
         }
         let event_slot = event.target.id.split('_')[1]
-        props.timeOfDay[event_slot] = ref
-        props.setTimeOfDay(props.timeOfDay)
+        props.categoryTypes[event_slot] = ref
+        props.setCategoryTypes(props.categoryTypes)
     }
 
     useEffect(() => {
@@ -94,7 +93,6 @@ const Categories = (props) => {
         props.setTable(props.categoryTable)
     }
 
-
     const fetchCategories = (type) => {
         fetch("http://localhost:5000/tasks/"+type+"/"+props.userID)
             .then(res => res.json())
@@ -103,7 +101,7 @@ const Categories = (props) => {
                     console.log('in fetch categories')
                     console.log(result)
                     if (result['statusCode'] === 500) throw new Error('Internal server error.');
-                    props.setTimeOfDay(result)
+                    props.setCategoryTypes(result)
                     props.setCategoryTrigger(true)
                     // setCategoryTable(result)
                 })

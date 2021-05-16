@@ -20,9 +20,11 @@ const App = () => {
     const [scheduleTrigger, setScheduleTrigger] = useState(false)
     const [table1, setTable] = useState([])
     const [scheduleTable, setScheduleTable] = useState([])
-    const [timeOfDay, setTimeOfDay] = useState(Array(slots_per_day*7).fill(-1))
+    const schedRef = useRef()
+    schedRef.current = scheduleTable;
+    const [ categoryTypes, setCategoryTypes] = useState(Array(slots_per_day*7).fill(-1))
     const timeRef = useRef();
-    timeRef.current = timeOfDay;
+    timeRef.current =  categoryTypes;
     const [scheduleJsx, setScheduleJsx] = useState([])
     const [userID, setUserID] = useState()
     // const user_id = 2
@@ -48,15 +50,15 @@ const App = () => {
         return tasksID
     }
 
-    // useEffect(() => {
-    //     let i, j;
-    //     let cls = []
-    //     for (i=1 ; i<8;i++) {
-    //         for (j = 1; j < slots_per_day + 1; j++) {
-    //             cls.push(timeOfDay[slots_per_day * (i - 1) + (j - 1)])
-    //         }
-    //     }
-    // },[timeOfDay])
+    useEffect(() => {
+        console.log('TABLE 1: ', table1)
+    }, [table1])
+
+    useEffect(() => {
+        console.log('TABLE IN SCHEDULE TABLE: ', table1)
+        console.log('SCHEDULE TABLE: ', scheduleTable)
+    }, [scheduleTable])
+
 
     const fetchTasks = (type, userID) => {
         fetch("http://localhost:5000/tasks/"+type+"/"+userID)
@@ -107,7 +109,7 @@ const App = () => {
             .then((response) => {
                 if (response.status === 200) {
                     console.log("User's tasks hes been removed successfully.");
-                    // setTimeOfDay([])
+                    // setCategoryTypes([])
                     postCategories()
                     // setCategoryTable()
                 } else {
@@ -128,7 +130,7 @@ const App = () => {
                 Accept: 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(timeOfDay)
+            body: JSON.stringify( categoryTypes)
         })
             .then((response) => {
                 // setCategoryTable(response)
@@ -208,7 +210,7 @@ const App = () => {
         let i, j;
         for (i=1 ; i<8;i++) {
             for (j=1 ; j < slots_per_day+1 ; j++) {
-                // let class_name = getClass(timeOfDay[slots_per_day * (i - 1) + (j-1)])
+                // let class_name = getClass( categoryTypes[slots_per_day * (i - 1) + (j-1)])
                 let node = sched.childNodes.item(0).childNodes.item(0).childNodes.item(0).childNodes.item(i).childNodes.item(j)
                 // node.className = class_name//class_name
                 node.ondragstart = dragStartCat
@@ -228,11 +230,11 @@ const App = () => {
             for (j=1 ; j < slots_per_day+1 ; j++) {
                 let node = sched.childNodes.item(0).childNodes.item(0).childNodes.item(0).childNodes.item(i).childNodes.item(j)
                 // node.className = 'empty_slot';
-                node.ondragstart = dragStartSched
-                node.ondragover = allowDropSched
+                node.ondragstart = null
+                node.ondragover = null
                 node.onclick = null
-                node.ondrop = dropSched
-                node.ondragleave = leaveDropAreaSched
+                node.ondrop = null
+                node.ondragleave = null
                 node.draggable = true
             }
         }
@@ -261,49 +263,8 @@ const App = () => {
                 break;
         }
         let event_slot = event.target.id.split('_')[1]
-        timeOfDay[event_slot] = ref
-        setTimeOfDay(timeOfDay)
-    }
-
-    const dragStartSched = (event) => {
-        event.dataTransfer.setData('text/plain', event.target.id);
-    }
-
-    const allowDropSched = (event) => {
-        event.preventDefault();
-        event.target.style.boxShadow = 'rgba(0, 0, 0, 0.46) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px';
-        event.target.style.transition = 'box-shadow .2s linear';
-    }
-
-
-    const leaveDropAreaSched = (event) => {
-        event.preventDefault();
-        event.target.style.boxShadow = 'none';
-        event.target.style.transition = 'box-shadow .2s linear';
-    }
-
-    const dropSched = (event) => {
-        event.preventDefault();
-        let id = event.dataTransfer.getData('text/plain');
-        let dragged_element = document.getElementById(id);
-        event.target.style.boxShadow = 'none';
-        event.target.style.transition = 'box-shadow .2s linear';
-        // TODO: remove second condition, so it will be possible to drag into an occupied slot.
-        if (dragged_element.textContent && !event.target.textContent && event.target !== dragged_element) {
-            event.target.textContent = dragged_element.textContent;
-            dragged_element.textContent = '';
-            let src_data = id.split('_')
-            let dest_slot = event.target.id.split('_')[1]
-            let src_slot = src_data[1]
-            let tasks_id = tasksID
-            let src_task_id = tasks_id[src_slot]
-            tasks_id[dest_slot] = parseInt(src_task_id)
-            tasks_id[src_slot] = -1
-            setTaskID(tasks_id)
-            // let user_id = 2
-            updateTaskLocation(src_slot, dest_slot, src_task_id)
-        }
-        event.dataTransfer.clearData();
+         categoryTypes[event_slot] = ref
+        setCategoryTypes( categoryTypes)
     }
 
     const updateTaskLocation = (src_slot, dest_slot, task_id) => {
@@ -440,10 +401,10 @@ const App = () => {
                 </div>
                 <div id='schedule_parent' className='col-8 col-8_start'>
                     <div id='schedule_component'>
-                        <Schedule userID={userID} categoryTrigger={categoryTrigger} test123={test} setTimeOfDay={setTimeOfDay} timeOfDay={timeOfDay} setScheduleTable={setScheduleTable} setScheduleJsx={setScheduleJsx} scheduleJsx={scheduleJsx} initialSchedule={initialSchedule} table1={table1} setTable={setTable} getCategoryTable={categoryTable} setCategoryTable={setCategoryTable} setToOptimize={setToOptimize} toOptimize={toOptimize} tasksID={tasksID} getTasksID={taskIDGetter} trigTasksID={taskIDTrig} updating_tasks={tasks} getTasks={taskGetter} setTasks={taskSetter}/>
+                        <Schedule userID={userID} categoryTrigger={categoryTrigger} test123={test} setCategoryTypes={setCategoryTypes}  categoryTypes={ categoryTypes} schedRef={schedRef} scheduleTable={scheduleTable} setScheduleTable={setScheduleTable} setScheduleJsx={setScheduleJsx} scheduleJsx={scheduleJsx} initialSchedule={initialSchedule} table1={table1} setTable={setTable} getCategoryTable={categoryTable} setCategoryTable={setCategoryTable} setToOptimize={setToOptimize} toOptimize={toOptimize} tasksID={tasksID} getTasksID={taskIDGetter} trigTasksID={taskIDTrig} updating_tasks={tasks} getTasks={taskGetter} setTasks={taskSetter}/>
                     </div>
                     <div id='category_component'>
-                        <Categories userID={userID} setCategoryTrigger={setCategoryTrigger} categoryTrigger={categoryTrigger} scheduleTrigger={scheduleTrigger} table1={table1} categoryTable={categoryTable} setTable={setTable} optionRef={optionRef} setCategoryTable={setCategoryTable} setTimeOfDay={setTimeOfDay} timeOfDay={timeOfDay} initialScedule={initialSchedule} scheduleJsx={scheduleJsx} setScheduleJsx={setScheduleJsx} />
+                        <Categories userID={userID} setCategoryTrigger={setCategoryTrigger} categoryTrigger={categoryTrigger} scheduleTrigger={scheduleTrigger} table1={table1} categoryTable={categoryTable} setTable={setTable} optionRef={optionRef} setCategoryTable={setCategoryTable} setCategoryTypes={setCategoryTypes}  categoryTypes={ categoryTypes} initialScedule={initialSchedule} scheduleJsx={scheduleJsx} setScheduleJsx={setScheduleJsx} />
                     </div>
                 </div>
             </div>
