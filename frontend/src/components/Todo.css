@@ -47,7 +47,7 @@
 
 .expanded_task {
   /*height: 180px;*/
-  height: 450px;
+  height: 500px;
   background-color: rgba(250,250,250, .3);
   box-shadow: 1px 0px 3px 3px #ccc;
   border-radius: 10px;

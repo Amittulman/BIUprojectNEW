@@ -14,11 +14,14 @@ export class SchedulerService {
         //var temptaskss = await this.createTempTasks();
         const slots = await this.createSlotsWithCategory(categorySlots);
         const mockTasks = await this.createTempTasks();
-        //tasks from frontend
         const tasksFromUser = ToDoList.tasks;
-        const prioritiesTasks =  await this.sortPriorities(tasksFromUser);
+
+        const taskWithRec = await this.createTaskWithDup(tasksFromUser);
+        //tasks from frontend
+        const prioritiesTasks =  await this.sortPriorities(taskWithRec);
         const resultCalc = await this.calcBackTracking(prioritiesTasks, slots);
         const resultsOnlySlots = await this.createSlotsFromResult(resultCalc);
+        console.log(resultsOnlySlots);
         return resultsOnlySlots;
     }
 
@@ -121,14 +124,21 @@ export class SchedulerService {
             console.log('slots[index][1] ' + slots[index][1]);
         }
         const isRightCategory = (task.category_id === slots[index][1]);
-
+        if(index < 12) {
+            return false;
+        }
         const constraint = await this.slotToConstraint(index);
         const day = constraint[0];
         let hour = constraint[1];
         if (hour === 3) {
             hour = 2;
         }
-        // console.log("task:" + task);
+        if (task.recurrings > 1) {
+            let isInThisDayAlready =  await this.checkIfSameTaskThisDay(task, day, slots);
+            if (isInThisDayAlready) {
+                return false;
+            }
+        }
         if(task === undefined || task.constraints === undefined || task.constraints[day] === undefined || task.constraints[day][hour] === undefined ){
             console.log('Hi!');
             console.log('task ' + task);
@@ -214,19 +224,18 @@ export class SchedulerService {
             task_id: 1333,
             user_id: 1, task_title: 'first task',
             duration: 90,
-            priority: 1, category_id: 1,
-            recurrings: 1,
-            constraints: [[1,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
+            priority: 1, category_id: -1,
+            recurrings: 2,
+            constraints: [[1,0,1],[0,0,0],[1,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
             // constraints: '010000000000000110100'
         }
         const temp_task2: Task = {
             task_id: 2,
             user_id: 1, task_title: 'second task',
             duration: 90,
-            priority: 2, category_id: 1,
-            constraints: [[0,1,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
-            recurrings: 1
-
+            priority: 2, category_id: -1,
+            constraints: [[0,0,0],[1,1,1],[1,1,1],[1,1,1],[0,0,0],[0,0,0],[0,0,0]],
+            recurrings: 3
         }
         const temp_task3: Task = {
             task_id: 3,
@@ -258,14 +267,50 @@ export class SchedulerService {
         return new Array<Task>(temp_task1, temp_task2);
     }
 
+
+    // sun: 12 - 60
+    // mon: 60 -108
+    // Tu: 108-156
+    // Wen: 156-204
+    // Th: 204-252
+    // Fr: 252 su:300 - 336
     private async slotToConstraint(slot: any) {
-        const day = Math.floor(slot/48);
+        slot = slot-12;
+        let day = Math.floor(slot/48);
         const toMinus = day*48;
         const temp = slot-toMinus;
         const partOfTheDay = Math.floor(temp/12);
-
-
+        if (day < 0) {
+            return [0,0];
+        }
         return [day, partOfTheDay];
+    }
 
+    private async createTaskWithDup(tasks: any)
+    {
+        const newTasks = [];
+        for (let i = 0; i < tasks.length; i++) {
+            let rec = tasks[i].recurrings;
+            for(let j = 0; j < rec; j++) {
+                const objShallowCopy = Object.assign({}, tasks[i]);
+                newTasks.push(objShallowCopy);
+            }
+        }
+        return newTasks;
+    }
+
+    private async checkIfSameTaskThisDay(task:Task , day: number, slots: any) {
+        const temp = day*48;
+        const down = 12 + temp;
+        let up = down + 48;
+        if(up === 348) {
+            up = 336;
+        }
+        for(let i=down; i< up; i++) {
+            if(slots[i][0] === task.task_id) {
+                return true;
+            }
+        }
+        return false;
     }
 }

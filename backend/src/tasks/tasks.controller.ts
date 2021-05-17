@@ -41,7 +41,7 @@ export class TasksController {
       console.log(await this.deleteSchedule(user_id));
       const success = await this.postSchedule(result,user_id);
       console.log(success);
-      res = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, ...result];
+      res = result;
     }
     else {
       res = null;
