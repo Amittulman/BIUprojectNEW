@@ -214,6 +214,7 @@ const Todo = (props) => {
   },[isLoaded])
 
   const sendTasksToRemove = () => {
+    console.log('TASKS TO REMOVE: ', removed_tasks)
     fetch('http://localhost:5000/tasks/DeleteTasks/'+props.userID, {
       method: 'DELETE',
       headers: {
@@ -286,7 +287,7 @@ const Todo = (props) => {
       handleConstraints(event, index)
       return
     }
-    let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'','priority':'', 'recurrings':'', 'category_id':'','constraints':'000000000000000000000'};
+    let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'','priority':'', 'recurrings':'1', 'category_id':'','constraints':'000000000000000000000'};
     let updated = updatedRef.current
     // If task is new, create a new instance of it, else edit existing/
     //removes old task when submitting form.
@@ -317,7 +318,7 @@ const Todo = (props) => {
     console.log('nam: ',nam)
     console.log('val: ',val)
     // console.log('print: ', '1'.repeat(val) + '0' + '1'.repeat(20-val))
-    let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'','priority':'', 'recurrings':'', 'category_id':'','constraints':'000000000000000000000'};
+    let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'','priority':'', 'recurrings':'1', 'category_id':'','constraints':'000000000000000000000'};
     let updated = updatedRef.current
     // If task is new, create a new instance of it, else edit existing/
     //removes old task when submitting form.

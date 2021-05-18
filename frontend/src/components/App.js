@@ -34,6 +34,14 @@ const App = () => {
         setTasks(received_tasks)
     }
 
+    useEffect(() => {
+        console.log('tasks id: ', tasksID)
+    }, [tasksID])
+
+    useEffect(() => {
+        console.log('tasks has CHANGEDDD: ', tasks)
+    }, [tasks])
+
     const taskGetter = () => {
         fetchTasks('gettasks', userID)
     }
@@ -193,19 +201,6 @@ const App = () => {
         }
     }
 
-    const getClass = (number) => {
-        switch(number) {
-            case 0:
-                return 'type_a'
-            case 1:
-                return 'type_b'
-            case 2:
-                return 'type_c'
-            default:
-                return 'empty_slot'
-        }
-    }
-
     const paintSlots = (sched) => {
         let i, j;
         for (i=1 ; i<8;i++) {
@@ -265,32 +260,6 @@ const App = () => {
         let event_slot = event.target.id.split('_')[1]
          categoryTypes[event_slot] = ref
         setCategoryTypes( categoryTypes)
-    }
-
-    const updateTaskLocation = (src_slot, dest_slot, task_id) => {
-        let data_to_send = {'slot_id': parseInt(src_slot), 'task_id': parseInt(task_id), 'user_id': userID}
-        console.log('b!!! ', data_to_send)
-        fetch('http://localhost:5000/tasks/UpdateSchedule/' + dest_slot, {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data_to_send)
-        })
-            .then((response) => {
-                if (response.status === 201) {
-                    console.log("User's tasks hes been sent successfully.");
-                    console.log(response.text())
-                } else {
-                    console.log("User's tasks hes been sent. HTTP request status code: " + response.status);
-                    console.log(response.text())
-                }
-                console.log('respones: ', response)
-            })
-            .catch((error) => {
-                console.error("Error while submitting task: " + error.message);
-            });
     }
 
     const findTask = (event) => {
