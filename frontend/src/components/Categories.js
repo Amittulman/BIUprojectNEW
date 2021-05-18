@@ -9,9 +9,7 @@ const Categories = (props) => {
 
 
     useEffect(() => {
-        console.log('hello')
         if (!props.userID) return
-        console.log('hello2, ', props.userID)
         getCategories()
         props.setScheduleJsx(props.initialScedule())
     }, [props.userID]);
@@ -98,7 +96,6 @@ const Categories = (props) => {
             .then(res => res.json())
             .then(
                 (result) => {
-                    console.log('in fetch categories')
                     console.log(result)
                     if (result['statusCode'] === 500) throw new Error('Internal server error.');
                     props.setCategoryTypes(result)

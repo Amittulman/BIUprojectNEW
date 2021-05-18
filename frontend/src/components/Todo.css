@@ -27,7 +27,7 @@
 
 }
 
-.closed_task {
+.closed_task, .closed_task_error {
   height: 45px;
   background-color: rgba(250,250,250, .3);
   box-shadow: 1px 0px 3px 3px #ccc;
@@ -45,7 +45,21 @@
 
 }
 
-.expanded_task {
+#error_popup {
+  z-index: 1000;
+  position: absolute;
+  bottom: 150px;
+  font-size: 20px;
+  /*font-size: 100vw;*/
+  padding: 5px 20px 5px 20px;
+  /*right: 150px;*/
+  border: 1px solid rgba(0,0,0,.2);
+  background-color: rgba(255, 0, 0, 0.2);
+  border-radius: 20px 20px;
+  opacity: 0;
+}
+
+.expanded_task, .expanded_task_error {
   /*height: 180px;*/
   height: 500px;
   background-color: rgba(250,250,250, .3);
@@ -61,6 +75,15 @@
   white-space: nowrap;
   text-align: center;
   -webkit-transition: height 0.4s ease;
+}
+
+.expanded_task_error, .closed_task_error {
+  box-shadow: 1px 0px 3px 3px rgb(255, 78, 79);
+  animation: error 1.5s infinite;
+}
+
+@keyframes error {
+  50% {box-shadow: 1px 0 3px 5px rgb(243, 124, 124)}
 }
 
 #header {
@@ -130,7 +153,10 @@ select {
   background-color: white;
   position: relative;
   background-clip: content-box;
+}
 
+.task_container_error {
+  background-color: red;
 }
 
 .removed_container {
@@ -190,9 +216,17 @@ select {
   text-align: left;
 }
 
+.task_error {
+  color: red !important;
+}
+
 .task_elm:hover {
   text-shadow: 0 0 1px black;
   -webkit-transition: text-shadow 0.1s linear;
+}
+
+.red_task {
+  color: red;
 }
 
 #container {
@@ -304,3 +338,5 @@ select {
   position: absolute;
   background-color: red;
 }
+
+

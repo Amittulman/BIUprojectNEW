@@ -34,14 +34,6 @@ const App = () => {
         setTasks(received_tasks)
     }
 
-    useEffect(() => {
-        console.log('tasks id: ', tasksID)
-    }, [tasksID])
-
-    useEffect(() => {
-        console.log('tasks has CHANGEDDD: ', tasks)
-    }, [tasks])
-
     const taskGetter = () => {
         fetchTasks('gettasks', userID)
     }
@@ -57,16 +49,6 @@ const App = () => {
         }
         return tasksID
     }
-
-    useEffect(() => {
-        console.log('TABLE 1: ', table1)
-    }, [table1])
-
-    useEffect(() => {
-        console.log('TABLE IN SCHEDULE TABLE: ', table1)
-        console.log('SCHEDULE TABLE: ', scheduleTable)
-    }, [scheduleTable])
-
 
     const fetchTasks = (type, userID) => {
         fetch("http://localhost:5000/tasks/"+type+"/"+userID)
@@ -86,7 +68,6 @@ const App = () => {
     }
 
     const fetchTaskID = (type, userID) => {
-        console.log('taskid getter')
         fetch("http://localhost:5000/tasks/"+type+"/"+userID)
             .then(res => res.json())
             .then(
@@ -96,8 +77,25 @@ const App = () => {
                 })
             .catch((error) => {
                 console.log(error)
+                if (type === 'trig') {
+                    let popup = document.getElementById('error_popup')
+                    popup.animate(errorAnimation[0], errorAnimation[1])
+                    setTimeout(function() {
+                    popup.animate(endErrorAnimation[0], endErrorAnimation[1])
+                    }, 3000)
+                }
             });
     }
+
+    const errorAnimation = [[
+        { 'opacity': 0, transform: 'translateY(50px)'},
+        { 'opacity': 1, transform: 'translateY(0px)', visibility:'visible'}
+    ], {duration: 500, fill: 'forwards', easing: 'ease-out'}];
+
+    const endErrorAnimation = [[
+        { 'opacity': 1, transform: 'translateY(0px))'},
+        { 'opacity': 0, transform: 'translateY(50px)', visibility:'hidden'}
+    ], { duration: 500, fill: 'forwards', easing: 'ease-in'}];
 
     const handleCategoriesSubmission = () => {
         removeCategories()
