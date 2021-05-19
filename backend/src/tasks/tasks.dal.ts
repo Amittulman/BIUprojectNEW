@@ -88,28 +88,45 @@ export class TasksDal {
         tasks[task].constraints = "111111111111111111111"
       }
     }
-    // for (const task in tasks){
-    //   let str_constraints = "";
-    //
-    //
-    //   const constraints = tasks[task].constraints
-    //   for (const day in constraints){
-    //     for (const day_part in constraints[day]){
-    //       str_constraints+=constraints[day][day_part];
-    //     }
-    //
-    //
-    //   }
-    //   tasks[task].constraints = str_constraints;
-    // }
     try{
-
       const res = await  this.db(TASK_TABLE).insert(tasks);
     }
     catch (e){
       suc = e
     }
     return suc;  }
+
+  async updateTasks(tasks: any): Promise<any> {
+
+    console.log(tasks);
+    const queries = [];
+    tasks.forEach(task=>{ const i = 0;
+      queries.push(
+          "update `tasks_table` set `duration` = " + task.duration +
+          ", `task_title` = '" + task.task_title +
+          "', `priority` = " + task.priority +
+          ", `category_id` = " + task.category_id+
+          ", `constraints` = '" + task.constraints+
+          "', `recurrings` = " + task.recurrings +
+          " where `task_id`=" + task.task_id
+      )
+    })
+
+  // console.log(queries);
+  return this.db.transaction(trx => {
+
+    const whole_query = [];
+    queries.forEach(quer =>{
+      whole_query.push(this.db.raw(quer).transacting(trx),
+      )
+    } );
+
+
+    return Promise.all(whole_query);
+  });
+
+
+  }
 
 
   //

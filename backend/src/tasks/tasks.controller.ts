@@ -78,14 +78,32 @@ export class TasksController {
         schedule_task.recurrings = 1;
       }
       tasks.push(schedule_task);
+    }
+    return this.tasksService.postTasks(tasks);
+  }
 
+  @Post('UpdateTasks/:tasks')
+  updateTasks(@Body() tasksArray: Array<CreateTaskDto>) {
+    const tasks:Array<CreateTaskDto> = [];
+    for(const task in tasksArray){
+      const schedule_task:CreateTaskDto = {
+        task_id : tasksArray[task]['task_id'],
+        user_id : tasksArray[task]['user_id'],
+        task_title : tasksArray[task]['task_title'],
+        duration: tasksArray[task]['duration'],
+        priority: tasksArray[task]['priority'],
+        category_id: tasksArray[task]['category_id'],
+        constraints: tasksArray[task]['constraints'],
+        recurrings: tasksArray[task]['recurrings']
 
+      };
+      if (tasksArray[task]['recurrings'] === undefined){
+        schedule_task.recurrings = 1;
+      }
+      tasks.push(schedule_task);
     }
 
-    return this.tasksService.postTasks(tasks);
-
-
-
+    return this.tasksService.updateTasks(tasks);
   }
 
   // @Post('TaskForToDoList/:createTaskDto')
