@@ -13,7 +13,7 @@ export class SchedulerService {
         //create tasks for testing
         //var temptaskss = await this.createTempTasks();
         const slots = await this.createSlotsWithCategory(categorySlots);
-        const mockTasks = await this.createTempTasks();
+        // const mockTasks = await this.createTempTasks();
         const tasksFromUser = ToDoList.tasks;
 
         const taskWithRec = await this.createTaskWithDup(tasksFromUser);
@@ -134,7 +134,7 @@ export class SchedulerService {
             hour = 2;
         }
         if (task.recurrings > 1) {
-            let isInThisDayAlready =  await this.checkIfSameTaskThisDay(task, day, slots);
+            const isInThisDayAlready =  await this.checkIfSameTaskThisDay(task, day, slots);
             if (isInThisDayAlready) {
                 return false;
             }
@@ -219,53 +219,53 @@ export class SchedulerService {
         return slots;
     }
 
-    private async createTempTasks() {
-        const temp_task1: Task = {
-            task_id: 1333,
-            user_id: 1, task_title: 'first task',
-            duration: 90,
-            priority: 1, category_id: -1,
-            recurrings: 2,
-            constraints: [[1,0,1],[0,0,0],[1,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
-            // constraints: '010000000000000110100'
-        }
-        const temp_task2: Task = {
-            task_id: 2,
-            user_id: 1, task_title: 'second task',
-            duration: 90,
-            priority: 2, category_id: -1,
-            constraints: [[0,0,0],[1,1,1],[1,1,1],[1,1,1],[0,0,0],[0,0,0],[0,0,0]],
-            recurrings: 3
-        }
-        const temp_task3: Task = {
-            task_id: 3,
-            user_id: 1, task_title: 'third task',
-            duration: 120,
-            priority: 1, category_id: 1,
-            constraints: null,
-            recurrings: 1,
-
-        }
-        const temp_task4: Task = {
-            task_id: 4,
-            user_id: 1, task_title: 'third task',
-            duration: 320,
-            priority: 0, category_id: 1,
-            constraints: null,
-            recurrings: 1,
-
-        }
-        const temp_task5: Task = {
-            task_id: 5,
-            user_id: 1, task_title: 'third task',
-            duration: 4990,
-            priority: 0, category_id: 1,
-            constraints: null,
-            recurrings: 1,
-
-        }
-        return new Array<Task>(temp_task1, temp_task2);
-    }
+    // private async createTempTasks() {
+    //     const temp_task1: Task = {
+    //         task_id: 1333,
+    //         user_id: 1, task_title: 'first task',
+    //         duration: 90,
+    //         priority: 1, category_id: -1,
+    //         recurrings: 2,
+    //         constraints: [[1,0,1],[0,0,0],[1,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
+    //         // constraints: '010000000000000110100'
+    //     }
+    //     const temp_task2: Task = {
+    //         task_id: 2,
+    //         user_id: 1, task_title: 'second task',
+    //         duration: 90,
+    //         priority: 2, category_id: -1,
+    //         constraints: [[0,0,0],[1,1,1],[1,1,1],[1,1,1],[0,0,0],[0,0,0],[0,0,0]],
+    //         recurrings: 3
+    //     }
+    //     const temp_task3: Task = {
+    //         task_id: 3,
+    //         user_id: 1, task_title: 'third task',
+    //         duration: 120,
+    //         priority: 1, category_id: 1,
+    //         constraints: null,
+    //         recurrings: 1,
+    //
+    //     }
+    //     const temp_task4: Task = {
+    //         task_id: 4,
+    //         user_id: 1, task_title: 'third task',
+    //         duration: 320,
+    //         priority: 0, category_id: 1,
+    //         constraints: null,
+    //         recurrings: 1,
+    //
+    //     }
+    //     const temp_task5: Task = {
+    //         task_id: 5,
+    //         user_id: 1, task_title: 'third task',
+    //         duration: 4990,
+    //         priority: 0, category_id: 1,
+    //         constraints: null,
+    //         recurrings: 1,
+    //
+    //     }
+    //     return new Array<Task>(temp_task1, temp_task2);
+    // }
 
 
     // sun: 12 - 60
@@ -276,7 +276,7 @@ export class SchedulerService {
     // Fr: 252 su:300 - 336
     private async slotToConstraint(slot: any) {
         slot = slot-12;
-        let day = Math.floor(slot/48);
+        const day = Math.floor(slot/48);
         const toMinus = day*48;
         const temp = slot-toMinus;
         const partOfTheDay = Math.floor(temp/12);
@@ -290,7 +290,7 @@ export class SchedulerService {
     {
         const newTasks = [];
         for (let i = 0; i < tasks.length; i++) {
-            let rec = tasks[i].recurrings;
+            const rec = tasks[i].recurrings;
             for(let j = 0; j < rec; j++) {
                 const objShallowCopy = Object.assign({}, tasks[i]);
                 newTasks.push(objShallowCopy);

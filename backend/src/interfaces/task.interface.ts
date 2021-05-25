@@ -7,5 +7,6 @@ export interface Task {
   category_id: number;
   constraints: number[][];
   recurrings: number;
+  pinned_slot: number;
 
 }

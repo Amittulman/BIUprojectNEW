@@ -71,7 +71,8 @@ export class TasksController {
         priority: tasksArray[task]['priority'],
         category_id: tasksArray[task]['category_id'],
         constraints: tasksArray[task]['constraints'],
-        recurrings: tasksArray[task]['recurrings']
+        recurrings: tasksArray[task]['recurrings'],
+        pinned_slot: tasksArray[task]['pinned_slot']
 
       };
       if (tasksArray[task]['recurrings'] === undefined){
@@ -94,7 +95,8 @@ export class TasksController {
         priority: tasksArray[task]['priority'],
         category_id: tasksArray[task]['category_id'],
         constraints: tasksArray[task]['constraints'],
-        recurrings: tasksArray[task]['recurrings']
+        recurrings: tasksArray[task]['recurrings'],
+        pinned_slot: tasksArray[task]['pinned_slot']
 
       };
       if (tasksArray[task]['recurrings'] === undefined){

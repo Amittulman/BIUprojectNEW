@@ -22,10 +22,10 @@ export class AppController {
     return this.appService.postTask(createTaskDto); //TODO check DTO enforce
   }
 
-  @Get('GetUser')
-  async getUser(): Promise<User> {
-    return this.appService.getUser();
-  }
+  // @Get('GetUser')
+  // async getUser(): Promise<User> {
+  //   return this.appService.getUser();
+  // }
 
   @Post('PostUser')
   createUser(@Body() createUserDto: CreateUserDto) {
@@ -38,11 +38,11 @@ export class AppController {
 
     return await this.appService.deleteUser(id);
   }
-
-  @Get('GetToDoList')
-  async getToDoList(): Promise<ToDoList> {
-    return this.appService.GetToDoList();
-  }
+  //
+  // @Get('GetToDoList')
+  // async getToDoList(): Promise<ToDoList> {
+  //   return this.appService.GetToDoList();
+  // }
 
   @Post('PostToDoList')
   createToDoList(@Body() createToDoListDto: CreateToDoListDto) {

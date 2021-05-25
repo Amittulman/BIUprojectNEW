@@ -22,4 +22,6 @@ export class CreateTaskDto {
     constraints: number[][];
     @IsNumber()
     recurrings: number;
+    @IsNumber()
+    pinned_slot: number;
 }

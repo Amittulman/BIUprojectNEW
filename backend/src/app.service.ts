@@ -18,9 +18,9 @@ export class AppService {
     return this.appDal.postTask(task);
   }
 
-  async getUser(): Promise<User> {
-    return this.appDal.getUser();
-  }
+  // async getUser(): Promise<User> {
+  //   return this.appDal.getUser();
+  // }
 
   async postUser(user: User): Promise<string> {
     return this.appDal.postUser(user);
@@ -32,9 +32,9 @@ export class AppService {
     return this.appDal.deleteUser(id);
   }
 
-  async GetToDoList(): Promise<ToDoList> {
-    return this.appDal.GetToDoList();
-  }
+  // async GetToDoList(): Promise<ToDoList> {
+  //   return this.appDal.GetToDoList();
+  // }
 
   async postToDoList(createToDoListDto: CreateToDoListDto): Promise<string> {
     return this.appDal.postToDoList(createToDoListDto);

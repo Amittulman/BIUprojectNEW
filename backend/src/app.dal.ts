@@ -38,9 +38,9 @@ export class AppDal {
     });
   }
 
-  async getUser(): Promise<User> {
-    return { username: 'Amitush', id: 123 };
-  }
+  // async getUser(): Promise<User> {
+  //   return { username: 'Amitush', id: 123 };
+  // }
 
   async postUser(user: User): Promise<string> {
     //console.log(user);
@@ -53,20 +53,20 @@ export class AppDal {
     return `This action removes a #${id} user`;
   }
 
-  async GetToDoList(): Promise<ToDoList> {
-    const temp_task :Task  = {
-      task_id: 10,
-      user_id: 11,
-      task_title: 'first task',
-      duration: 40,
-      priority: 2,
-      category_id: 3,
-      constraints: null,
-      recurrings: 1
-
-    }
-    return { tasks: [temp_task] };
-  }
+  // async GetToDoList(): Promise<ToDoList> {
+  //   const temp_task :Task  = {
+  //     task_id: 10,
+  //     user_id: 11,
+  //     task_title: 'first task',
+  //     duration: 40,
+  //     priority: 2,
+  //     category_id: 3,
+  //     constraints: null,
+  //     recurrings: 1
+  //
+  //   }
+  //   return { tasks: [temp_task] };
+  // }
 
   async postToDoList(createToDoListDto: CreateToDoListDto): Promise<string> {
     console.log(createToDoListDto);
