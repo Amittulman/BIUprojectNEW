@@ -128,6 +128,37 @@ export class TasksDal {
 
   }
 
+  async updateScheduledTasks(slots: any): Promise<any> {
+
+    console.log(slots);
+    const queries = [];
+    slots.forEach(slot=>{
+      queries.push(
+          "update "+SCHEDULE_TABLE+
+          " set `task_id` = " + slot.task_id +
+          ", `user_id` = " + slot.user_id +
+          ", `slot_id` = " + slot.new_slot +
+          " where `user_id`=" + slot.user_id +
+          " and `slot_id`=" + slot.slot_id
+      )
+    })
+
+  // console.log(queries);
+  return this.db.transaction(trx => {
+
+    const whole_query = [];
+    queries.forEach(quer =>{
+      whole_query.push(this.db.raw(quer).transacting(trx),
+      )
+    } );
+
+
+    return Promise.all(whole_query);
+  });
+
+
+  }
+
 
   //
   // async postTaskForToDoList(createTaskDto: CreateTaskDto): Promise<string> {

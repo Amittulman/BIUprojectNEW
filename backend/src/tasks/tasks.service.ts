@@ -31,9 +31,13 @@ export class TasksService {
   async postTasks(tasks: Array<CreateTaskDto>): Promise<string> {
     return this.tasksDal.postTasks(tasks);
   }
+  async updateScheduledTasks(tasks: Array<any>): Promise<any> {
+    return this.tasksDal.updateScheduledTasks(tasks);
+  }
   async updateTasks(tasks: Array<CreateTaskDto>): Promise<any> {
     return this.tasksDal.updateTasks(tasks);
   }
+
 
   // async postTaskForToDoList(createTaskDto: CreateTaskDto): Promise<string> {
   //   return this.tasksDal.postTaskForToDoList(createTaskDto);

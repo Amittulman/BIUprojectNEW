@@ -28,8 +28,9 @@ export class TasksController {
   //   return this.tasksService.postTask(createTaskDto); //TODO check DTO enforce
   // }
 
-  @Get('trig/:id')
-  async trig(@Param('id') user_id: string): Promise<any[]> {
+  @Get('trig/:id/:slot')
+  async trig(@Param('id') user_id: string, @Param('slot') current_time_slot: number): Promise<any[]> {
+    console.log(current_time_slot)
     const tasks = await this.getToDoList(user_id);
     // if recurring task - need to duplicate here.
     const categorySlots = await  this.getUserCategorySlots(user_id);
@@ -102,10 +103,30 @@ export class TasksController {
       if (tasksArray[task]['recurrings'] === undefined){
         schedule_task.recurrings = 1;
       }
+      if (tasksArray[task]['pinned_slot'] === undefined){
+        schedule_task.pinned_slot = null;
+      }
       tasks.push(schedule_task);
     }
 
     return this.tasksService.updateTasks(tasks);
+  }
+
+
+@Post('UpdateScheduledTasks/:tasks')
+updateScheduledTasks(@Body() tasksArray: Array<any>) {
+    const tasks:Array<any> = [];
+    for(const task in tasksArray){
+      const schedule_task:any = {
+        task_id : tasksArray[task]['task_id'],
+        user_id : tasksArray[task]['user_id'],
+        slot_id : tasksArray[task]['slot_id'],
+        new_slot : tasksArray[task]['new_slot']
+      };
+      tasks.push(schedule_task);
+    }
+
+    return this.tasksService.updateScheduledTasks(tasks);
   }
 
   // @Post('TaskForToDoList/:createTaskDto')
