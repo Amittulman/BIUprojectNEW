@@ -13,13 +13,15 @@ export class SchedulerService {
         //create tasks for testing
         //var temptaskss = await this.createTempTasks();
         const slots = await this.createSlotsWithCategory(categorySlots);
-        // const mockTasks = await this.createTempTasks();
+        const mockTasks = await this.createTempTasks();
         const tasksFromUser = ToDoList.tasks;
 
         const taskWithRec = await this.createTaskWithDup(tasksFromUser);
         //tasks from frontend
         const prioritiesTasks =  await this.sortPriorities(taskWithRec);
-        const resultCalc = await this.calcBackTracking(prioritiesTasks, slots);
+        const slotsAfterPinned = await this.putPinnedTasks(prioritiesTasks[0], slots);
+        const tasksWithPriorities = [prioritiesTasks[1],prioritiesTasks[2],prioritiesTasks[3]];
+        const resultCalc = await this.calcBackTracking(tasksWithPriorities, slotsAfterPinned);
         const resultsOnlySlots = await this.createSlotsFromResult(resultCalc);
         console.log(resultsOnlySlots);
         return resultsOnlySlots;
@@ -34,7 +36,10 @@ export class SchedulerService {
         const allTasks = new  Array<Task>();
 
         for (const task of user_tasks) {
-            if(task.priority == 0) {
+            if (task.pinned_slot != null) {
+                pin_tasks.push(task);
+            }
+            else if(task.priority == 0) {
                 midPriority_tasks.push(task);
             }
             else if(task.priority == 3) {
@@ -47,7 +52,7 @@ export class SchedulerService {
                 lowPriority_tasks.push(task);
             }
             else {
-                pin_tasks.push(task);
+                lowPriority_tasks.push(task);
             }
         }
         return new Array<Array<Task>>(pin_tasks, highPriority_tasks, midPriority_tasks, lowPriority_tasks);
@@ -219,53 +224,55 @@ export class SchedulerService {
         return slots;
     }
 
-    // private async createTempTasks() {
-    //     const temp_task1: Task = {
-    //         task_id: 1333,
-    //         user_id: 1, task_title: 'first task',
-    //         duration: 90,
-    //         priority: 1, category_id: -1,
-    //         recurrings: 2,
-    //         constraints: [[1,0,1],[0,0,0],[1,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
-    //         // constraints: '010000000000000110100'
-    //     }
-    //     const temp_task2: Task = {
-    //         task_id: 2,
-    //         user_id: 1, task_title: 'second task',
-    //         duration: 90,
-    //         priority: 2, category_id: -1,
-    //         constraints: [[0,0,0],[1,1,1],[1,1,1],[1,1,1],[0,0,0],[0,0,0],[0,0,0]],
-    //         recurrings: 3
-    //     }
-    //     const temp_task3: Task = {
-    //         task_id: 3,
-    //         user_id: 1, task_title: 'third task',
-    //         duration: 120,
-    //         priority: 1, category_id: 1,
-    //         constraints: null,
-    //         recurrings: 1,
-    //
-    //     }
-    //     const temp_task4: Task = {
-    //         task_id: 4,
-    //         user_id: 1, task_title: 'third task',
-    //         duration: 320,
-    //         priority: 0, category_id: 1,
-    //         constraints: null,
-    //         recurrings: 1,
-    //
-    //     }
-    //     const temp_task5: Task = {
-    //         task_id: 5,
-    //         user_id: 1, task_title: 'third task',
-    //         duration: 4990,
-    //         priority: 0, category_id: 1,
-    //         constraints: null,
-    //         recurrings: 1,
-    //
-    //     }
-    //     return new Array<Task>(temp_task1, temp_task2);
-    // }
+     private async createTempTasks() {
+         const temp_task1: Task = {
+             task_id: 1333,
+             user_id: 1, task_title: 'first task',
+             duration: 90,
+             priority: 1, category_id: -1,
+             recurrings: 1,
+             constraints: [[1,0,1],[0,0,0],[1,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
+             pinned_slot: 30
+         }
+         const temp_task2: Task = {
+             task_id: 2,
+             user_id: 1, task_title: 'second task',
+             duration: 90,
+             priority: 2, category_id: -1,
+             constraints: [[0,0,0],[1,1,1],[1,1,1],[1,1,1],[0,0,0],[0,0,0],[0,0,0]],
+             recurrings: 1,
+             pinned_slot: 10
+         }
+         const temp_task3: Task = {
+             task_id: 3,
+             user_id: 1, task_title: 'third task',
+             duration: 120,
+             priority: 1, category_id: 1,
+             constraints: null,
+             recurrings: 1,
+             pinned_slot: null
+
+         }
+         const temp_task4: Task = {
+             task_id: 4,
+             user_id: 1, task_title: 'third task',
+             duration: 320,
+             priority: 0, category_id: 1,
+             constraints: null,
+             recurrings: 1,
+             pinned_slot: 40
+         }
+         const temp_task5: Task = {
+             task_id: 5,
+             user_id: 1, task_title: 'third task',
+             duration: 4990,
+             priority: 0, category_id: 1,
+             constraints: null,
+             recurrings: 1,
+             pinned_slot: 100
+         }
+         return new Array<Task>(temp_task1, temp_task2,temp_task3);
+    }
 
 
     // sun: 12 - 60
@@ -312,5 +319,15 @@ export class SchedulerService {
             }
         }
         return false;
+    }
+
+    private async putPinnedTasks(pinnedTasks: Array<Task>, slots: any) {
+        for (const task of pinnedTasks) {
+            const numOfSlots = Math.ceil(task.duration/30); // calc how many slots the task needs
+            for(let i=task.pinned_slot; i < task.pinned_slot + numOfSlots; i++) {
+                slots[i][0] = task.task_id;
+            }
+        }
+        return slots;
     }
 }
