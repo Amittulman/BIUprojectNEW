@@ -87,7 +87,12 @@
     background-color: white;
     z-index: 2;
     margin-left: 10px;
+    height: auto;
+}
 
+#site_body {
+    height: auto;
+    justify-content: center;
 }
 
 #todo_component, #schedule_component {
@@ -159,7 +164,7 @@
 }
 
 .type_a {
-    background-color: #D6FFB7;
+    background-color: #EBFFE2;
     content: 'type a';
     transition: background-color 0.2s ease;
 
@@ -168,18 +173,6 @@
 .type_a:before {
     /*content:'TYPE A';*/
     /*transition: opacity 0.2s ease;*/
-}
-
-#type_a_button {
-    background-color: #D6FFB7;
-    border-radius: 50%;
-    transition: background-color 0.2s ease-out, margin-left 0.5s ease-out, opacity 0.5s ease-out;
-    height: 30px;
-    width: 30px;
-    cursor: pointer;
-
-    /*animation: slide-aside_a 0.4s ease;*/
-
 }
 
 @keyframes slide-aside_a {
@@ -225,20 +218,28 @@
     }
 }
 
+#type_a_button {
+    background-color: #EBFFE2;
+    border-radius: 20%;
+    transition: background-color 0.2s ease-out, margin-left 0.5s ease-out, opacity 0.5s ease-out;
+    height: 30px;
+    width: 55px;
+    cursor: pointer;
+    /*animation: slide-aside_a 0.4s ease;*/
+}
+
 #type_a_button:hover {
-    border-radius: 50%;
-    background-color: #C8FCA1;
+    background-color: #E0FFD2;
     transition: background-color 0.5s ease-out;
 }
 
 #type_a_button:active {
-    border-radius: 50%;
-    background-color: #B9FE86;
+    background-color: #D9FFC8;
     transition: background-color 0.5s ease-out;
 }
 
 .type_b {
-    background-color: #FFE6AD;
+    background-color: #FCEDFF;
     content: 'type b';
     transition: background-color 0.2s ease;
 }
@@ -247,25 +248,23 @@
 }
 
 #type_b_button {
-    background-color: #FFE6AD;
-    border-radius: 50%;
+    background-color: #FDF0FF;
+    border-radius: 20%;
     transition: background-color 0.2s ease-out, margin-left 0.5s ease-out, opacity 0.5s ease-out;
     height: 30px;
-    width: 30px;
+    width: 55px;
     cursor: pointer;
     /*animation: slide-aside_b 0.4s ease;*/
 
 }
 
 #type_b_button:hover {
-    border-radius: 50%;
-    background-color: #FCD784;
+    background-color: #FCE6FF;
     transition: background-color 0.2s ease-out;
 }
 
 #type_b_button:active {
-    border-radius: 50%;
-    background-color: #FFCC5B;
+    background-color: #FBDCFF;
     transition: background-color 0.2s ease-out;
 }
 @keyframes slide-aside_b {
@@ -280,7 +279,7 @@
 }
 
 .type_c {
-    background-color: #BED2FE;
+    background-color: #EBEDFF;
     transition: background-color 0.2s ease;
 }
 
@@ -288,25 +287,23 @@
 }
 
 #type_c_button {
-    background-color: #BED2FE;
-    border-radius: 50%;
+    background-color: #E4E6FF;
+    border-radius: 20%;
     transition: background-color 0.2s ease-out, margin-left 0.5s ease-out, opacity 0.5s ease-out;
     height: 30px;
-    width: 30px;
+    width: 55px;
     cursor: pointer;
     /*animation: slide-aside_c 0.4s ease;*/
 
 }
 
 #type_c_button:hover {
-    border-radius: 50%;
-    background-color: #8BAFFE;
+    background-color: #D9DCFF;
     transition: background-color 0.2s ease-out;
 }
 
 #type_c_button:active {
-    border-radius: 50%;
-    background-color: #5087FF;
+    background-color: #CCD0FF;
     transition: background-color 0.2s ease-out;
 }
 
@@ -321,15 +318,34 @@
     }
 }
 
-#clear_category_button {
+#clear_category_button, #add_category_button, #category_send_button {
     /*background-color: #BED2FE;*/
     border-radius: 50%;
     transition: background-color 0.2s ease-out, margin-left 0.5s ease-out, opacity 0.5s ease-out;
     height: 30px;
     width: 30px;
     cursor: pointer;
-    background: url("../images/sweep.svg") no-repeat 50% 50%;
     /*animation: slide-aside_clear 0.4s ease;*/
+}
+
+#clear_category_button {
+    background: url("../images/sweep.svg") no-repeat 50% 50%;
+}
+
+#add_category_button {
+    background: url("../images/add.svg") no-repeat 50% 50%;
+}
+
+#clear_category_button:hover, #show_hide_todo:hover, .show_hide_todo_reverse:hover, #category_send_button:hover, #add_category_button:hover {
+    border-radius: 50%;
+    background-color: #E5E5E5;
+    transition: background-color 0.2s ease-out;
+}
+
+#clear_category_button:active, #show_hide_todo:active, .show_hide_todo_reverse:active, #category_send_button:active, #add_category_button:active {
+    border-radius: 50%;
+    background-color: #C5C4C4;
+    transition: background-color 0.2s ease-out;
 }
 
 @keyframes slide-aside_clear {
@@ -343,25 +359,8 @@
     }
 }
 
-#clear_category_button:hover, .show_hide_todo:hover, .show_hide_todo_reverse:hover {
-    border-radius: 50%;
-    background-color: #E5E5E5;
-    transition: background-color 0.2s ease-out;
-}
-
-#clear_category_button:active, .show_hide_todo:active, .show_hide_todo_reverse:active {
-    border-radius: 50%;
-    background-color: #C5C4C4;
-    transition: background-color 0.2s ease-out;
-}
-
 #category_send_button {
     /*background-color: #BED2FE;*/
-    border-radius: 50%;
-    transition: background-color 0.2s ease-out, margin-left 0.5s ease-out, opacity 0.5s ease-out;
-    height: 30px;
-    width: 30px;
-    cursor: pointer;
     background: url("../images/done.svg") no-repeat 50% 50%;
     /*animation: slide-aside_send 0.4s ease;*/
 }
@@ -377,17 +376,7 @@
     }
 }
 
-#category_send_button:hover {
-    border-radius: 50%;
-    background-color: #E5E5E5;
-    transition: background-color 0.2s ease-out;
-}
 
-#category_send_button:active {
-    border-radius: 50%;
-    background-color: #C5C4C4;
-    transition: background-color 0.2s ease-out;
-}
 
 .empty_slot {
     background-color: white;

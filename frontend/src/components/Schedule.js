@@ -1,5 +1,6 @@
 import React, {useEffect, useState, useRef} from 'react';
 import './Schedule.css';
+import Datetime from "react-datetime";
 
 const slots_per_day = 24*2
 
@@ -35,7 +36,7 @@ const Table = (props) => {
     }, [props.tasksID, tasksID])
 
     useEffect(() => {
-        console.log(props.categoryTrigger)
+        //console.log(props.categoryTrigger)
         if (!props.categoryTrigger) return
         let time_jsx = props.initialSchedule()
         jsx = []
@@ -134,41 +135,22 @@ const Table = (props) => {
         event.target.style.transition = 'box-shadow .2s linear';
     }
 
-    const drop_old = (event) => {
-        event.preventDefault();
-        let id = event.dataTransfer.getData('text/plain');
-        let dragged_element = document.getElementById(id);
-        event.target.style.boxShadow = 'none';
-        event.target.style.transition = 'box-shadow .2s linear';
-        // If dragged slots are in paint mode, do not drop.
-        if (dragged_element.ondragover !== null) return
-        if (dragged_element.textContent && !event.target.textContent && event.target !== dragged_element) {
-            // Moving content to target slot
-            event.target.textContent = dragged_element.textContent;
-            // Emptying source slot.
-            dragged_element.textContent = '';
-            let src_data = id.split('_')
-            let dest_slot = event.target.id.split('_')[1]
-            let src_slot = src_data[1]
-            let tasks_id = tasksID
-            let src_task_id = tasks_id[src_slot]
-            tasks_id[dest_slot] = parseInt(src_task_id)
-            tasks_id[src_slot] = -1
-            setTasksID(tasks_id)
-            updateTaskLocation(src_slot, dest_slot, src_task_id)
-        }
-        event.dataTransfer.clearData();
-    }
-
     const drop = (event) => {
         event.preventDefault();
+        let target_element, slots_to_update = [];
         let ids = event.dataTransfer.getData('text/plain').slice(1,-1).split(",");
-        // Calculate the difference between src and dst.
         let distance = (parseInt(event.target.id.split('_')[1]) - parseInt(ids[0].split('_')[1]))
+        ids = ids.sort(function(elm1, elm2) {
+            let elm1Sub = parseInt(elm1.split('_')[1])
+            let elm2Sub = parseInt(elm2.split('_')[1])
+            if (elm1Sub>elm2Sub) {return 1;}
+            else if (elm1Sub === elm2Sub) {return 0;}
+            else {return -1;}
+        });
+        // Calculate the difference between src and dst.
         // //  If out of range for any slot in array, or dropped on an occupied slot, do not drop.
         // TODO - do not allow drop if performed on an occupied slot (self, one slot or more than one slot being dragged).
         if (!availableSlots(ids, distance)) return
-        ids = event.dataTransfer.getData('text/plain').slice(1,-1).split(",").sort()
         // let diff = parseInt(dragged_element.id.split('_')[1]) - parseInt(target_element.id.split('_')[1])
         //Drop all slots with the same ID.
         let tasks_id = tasksID
@@ -183,7 +165,7 @@ const Table = (props) => {
             // If dragged slots are in paint mode, do not drop.
             if (dragged_element.ondragover !== null) return
             let target_id = 'cell_' + (parseInt(ids[i].split('_')[1]) + distance)
-            let target_element = document.querySelector('[id^='+target_id+']')
+            target_element = document.querySelector('[id^='+target_id+']')
             // If not an empty slot, not being dropped on an occupied slot and not being dropped to the same slot.
             if (dragged_element.textContent && target_element !== dragged_element) {
                 let temp_target_element_text = target_element.textContent
@@ -199,15 +181,24 @@ const Table = (props) => {
                     tasks_id[src_slot] = -1
                 }
                 else if (temp_target_element_text !== ''){
-                    dragged_element.textContent = temp_target_element_text;
-                    tasks_id[src_slot] = parseInt(target_element.id.split('_')[3])
+                    // dragged_element.textContent = 'temp_target_element_text';
+                    // tasks_id[src_slot] = parseInt(target_element.id.split('_')[3])
                 }
                 dragged_element.id = (dragged_element.id.split('_').slice(0,3) + '_' + tasks_id[src_slot]).replaceAll(',','_');
                 target_element.id = (target_element.id.split('_').slice(0,3) + '_' + src_task_id).replaceAll(',','_');
+                console.log('target_element', target_element)
+                console.log('src_task_id', src_task_id)
+                console.log('src_slot', src_slot)
+                console.log('dest_slot', dest_slot)
                 setTasksID(tasks_id)
-                updateTaskLocation(src_slot, dest_slot, src_task_id)
+                //TODO - update slots value according to dragged_element.textContent and target_element.textContent
+                slots_to_update.push({'slot_id':src_slot, 'task_id':src_task_id, 'user_id':props.userID, 'new_slot':dest_slot})
+                // updateTaskLocation(src_slot, dest_slot, src_task_id)
             }
         }
+        updateTasksLocation(slots_to_update)
+        // Update new category after dropping task, if was dropped into one.
+        updateTaskCategory(tasks[target_element.id.split('_')[3]])
         let temp_tasks = {...props.updating_tasks}
         // If task is dragged into a different category slot, change category and send changed to DB.
         if (temp_tasks[ids[0].split('_')[3]]['category_id'] !== parseInt(props.categoryTypes[event.target.id.split('_')[1]])) {
@@ -218,14 +209,39 @@ const Table = (props) => {
         event.dataTransfer.clearData();
     }
 
+    const updateTaskCategory = (task) => {
+        console.log('task to send ', task)
+        fetch('http://localhost:5000/tasks/updatetasks/{dest_slot}', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify([task])
+        })
+            .then((response) => {
+                if (response.status === 201) {
+                    console.log("User's tasks hes been sent successfully.");
+                    console.log(response.text())
+                } else {
+                    console.log("User's tasks hes been sent. HTTP request status code: " + response.status);
+                    console.log(response.text())
+                }
+                //console.log('respones: ', response)
+            })
+            .catch((error) => {
+                console.error("Error while submitting task: " + error.message);
+            });
+    }
+
     const availableSlots = (ids, distance) => {
-        console.log('IDS ', ids[0].split('_')[3].split('"')[0])
+        //console.log('IDS ', ids[0].split('_')[3].split('"')[0])
         let i;
         if (ids[0].split('_')[3].split('"')[0] === '-1' || ids[0]-distance < 0 || ids[ids.length-1] > slots_per_day*7) return false
         // Check all ids drop area
         for (i=0;i<ids.length;i++) {
             let partial_target_id = 'cell_' + (parseInt(ids[i].split('_')[1]) + distance)
-            console.log('partial target id: ', partial_target_id)
+            //console.log('partial target id: ', partial_target_id)
             let source_id = ids[i].split('_')[3].split('"')[0]
             let target_id = document.querySelector('[id^='+partial_target_id+']').id.split('_')[3]
             // If dropped area in an occupied slot, return false.
@@ -233,94 +249,6 @@ const Table = (props) => {
         }
         return true
     }
-
-    const postSchedule = (tasks_id) => {
-        fetch('http://localhost:5000/tasks/postSchedule/'+props.userID, {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(tasks_id)
-        })
-            .then((response) => {
-                if (response.status === 201) {
-                    console.log("User's tasks hes been sent successfully.");
-                } else {
-                    console.log("User's tasks hes been sent. HTTP request status code: " + response.status);
-                }
-                console.log(response.text())
-            })
-            .catch((error) => {
-                console.error("Error while submitting task: " + error.message);
-            });
-    }
-
-    const deleteSchedule = (task_id) => {
-        fetch('http://localhost:5000/tasks/DeleteSchedule/'+props.userID, {
-            method: 'DELETE',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-        })
-            .then((response) => {
-                if (response.status === 200) {
-                    console.log("User's tasks hes been removed successfully.");
-                } else {
-                    console.log("Request status code: " + response.status);
-                }
-                console.log('promise of remove: ',response.text())
-            })
-            .catch((error) => {
-                console.error("Error while submitting task: " + error.message);
-            });
-    }
-
-    const sendTasksToRemove = (task_id) => {
-        fetch('http://localhost:5000/tasks/DeleteTasks/'+props.userID, {
-            method: 'DELETE',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify([task_id])
-        })
-            .then((response) => {
-                if (response.status === 200) {
-                    console.log("User's tasks hes been removed successfully.");
-                } else {
-                    console.log("Request status code: " + response.status);
-                }
-                console.log('promise of remove: ',response.text())
-            })
-            .catch((error) => {
-                console.error("Error while submitting task: " + error.message);
-            });
-    }
-
-    const sendTasksToPost = (temp_tasks) => {
-        fetch('http://localhost:5000/tasks/PostTasks/{tasks}', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(temp_tasks)
-        })
-            .then((response) => {
-                if (response.status === 201) {
-                    console.log("User's tasks hes been sent successfully.");
-                } else {
-                    console.log("User's tasks hes been sent. HTTP request status code: " + response.status);
-                }
-                console.log(response.text())
-            })
-            .catch((error) => {
-                console.error("Error while submitting task: " + error.message);
-            });
-    }
-
 
     const updateTaskLocation = (src_slot, dest_slot, task_id) => {
         let data_to_send = {'slot_id': parseInt(src_slot), 'task_id': parseInt(task_id), 'user_id': props.userID}
@@ -334,18 +262,44 @@ const Table = (props) => {
         })
             .then((response) => {
                 if (response.status === 201) {
+                    //console.log("User's tasks hes been sent successfully.");
+                    //console.log(response.text())
+                } else {
+                    //console.log("User's tasks hes been sent. HTTP request status code: " + response.status);
+                    //console.log(response.text())
+                }
+                //console.log('respones: ', response)
+            })
+            .catch((error) => {
+                console.error("Error while submitting task: " + error.message);
+            });
+    }
+
+    const updateTasksLocation = (dragged_tasks) => {
+        console.log('dragged tasks: ', dragged_tasks)
+        fetch('http://localhost:5000/tasks/UpdateScheduledTasks/{tasks}', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dragged_tasks)
+        })
+            .then((response) => {
+                if (response.status === 201) {
                     console.log("User's tasks hes been sent successfully.");
                     console.log(response.text())
                 } else {
                     console.log("User's tasks hes been sent. HTTP request status code: " + response.status);
                     console.log(response.text())
                 }
-                console.log('respones: ', response)
+                //console.log('respones: ', response)
             })
             .catch((error) => {
                 console.error("Error while submitting task: " + error.message);
             });
     }
+
     return (<div id='schedule_component1'>{props.table1}</div>);
 }
 

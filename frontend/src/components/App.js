@@ -39,7 +39,8 @@ const App = () => {
     }
 
     const taskIDTrig = () => {
-        fetchTaskID('trig', userID)
+        let day = new Date()
+        trigTasks(timeToSlot(day.getDay(), null, day.getHours(), day.getMinutes()))
         return tasksID
     }
 
@@ -48,6 +49,21 @@ const App = () => {
             fetchTaskID('GetSchedule', userID)
         }
         return tasksID
+    }
+
+    const timeToSlot = (day, time, hours=null, minutes=null) => {
+        console.log('timeToSlot data: day, time. hours, minutes:', day, time, hours, minutes)
+        if (hours == null) {
+            hours = parseInt(time.substr(0, 2));
+            minutes = parseInt(time.substr(3, 2));
+        }
+        if (minutes < 30 && minutes > 0)
+            minutes = 1
+        else if (minutes !== 0) {
+            hours += 1
+            minutes = 0
+        }
+        return day*48 + hours*2+minutes
     }
 
     const fetchTasks = (type, userID) => {
@@ -63,7 +79,7 @@ const App = () => {
                     setTasks(tasks2)
                 })
             .catch((error) => {
-                console.log(error)
+                //console.log(error)
             });
     }
 
@@ -77,13 +93,24 @@ const App = () => {
                 })
             .catch((error) => {
                 console.log(error)
-                if (type === 'trig') {
-                    let popup = document.getElementById('error_popup')
-                    popup.animate(errorAnimation[0], errorAnimation[1])
-                    setTimeout(function() {
+            });
+    }
+
+    const trigTasks = (slot) => {
+        console.log('TRIG ', slot)
+        fetch("http://localhost:5000/tasks/trig/"+userID+"/"+slot)
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    if (result['statusCode'] === 500) throw new Error('Internal server error.');
+                    setTaskID(result)
+                })
+            .catch((error) => {
+                let popup = document.getElementById('error_popup')
+                popup.animate(errorAnimation[0], errorAnimation[1])
+                setTimeout(function() {
                     popup.animate(endErrorAnimation[0], endErrorAnimation[1])
-                    }, 3000)
-                }
+                }, 3000)
             });
     }
 
@@ -114,14 +141,14 @@ const App = () => {
         })
             .then((response) => {
                 if (response.status === 200) {
-                    console.log("User's tasks hes been removed successfully.");
+                    //console.log("User's tasks hes been removed successfully.");
                     // setCategoryTypes([])
                     postCategories()
                     // setCategoryTable()
                 } else {
-                    console.log("Request status code: " + response.status);
+                    //console.log("Request status code: " + response.status);
                 }
-                console.log('promise of remove: ',response.text())
+                //console.log('promise of remove: ',response.text())
             })
             .catch((error) => {
                 console.error("Error while submitting task: " + error.message);
@@ -141,11 +168,11 @@ const App = () => {
             .then((response) => {
                 // setCategoryTable(response)
                 if (response.status === 201) {
-                    console.log("User's tasks hes been sent successfully.");
+                    //console.log("User's tasks hes been sent successfully.");
                 } else {
-                    console.log("User's tasks hes been sent. HTTP request status code: " + response.status);
+                    //console.log("User's tasks hes been sent. HTTP request status code: " + response.status);
                 }
-                console.log(response.text())
+                //console.log(response.text())
             })
             .catch((error) => {
                 console.error("Error while submitting task: " + error.message);
@@ -218,7 +245,7 @@ const App = () => {
 
     const unpaintSlots = (sched) => {
         let i, j;
-        console.log(sched.length)
+        //console.log(sched.length)
         for (i=1 ; i<8;i++) {
             for (j=1 ; j < slots_per_day+1 ; j++) {
                 let node = sched.childNodes.item(0).childNodes.item(0).childNodes.item(0).childNodes.item(i).childNodes.item(j)
@@ -297,8 +324,6 @@ const App = () => {
         setUserID(parseInt(event.target.parentElement.childNodes[0].childNodes[0].value))
     }
 
-    let search_input = <input onKeyPress={findTask} id='input' type='text' placeholder='Search Task...'/>;
-    let search = <div>{search_input}</div>
     let login_input = <input onKeyPress={findTask} id='input' name='user_id_input' type='text' placeholder='Enter ID number'/>;
     let login = <div className='row'><div>{login_input}</div><button onClick={userIDHandler}>Log in</button></div>
 
@@ -330,40 +355,40 @@ const App = () => {
             minute = 30 * (j % 2);
             if (hour < 10) hour = '0' + hour
             if (minute === 0) minute = '00'
-            content.push(<td key={'time' + hour + ':' + minute}>{hour}:{minute}</td>);
+            content.push(<td className='td1' key={'time' + hour + ':' + minute}>{hour}:{minute}</td>);
         }
-        jsx.push(<tr key={'tr' + 0}><th key={'th' + 0}>Time</th>{content}</tr>);
+        jsx.push(<tr className='tr1' key={'tr' + 0}><th className='th1' key={'th' + 0}>Time</th>{content}</tr>);
         return jsx
     }
 
+    const foo = (event) => {
+        // TODO - if thumbtack is activated, clicking outside of day/time should close it.
+        let elements = document.getElementsByClassName('thumbtack_clicked');
+        // console.log(elements)
+    }
+
     return (
-        <div className="App">
-            <div id='site_top' className='row'>
-                <div className='col-4'>{search}</div>
+        <div onClick={foo} className="App d-flex flex-column">
+            <div id='site_top' className='row flex-grow-0'>
+                <div className='col-4'></div>
                 <div data-toggle="tooltip" title="Modify Categories" onClick={showCategories} id='category_button' className='category_button'/>
-                <div data-toggle="tooltip" title="Type A" id='type_a_button' onClick={()=>setOption(0)} className='category_option'/>
-                <div data-toggle="tooltip" title="Type B" id='type_b_button' onClick={()=>setOption(1)} className='category_option'/>
-                <div data-toggle="tooltip" title="Type C" id='type_c_button' onClick={()=>setOption(2)} className='category_option'/>
+                <div data-toggle="tooltip" title="Type A" id='type_a_button' onClick={()=>setOption(0)} className='category_option'>Work</div>
+                <div data-toggle="tooltip" title="Type B" id='type_b_button' onClick={()=>setOption(1)} className='category_option'>Leisure</div>
+                <div data-toggle="tooltip" title="Type C" id='type_c_button' onClick={()=>setOption(2)} className='category_option'>Sleep</div>
+                {/*TODO - implement "add category button    "*/}
+                <div data-toggle="tooltip" title="Type C" id='add_category_button' onClick={()=>alert('Implement')} className='category_option'/>
                 <div data-toggle="tooltip" title="Clear" id='clear_category_button' onClick={()=>setOption(-1)} className='category_option'/>
                 {/*TODO:show indicator of sending category.*/}
                 <div data-toggle="tooltip" title="Send" id='category_send_button' onClick={()=>{handleCategoriesSubmission(); showCategories(); setCategoryTrigger(!categoryTrigger)}} className='category_option'/>
                 <div className='col-4'>{login}</div>
             </div>
-            <div className='row'>
+            <div id='site_body' className='row flex-grow-1'>
                 <div id='show_hide_todo' className='show_hide_todo' onClick={closeTaskPane}/>
                 <div id='todo_parent' className='col-4'>
                     <div id='todo_component' className='sticky-top row'>
                         <div className='col-12'>
-                            <Todo userID={userID} setToOptimize={setToOptimize} updating_tasks={tasks} trigTasks={taskIDTrig} getTasks={taskGetter} setTasks={taskSetter}/>
+                            <Todo timeToSlot={timeToSlot}  showCategories={showCategories} userID={userID} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setToOptimize={setToOptimize} updating_tasks={tasks} trigTasks={taskIDTrig} getTasks={taskGetter} setTasks={taskSetter}/>
                         </div>
-                    </div>
-                    <div id='boo' className='row'>
-                        <span id='this_week' className='this_week_chosen'>This week&nbsp;&nbsp;</span>
-                        <label className="switch">
-                            <input onChange={(e)=>switch_weeks(e)} id='week_switch' type="checkbox"/>
-                            <span className="slider round"/>
-                        </label>
-                        <span id='next_week' className='week'>&nbsp;&nbsp;Next week</span>
                     </div>
                 </div>
                 <div id='schedule_parent' className='col-8 col-8_start'>
@@ -371,7 +396,7 @@ const App = () => {
                         <Schedule userID={userID} categoryTrigger={categoryTrigger} test123={test} setCategoryTypes={setCategoryTypes}  categoryTypes={ categoryTypes} schedRef={schedRef} scheduleTable={scheduleTable} setScheduleTable={setScheduleTable} setScheduleJsx={setScheduleJsx} scheduleJsx={scheduleJsx} initialSchedule={initialSchedule} table1={table1} setTable={setTable} getCategoryTable={categoryTable} setCategoryTable={setCategoryTable} setToOptimize={setToOptimize} toOptimize={toOptimize} tasksID={tasksID} getTasksID={taskIDGetter} trigTasksID={taskIDTrig} updating_tasks={tasks} getTasks={taskGetter} setTasks={taskSetter}/>
                     </div>
                     <div id='category_component'>
-                        <Categories userID={userID} setCategoryTrigger={setCategoryTrigger} categoryTrigger={categoryTrigger} scheduleTrigger={scheduleTrigger} table1={table1} categoryTable={categoryTable} setTable={setTable} optionRef={optionRef} setCategoryTable={setCategoryTable} setCategoryTypes={setCategoryTypes}  categoryTypes={ categoryTypes} initialScedule={initialSchedule} scheduleJsx={scheduleJsx} setScheduleJsx={setScheduleJsx} />
+                        <Categories userID={userID} setCategoryTrigger={setCategoryTrigger} categoryTrigger={categoryTrigger} setScheduleTrigger={setScheduleTrigger} scheduleTrigger={scheduleTrigger} table1={table1} categoryTable={categoryTable} setTable={setTable} optionRef={optionRef} setCategoryTable={setCategoryTable} setCategoryTypes={setCategoryTypes}  categoryTypes={ categoryTypes} initialScedule={initialSchedule} scheduleJsx={scheduleJsx} setScheduleJsx={setScheduleJsx} />
                     </div>
                 </div>
             </div>

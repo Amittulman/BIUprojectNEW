@@ -96,14 +96,14 @@ const Categories = (props) => {
             .then(res => res.json())
             .then(
                 (result) => {
-                    console.log(result)
+                    //console.log(result)
                     if (result['statusCode'] === 500) throw new Error('Internal server error.');
                     props.setCategoryTypes(result)
                     props.setCategoryTrigger(true)
                     // setCategoryTable(result)
                 })
             .catch((error) => {
-                console.log(error)
+                //console.log(error)
             });
     }
     return (<div id='category_component1'>{props.categoryTable}</div>);

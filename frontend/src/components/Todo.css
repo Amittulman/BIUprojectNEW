@@ -8,6 +8,7 @@
   justify-content: center;
   font-size: calc(22px);
   color: rgb(12, 13, 13);
+  user-select: none;
 }
 
 .App-link {
@@ -28,7 +29,7 @@
 }
 
 .closed_task, .closed_task_error {
-  height: 45px;
+  height: 80px;
   background-color: rgba(250,250,250, .3);
   box-shadow: 1px 0px 3px 3px #ccc;
   border-radius: 10px;
@@ -43,6 +44,16 @@
   text-align: center;
   -webkit-transition: height 0.4s ease;
 
+}
+
+
+
+#combobox {
+  width: 70px;
+}
+
+#combo-options {
+  height: 10px;
 }
 
 #error_popup {
@@ -120,18 +131,149 @@ option:hover {
   background: red !important;
 }
 
-#priority_options {
+#priority_options, #duration_options {
   color: rgb(12, 13, 13);
   background:  rgba(230,230,230, 0);
   border: none;
   outline:0;
+  width: 100px;
+  padding-left: 20px;
+}
+
+#duration_options {
+  width: 50px;
+  direction: rtl;
 }
 
 select {
   -webkit-appearance: none;
   -moz-appearance: none;
-  text-indent: 1px;
-  text-overflow: '';
+  text-align-last: center;
+  text-align: center;
+  /*text-indent: 0px;*/
+  /*text-overflow: '';*/
+  /*direction: ltr;*/
+}
+
+select option {
+  direction: ltr;
+
+}
+
+
+#options_arrow {
+  width: 25px;
+  height: 25px;
+  background: url("../images/expand_more.svg") no-repeat;
+  display: inline-block;
+  transform: scale(0.7);
+  pointer-events: none;
+  position: absolute;
+  z-index: -1;
+}
+
+.wrapper_options {
+  position: relative;
+  display: inline-block;
+}
+
+#duration_options {
+  height: 30px;
+  width: auto;
+  scroll-snap-type: y proximity;
+}
+
+.thumbtack, .thumbtack_clicked {
+  border-radius: 50%;
+  transition: box-shadow 0.2s ease-out, margin-left 0.2s ease-out, opacity 0.2s ease-out;
+  cursor: pointer;
+  background-image: url("../images/thumbtack.svg");
+  background-repeat: no-repeat;
+  margin-right: 10px;
+}
+
+.thumbtack_done {
+  animation: inout 3.5 forwards;
+}
+
+.thumbtack_clicked, .thumbtack_done {
+  box-shadow: rgb(205, 205, 205) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
+}
+
+.thumbtack:hover {
+  box-shadow: rgb(225, 225, 225) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
+}
+.thumbtack_clicked:hover, .thumbtack_done:hover {
+  box-shadow: rgb(195, 195, 195) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
+}
+
+.thumbtack:active, .thumbtack_clicked:active, .thumbtack_done:active{
+  box-shadow: rgb(175, 175, 175) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
+
+  /*background-color: yellow;*/
+}
+
+.thumbtack_done {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  transition: box-shadow 0.2s ease-out, margin-left 0.2s ease-out, opacity 0.2s ease-out;
+  cursor: pointer;
+  background-image: url("../images/checked.svg");
+  background-repeat: no-repeat;
+}
+
+#checkit {
+  position: sticky;
+}
+
+input[type="time"]::-webkit-calendar-picker-indicator {
+  color: rgba(0, 0, 0, 0);
+  opacity: 1;
+  display: block;
+  /*background: transparent;*/
+  width: 20px;
+  height: 20px;
+  border-color: red;
+
+}
+
+#time_input {
+  margin-left: 20px;
+  border-color: red;
+
+}
+
+#datetime-local {
+  color: transparent;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.datetime {
+  color: red !important;
+}
+
+.pinned_choose_day, .pinned_choose_time {
+  position: absolute;
+  z-index: 999999;
+  margin-top: 6%;
+  margin-left: 8%;
+}
+
+.pinned_calendar {
+  display: none;
+}
+
+.pinned_choose_time {
+  margin-top: 64px;
+  margin-left: 11%;
+}
+
+#title_place {
+  width: 30px;
 }
 
 #site_top {
@@ -214,6 +356,11 @@ select {
 
 .task_elm {
   text-align: left;
+  user-select: none;
+}
+
+.task_title {
+
 }
 
 .task_error {

@@ -1,5 +1,14 @@
 import './Todo.css';
 import React, {useState, useEffect, useRef} from 'react';
+import Datetime from "react-datetime";
+import moment from "moment";
+import DatePicker, {CalendarContainer} from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
+import "react-datetime/css/react-datetime.css";
+
+const slots_per_day = 24*2
+
 
 const Todo = (props) => {
   const [tasks_jsx, setTasksJsx] = useState(new Set())
@@ -26,6 +35,7 @@ const Todo = (props) => {
   tasksRef.current = tasks
   const numRef = useRef()
   numRef.current = task_number
+  const [startDate, setStartDate] = useState(new Date());
 
   //Adding JSX
   useEffect(() => {
@@ -67,7 +77,7 @@ const Todo = (props) => {
     //TODO - think of a way of an alternative if statement 4 lines below.
     // let element = document.getElementById('todo_status')
     // if (Object.keys(tasks_jsx).length === 0) {
-    //   console.log('loaded?', isLoaded)
+    //   //console.log('loaded?', isLoaded)
     //   if (!isLoaded) {
     //     element.classList.add('loader')
     //   } else {
@@ -85,8 +95,9 @@ const Todo = (props) => {
   //     checked.push([false, false, false])
   // }
 
+
   const bin_task = (event,i) => {
-    console.log('bin task')
+    //console.log('bin task')
     let timer;
     // Deletion animation, depending on closed/opened task.
     if (event.currentTarget.parentNode.childNodes[1].className.startsWith('closed')) {
@@ -133,30 +144,119 @@ const Todo = (props) => {
     }
   }
 
+  const showPinnedCalendar = (e, index) => {
+    let calendar = document.getElementById('pinned_calendar'+index);
+    let day = document.getElementById('pinned_choose_day'+index);
+    let time = document.getElementById('pinned_choose_time'+index);
+    console.log('day ', day.value)
+    console.log('time ', time.value)
+    if (calendar.style.display === 'block') {
+      calendar.style.display = 'none';
+    }    else {
+      calendar.style.display = 'block';
+    }
+    let pin = document.getElementById('thumbtack'+index);
+    console.log(pin.classList)
+    if (pin.classList.contains('thumbtack_done')) {
+      console.log('else ',pin.classList)
+      pin.classList.remove('thumbtack_done');
+      pin.classList.add('thumbtack');
+      pin.classList.add('col-1');
+      console.log('else ',pin.classList)
+    } else if (pin.classList.contains('thumbtack')) {
+      pin.classList.remove('thumbtack');
+      pin.classList.add('thumbtack_clicked');
+      pin.classList.add('col-1');
+
+    } else {
+      pin.classList.remove('thumbtack_clicked');
+      pin.classList.add('thumbtack');
+      pin.classList.add('col-1');
+    }
+    console.log(pin.classList)
+
+  }
+
+  const getDay = (slot_number) => {
+    return parseInt(parseInt(slot_number)/48)
+  }
+
+  const getTime = (slot_number) => {
+    let day = parseInt(parseInt(slot_number)/48)
+    let daily_task_number = slot_number - slots_per_day * day
+    let hour = Math.floor(daily_task_number/2)
+    let minute;
+    if (daily_task_number % 2 === 0) minute = '00'
+    else minute = '30'
+    return hour+':'+minute+':00'
+  }
+
   const addTask = (index, values) => {
     if (values == null) {
-      values = {'user_id':props.userID,'task_title':'', 'duration':'','priority':'', 'recurrings':'1', 'category_id':'','constraints':'000000000000000000000'}
+      values = {'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'','constraints':'000000000000000000000', 'pinned_slot':null}
     }
-      let constraints_params = getConstraints(index, values['constraints']);
+    let constraints_params = getConstraints(index, values['constraints']);
     let i = index
     //TODO - resolve a bug: after opening a task and adding a new one, it is created as duplicate(container id)
+    //TODO - when hovering a task, emphasis only its text(?) [or do not emphasis title when hovering thumbtack]
     let trash_bin = <svg className='bin_icon' id={'trash_bin'+index} onClick={(e) => bin_task(e,index)}  key={'trash_bin'+index} height="30px" viewBox="-40 0 427 427.00131" width="30px" xmlns="http://www.w3.org/2000/svg"><path d="m232.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0"/><path d="m114.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0"/><path d="m28.398438 127.121094v246.378906c0 14.5625 5.339843 28.238281 14.667968 38.050781 9.285156 9.839844 22.207032 15.425781 35.730469 15.449219h189.203125c13.527344-.023438 26.449219-5.609375 35.730469-15.449219 9.328125-9.8125 14.667969-23.488281 14.667969-38.050781v-246.378906c18.542968-4.921875 30.558593-22.835938 28.078124-41.863282-2.484374-19.023437-18.691406-33.253906-37.878906-33.257812h-51.199218v-12.5c.058593-10.511719-4.097657-20.605469-11.539063-28.03125-7.441406-7.421875-17.550781-11.5546875-28.0625-11.46875h-88.796875c-10.511719-.0859375-20.621094 4.046875-28.0625 11.46875-7.441406 7.425781-11.597656 17.519531-11.539062 28.03125v12.5h-51.199219c-19.1875.003906-35.394531 14.234375-37.878907 33.257812-2.480468 19.027344 9.535157 36.941407 28.078126 41.863282zm239.601562 279.878906h-189.203125c-17.097656 0-30.398437-14.6875-30.398437-33.5v-245.5h250v245.5c0 18.8125-13.300782 33.5-30.398438 33.5zm-158.601562-367.5c-.066407-5.207031 1.980468-10.21875 5.675781-13.894531 3.691406-3.675781 8.714843-5.695313 13.925781-5.605469h88.796875c5.210937-.089844 10.234375 1.929688 13.925781 5.605469 3.695313 3.671875 5.742188 8.6875 5.675782 13.894531v12.5h-128zm-71.199219 32.5h270.398437c9.941406 0 18 8.058594 18 18s-8.058594 18-18 18h-270.398437c-9.941407 0-18-8.058594-18-18s8.058593-18 18-18zm0 0"/><path d="m173.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0"/></svg>
-    let task_title = <span key={'task_title'+index} id={'task_title'+index} className='task_elm' onChange={(e) => handleChange(e, i)}> <input id={'title_textbox'+index} className='title_textbox' name='task_title' type='text' defaultValue={values['task_title']}/></span>
+    let thumbtack = <div onClick={(e)=>showPinnedCalendar(e,i)} className='col-1 thumbtack' id={'thumbtack'+index}/>;
+    // let pinned_calendar = <DatePicker shouldCloseOnSelect={false} selected={startDate} onChange={(e,date) => handleChange(['pinned_slot',date,e], i)} name='pinned_slot' dateFormat="dd/MM/yyyy h:mm aa" showTimeInput calendarContainer={calendarContainer} id={'pinned_calendar'+index} key={'pinned_calendar'+index} customInput={thumbtack}/>;
+    // let pinned_calendar = <div onChange={console.log('changed1')} id={'pinned_calendar'+index} key={'pinned_calendar'+index} className='pinned_calendar' ><Datetime onChange={console.log('changed2')} closeOnClickOutside={true} input={false} isValidDate={checkValidity}/></div>;
+    let pinned_calendar = <span key={'pinned_calendar'+index} className='pinned_calendar' id={'pinned_calendar'+index}>
+      <select onChange={(e) => handleChange(e, i)} defaultValue={getDay(values['pinned_slot'])} className='pinned_choose_day' name="pinned_choose_day" id={"pinned_choose_day"+index}>
+        <option value="">Day</option>
+        <option value="0">Sunday</option>
+        <option value="1">Monday</option>
+        <option value="2">Tuesday</option>
+        <option value="3">Wednesday</option>
+        <option value="4">Thursday</option>
+        <option value="5">Friday</option>
+        <option value="6">Saturday</option>
+    </select>
+    <input onChange={(e) => handleChange(e, i)} name="pinned_choose_time" defaultValue={getTime(values['pinned_slot'])} key={'pinned_choose_time'+index} id={'pinned_choose_time'+index} className='pinned_choose_time' type="time"/>
+    </span>;
+    let task_title = <span key={'task_title'+index} id={'task_title'+index} className='task_elm task_title col-sm-9' onChange={(e) => handleChange(e, i)}>Title:&nbsp;<input id={'title_textbox'+index} className='title_textbox' name='task_title' type='text' defaultValue={values['task_title']}/></span>
+    let title_and_thumbtack = <span key={'title_and_thumbtack'+index} className='row d-flex justify-content-between'>{task_title}{thumbtack}</span>;
     // TODO - create a list of durations (15, 30, 60, ... [30 mins spaces]...)
-    let duration = <div key={'duration'+index} id={'duration'+index} className='task_elm' onChange={(e) => handleChange(e, i)}> Duration:&nbsp;&nbsp;<input id={'nums_input'+i} name='duration' type='text' defaultValue={values['duration']}/></div>;
-    let priority = <div key={'priority'+index} className='task_elm'>Priority:&nbsp;&nbsp;
+    let duration123 = <div key={'duration'+index} className='task_elm'> Duration:
+      <div id='options_arrow'/>&nbsp;
+      <input  type="text" list="duration" name='duration' id='duration_options' defaultValue={values['duration']} onChange={(e) => handleChange(e, i)}/>
+        <datalist id="duration">
+          <option>0.5</option>
+          <option>1</option>
+          <option>1.5</option>
+          <option>2</option>
+        </datalist>
+    </div>;
+    let duration = <div key={'duration'+index} className='task_elm'> Duration:
+      <div id='options_arrow'/>&nbsp;
+      <select size='1' id='duration_options' name='duration' defaultValue={values['duration']} onChange={(e) => handleChange(e, i)}>
+        <option value="0.5">0.5</option>
+        <option value="1">1</option>
+        <option value="1.5">1.5</option>
+        <option value="2">2</option>
+        <option value="2.5">2.5</option>
+        <option value="3">3</option>
+        <option value="3.5">3.5</option>
+        <option value="4">4</option>
+      </select>
+      <input placeholder='____' id={'nums_input'+i} className='testclass' name='duration' type='text' defaultValue='' onChange={(e) => handleChange(e, i)}/>
+    </div>;
+    let priority = <div key={'priority'+index} className='task_elm'>Priority:
+      <div className='wrapper_options'><div id='options_arrow'/>&nbsp;</div>
       <select id='priority_options' name='priority' defaultValue={values['priority']} onChange={(e) => handleChange(e, i)}>
         <option value="0">None</option>
         <option value="1">Low</option>
         <option value="2">Medium</option>
         <option value="3">High</option>
       </select></div>;
-    let category_id = <div key={'category_id'+index} className='task_elm' onChange={(e) => handleChange(e, i)}>Category:&nbsp;&nbsp;<input name='category_id' type='text' defaultValue={values['category_id']}/></div>;
-    let recurrings = <div key={'recurrings'+index} id={'recurrings'+index} className='task_elm' onChange={(e) => handleChange(e, i)}>Recurrences:&nbsp;&nbsp;<input name='recurrings' type='text' defaultValue={values['recurrings']}/></div>;
-    let constraints = <div key={'constraints'+index} id={'constraints'+index} className='task_elm' onChange={(e) => handleChange(e, i)}>Constraints:&nbsp;&nbsp;{constraints_params}<input name='constraints' type='text'/></div>;
-    let task = <div key={'task'+index} id={'task'+index} className='closed_task'>{[task_title, duration, priority, category_id, recurrings, constraints]}</div>
+    let category_id = <div key={'category_id'+index} className='task_elm' onChange={(e) => handleChange(e, i)}>Category:&nbsp;<input name='category_id' type='text' defaultValue={values['category_id']}/></div>;
+    let recurrings = <div key={'recurrings'+index} id={'recurrings'+index} className='task_elm' onChange={(e) => handleChange(e, i)}>Recurrences:&nbsp;<input name='recurrings' type='text' defaultValue={values['recurrings']}/></div>;
+    let constraints = <div key={'constraints'+index} id={'constraints'+index} className='task_elm' onChange={(e) => handleChange(e, i)}>Constraints:&nbsp;{constraints_params}<input name='constraints' type='text'/></div>;
+    let task = <div key={'task'+index} id={'task'+index} className='closed_task'>{[pinned_calendar,title_and_thumbtack, duration, priority, category_id, recurrings, constraints]}</div>
     let sign = <div id='expand_icon' onClick={(e) =>  expandTask(e, task)} key='plus_sign'/>
-    let task_container = <div key={'task_container'+index} id={'task_container'+index} className='task_container' >{[sign, task,trash_bin]}</div>
+    let task_container = <div style={{zIndex:100000-index}} key={'task_container'+index} id={'task_container'+index} className='task_container' >{[sign, task,trash_bin]}</div>
     containerRef.current = task_container
 
     setTasksJsx(prevArr => [...prevArr,task_container])
@@ -164,7 +264,7 @@ const Todo = (props) => {
     //   setTasksJsx(prevArr => [...prevArr,task_container])
     //   setTodoIDs({...todoIDs, [index]: 1})
     // } else {
-    //   console.log('YES')
+    //   //console.log('YES')
     // }
     setTaskNumber(task_number+1)
   }
@@ -210,7 +310,7 @@ const Todo = (props) => {
       if (!(task_index in updated_tasks)) continue
       let temp_task = document.getElementById('title_textbox' + task_index)
       if (updated_tasks[task_index]['task_title'].length > 20) {
-        console.log('too long')
+        //console.log('too long')
         temp_task.className = 'task_error'
         task_err = true
         total_err = true
@@ -219,7 +319,7 @@ const Todo = (props) => {
       }
       let recurrences = document.getElementById('recurrings' + task_index)
       if (updated_tasks[task_index]['recurrings'] > 7) {
-        console.log('Too many recurrences. ', updated_tasks[task_index]['recurrings'])
+        //console.log('Too many recurrences. ', updated_tasks[task_index]['recurrings'])
         recurrences.className = 'task_error'
         task_err = true
         total_err = true
@@ -264,6 +364,8 @@ const Todo = (props) => {
     setTodoIDs({})
     setTasksJsx(new Set())
     props.setToOptimize(true)
+    props.handleCategoriesSubmission()
+    props.setCategoryTrigger(true)
     // Prevent duplicates after submitting, when user has no tasks prior to submitting new tasks.
     // if (tasks.length === 0) setIsLoaded(true)
     //Reloading page to reload updates jsx.
@@ -284,11 +386,11 @@ const Todo = (props) => {
     })
         .then((response) => {
           if (response.status === 200) {
-            console.log("User's tasks hes been removed successfully.");
+            //console.log("User's tasks hes been removed successfully.");
           } else {
-            console.log("Request status code: " + response.status);
+            //console.log("Request status code: " + response.status);
           }
-          console.log('promise of remove: ',response.text())
+          //console.log('promise of remove: ',response.text())
         })
         .catch((error) => {
           console.error("Error while submitting task: " + error.message);
@@ -305,11 +407,11 @@ const Todo = (props) => {
   }, [trigger])
 
   const sendTasksToPost = () => {
-    console.log('updated tasks(before post): ', updated_tasks)
+    console.log('updated tasks: ', updated_tasks)
     let s = 'temp_task_id'
     for (const key of Object.keys(updated_tasks))
       delete updated_tasks[key][s]
-    console.log('updated tasks(before post)2: ', Object.values(updated_tasks))
+    //console.log('updated tasks(before post)2: ', Object.values(updated_tasks))
     fetch('http://localhost:5000/tasks/PostTasks/{tasks}', {
       method: 'POST',
       headers: {
@@ -321,11 +423,11 @@ const Todo = (props) => {
         .then((response) => {
           setTrigger(!trigger)
           if (response.status === 201) {
-            console.log("User's tasks hes been sent successfully.");
+            //console.log("User's tasks hes been sent successfully.");
           } else {
-            console.log("User's tasks hes been sent. HTTP request status code: " + response.status);
+            //console.log("User's tasks hes been sent. HTTP request status code: " + response.status);
           }
-          console.log(response.text())
+          //console.log(response.text())
         })
         .catch((error) => {
           console.error("Error while submitting task: " + error.message);
@@ -336,17 +438,51 @@ const Todo = (props) => {
     console.log('updated tasks: ', updated_tasks)
   }, [updated_tasks])
 
+  const handlePinned = (index) => {
+    let day = document.getElementById('pinned_choose_day'+index).value;
+    let time = document.getElementById('pinned_choose_time'+index).value;
+    let pin = document.getElementById('thumbtack'+index);
+    if (day === '') {
+      if (pin.classList.contains('thumbtack_clicked') === false)
+        pin.className = 'thumbtack_clicked';
+      return null;
+    }
+    else if (time !== '') {
+      pin.className = 'thumbtack_done';
+      let nam = 'pinned_slot';
+      let val = props.timeToSlot(day, time);
+      return [nam, val];
+    } else return null;
+  }
+
   const handleChange = (event, index) => {
-    console.log('handlechange: ',event.target)
-    const nam = event.target.name;
-    const val = event.target.value;
-    console.log('nam: ', nam)
+    console.log('handlechange')
+    console.log(event.target)
+    console.log(event.currentTarget)
+    // If handling pinned slot, we should get event, and not its target (due to its API's implementation).
+    let nam;
+    let val;
+    let split_i = 0;
+    nam = event.target.name;
+    val = event.target.value;
     console.log('val: ', val)
+    console.log('nam: ', nam)
+    // Handling constraints
     if (nam === 'constraints') {
       handleConstraints(event, index)
-      return
+      return;
     }
-    let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'','priority':'', 'recurrings':'1', 'category_id':'','constraints':'000000000000000000000'};
+    // Handling pinned.
+    if (nam === 'pinned_choose_day' || nam === 'pinned_choose_time') {
+      let pinned = handlePinned(index);
+      if (!pinned) return;
+      nam = pinned[0]
+      val = pinned[1]
+    }
+    // convert duration to minutes.
+    if (nam === 'duration')
+      val *= 60;
+    let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'','constraints':'000000000000000000000', 'pinned_slot':null};
     let updated = updatedRef.current
     // If task is new, create a new instance of it, else edit existing/
     //removes old task when submitting form.
@@ -363,6 +499,8 @@ const Todo = (props) => {
     } else {
       updated[index][nam] = val
     }
+      console.log('val: ',val)
+      console.log('updated: ', updated)
     setUpdatedTasks(updated)
   }
 
@@ -372,10 +510,10 @@ const Todo = (props) => {
     let checked_num = 0;
     if (event.target.checked)
       checked_num = 1;
-    console.log('nam: ',nam)
-    console.log('val: ',val)
-    // console.log('print: ', '1'.repeat(val) + '0' + '1'.repeat(20-val))
-    let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'','priority':'', 'recurrings':'1', 'category_id':'','constraints':'000000000000000000000'};
+    //console.log('nam: ',nam)
+    //console.log('val: ',val)
+    // //console.log('print: ', '1'.repeat(val) + '0' + '1'.repeat(20-val))
+    let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'','constraints':'000000000000000000000', 'pinned_slot':null};
     let updated = updatedRef.current
     // If task is new, create a new instance of it, else edit existing/
     //removes old task when submitting form.
@@ -392,7 +530,7 @@ const Todo = (props) => {
         updated[index] = task_copy
       }
     } else {
-      // console.log('the val: ', updated)
+      // //console.log('the val: ', updated)
       updated[index][nam] = updated[index]['constraints'].substring(0,val) + checked_num + updated[index]['constraints'].substring(val+1)
     }
     setUpdatedTasks(updated)
