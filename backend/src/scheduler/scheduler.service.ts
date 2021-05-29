@@ -9,10 +9,10 @@ export class SchedulerService {
         //this.tryCalc();
     }
 
-    async tryCalc(ToDoList, categorySlots) {
+    async tryCalc(ToDoList, categorySlots, current_time_slot) {
         //create tasks for testing
         //var temptaskss = await this.createTempTasks();
-        const slots = await this.createSlotsWithCategory(categorySlots);
+        const slots = await this.createSlotsWithCategory(categorySlots, current_time_slot);
         const mockTasks = await this.createTempTasks();
         const tasksFromUser = ToDoList.tasks;
 
@@ -24,7 +24,8 @@ export class SchedulerService {
         const resultCalc = await this.calcBackTracking(tasksWithPriorities, slotsAfterPinned);
         const resultsOnlySlots = await this.createSlotsFromResult(resultCalc);
         console.log(resultsOnlySlots);
-        return resultsOnlySlots;
+        const result = await this.removeTimeStampSlots(resultsOnlySlots, current_time_slot);
+        return result;
     }
 
     async sortPriorities(user_tasks: Array<Task>): Promise<Array<Task>[]> {
@@ -201,7 +202,7 @@ export class SchedulerService {
         console.log(spotsForThisTask[spotIndex]);
     }
 
-    private createSlotsWithCategory(categorySlots: Array<number>) {
+    private createSlotsWithCategory(categorySlots: Array<number>, current_time_slot: number) {
         const slotsAndCatagory = Array(SLOTS_SIZE);
         for(let i = 0;i<slotsAndCatagory.length;i++) {
             slotsAndCatagory[i] = [-1, 1]
@@ -209,6 +210,10 @@ export class SchedulerService {
 
         for (let i = 0; i < categorySlots.length; i++) {
             slotsAndCatagory[i] = [-1, categorySlots[i]];
+        }
+
+        for(let j = 0; j <= current_time_slot; j++) {
+            slotsAndCatagory[j][0] = -999;
         }
         return slotsAndCatagory;
     }
@@ -329,5 +334,12 @@ export class SchedulerService {
             }
         }
         return slots;
+    }
+
+    private async removeTimeStampSlots(resultsOnlySlots: any[], current_time_slot:number) {
+        for(let j = 0; j <= current_time_slot; j++) {
+            resultsOnlySlots[j] = -1;
+        }
+        return resultsOnlySlots;
     }
 }

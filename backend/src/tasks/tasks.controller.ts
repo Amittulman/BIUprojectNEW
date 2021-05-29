@@ -34,7 +34,7 @@ export class TasksController {
     const tasks = await this.getToDoList(user_id);
     // if recurring task - need to duplicate here.
     const categorySlots = await  this.getUserCategorySlots(user_id);
-    const result = await this.schedulerService.tryCalc(tasks,categorySlots);
+    const result = await this.schedulerService.tryCalc(tasks,categorySlots, current_time_slot);
     let res;
     //change slots to scheduledTask
     //post slots to DB
