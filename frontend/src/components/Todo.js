@@ -1,8 +1,5 @@
 import './Todo.css';
 import React, {useState, useEffect, useRef} from 'react';
-import Datetime from "react-datetime";
-import moment from "moment";
-import DatePicker, {CalendarContainer} from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import "react-datetime/css/react-datetime.css";
@@ -35,7 +32,6 @@ const Todo = (props) => {
   tasksRef.current = tasks
   const numRef = useRef()
   numRef.current = task_number
-  const [startDate, setStartDate] = useState(new Date());
 
   //Adding JSX
   useEffect(() => {
@@ -89,12 +85,6 @@ const Todo = (props) => {
     //   element.textContent = ''
     // }
   },[tasks_jsx])
-
-  // const initChecked = () => {
-  //   for (let i=0;i<7;i++)
-  //     checked.push([false, false, false])
-  // }
-
 
   const bin_task = (event,i) => {
     //console.log('bin task')
@@ -156,29 +146,22 @@ const Todo = (props) => {
       calendar.style.display = 'block';
     }
     let pin = document.getElementById('thumbtack'+index);
-    console.log(pin.classList)
     if (pin.classList.contains('thumbtack_done')) {
-      console.log('else ',pin.classList)
       pin.classList.remove('thumbtack_done');
       pin.classList.add('thumbtack');
-      pin.classList.add('col-1');
-      console.log('else ',pin.classList)
     } else if (pin.classList.contains('thumbtack')) {
       pin.classList.remove('thumbtack');
       pin.classList.add('thumbtack_clicked');
-      pin.classList.add('col-1');
 
     } else {
       pin.classList.remove('thumbtack_clicked');
       pin.classList.add('thumbtack');
-      pin.classList.add('col-1');
     }
-    console.log(pin.classList)
-
+    pin.classList.add('col-1');
   }
 
   const getDay = (slot_number) => {
-    return parseInt(parseInt(slot_number)/48)
+    return null ? slot_number===null : parseInt(parseInt(slot_number)/48)
   }
 
   const getTime = (slot_number) => {
@@ -218,17 +201,6 @@ const Todo = (props) => {
     </span>;
     let task_title = <span key={'task_title'+index} id={'task_title'+index} className='task_elm task_title col-sm-9' onChange={(e) => handleChange(e, i)}>Title:&nbsp;<input id={'title_textbox'+index} className='title_textbox' name='task_title' type='text' defaultValue={values['task_title']}/></span>
     let title_and_thumbtack = <span key={'title_and_thumbtack'+index} className='row d-flex justify-content-between'>{task_title}{thumbtack}</span>;
-    // TODO - create a list of durations (15, 30, 60, ... [30 mins spaces]...)
-    let duration123 = <div key={'duration'+index} className='task_elm'> Duration:
-      <div id='options_arrow'/>&nbsp;
-      <input  type="text" list="duration" name='duration' id='duration_options' defaultValue={values['duration']} onChange={(e) => handleChange(e, i)}/>
-        <datalist id="duration">
-          <option>0.5</option>
-          <option>1</option>
-          <option>1.5</option>
-          <option>2</option>
-        </datalist>
-    </div>;
     let duration = <div key={'duration'+index} className='task_elm'> Duration:
       <div id='options_arrow'/>&nbsp;
       <select size='1' id='duration_options' name='duration' defaultValue={values['duration']} onChange={(e) => handleChange(e, i)}>
@@ -258,14 +230,7 @@ const Todo = (props) => {
     let sign = <div id='expand_icon' onClick={(e) =>  expandTask(e, task)} key='plus_sign'/>
     let task_container = <div style={{zIndex:100000-index}} key={'task_container'+index} id={'task_container'+index} className='task_container' >{[sign, task,trash_bin]}</div>
     containerRef.current = task_container
-
     setTasksJsx(prevArr => [...prevArr,task_container])
-    // if (!(index in todoIDs)) {
-    //   setTasksJsx(prevArr => [...prevArr,task_container])
-    //   setTodoIDs({...todoIDs, [index]: 1})
-    // } else {
-    //   //console.log('YES')
-    // }
     setTaskNumber(task_number+1)
   }
 

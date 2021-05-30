@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect} from 'react';
 import './Schedule.css';
 
 const slots_per_day = 24*2
@@ -34,7 +34,6 @@ const Categories = (props) => {
 
     const markCategories = () => {
         if (!props.scheduleJsx.length) return
-        const slots_per_day = 24*2
         for (let i = 1; i < 8; i++) {
             let empty_content = []
             for (let j = 0; j < slots_per_day; j++) {

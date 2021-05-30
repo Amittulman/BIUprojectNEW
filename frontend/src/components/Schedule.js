@@ -1,6 +1,5 @@
 import React, {useEffect, useState, useRef} from 'react';
 import './Schedule.css';
-import Datetime from "react-datetime";
 
 const slots_per_day = 24*2
 
@@ -81,17 +80,6 @@ const Table = (props) => {
         }
     }
 
-    const findTask = (event) => {
-        if (event.key === 'Enter') {
-            event.preventDefault()
-            alert('You typed "' + event.target.value + '" in the search box.')
-        }
-    }
-
-    const dragStart_old = (event) => {
-        event.dataTransfer.setData('text/plain', event.target.id);
-    }
-
     const getSimilarTasks = (id) => {
         let index = parseInt(id.split('_')[1])
         let targetID = parseInt(id.split('_')[3])
@@ -137,6 +125,9 @@ const Table = (props) => {
 
     const drop = (event) => {
         event.preventDefault();
+        // drop effect.
+        event.target.style.boxShadow = 'none';
+        event.target.style.transition = 'box-shadow .2s linear';
         let target_element, slots_to_update = [];
         let ids = event.dataTransfer.getData('text/plain').slice(1,-1).split(",");
         let distance = (parseInt(event.target.id.split('_')[1]) - parseInt(ids[0].split('_')[1]))
@@ -159,9 +150,6 @@ const Table = (props) => {
             ids[i] = ids[i].replaceAll('"', '')
             // The element itself.
             let dragged_element = document.getElementById(ids[i]);
-            // Its style.
-            event.target.style.boxShadow = 'none';
-            event.target.style.transition = 'box-shadow .2s linear';
             // If dragged slots are in paint mode, do not drop.
             if (dragged_element.ondragover !== null) return
             let target_id = 'cell_' + (parseInt(ids[i].split('_')[1]) + distance)
@@ -210,7 +198,7 @@ const Table = (props) => {
     }
 
     const updateTaskCategory = (task) => {
-        console.log('task to send ', task)
+        console.log('task to send ', [task])
         fetch('http://localhost:5000/tasks/updatetasks/{dest_slot}', {
             method: 'POST',
             headers: {
@@ -221,7 +209,7 @@ const Table = (props) => {
         })
             .then((response) => {
                 if (response.status === 201) {
-                    console.log("User's tasks hes been sent successfully.");
+                    console.log("User's tasks has been sent successfully.");
                     console.log(response.text())
                 } else {
                     console.log("User's tasks hes been sent. HTTP request status code: " + response.status);
@@ -248,31 +236,6 @@ const Table = (props) => {
             if(target_id !== '-1' && target_id !== source_id) return false
         }
         return true
-    }
-
-    const updateTaskLocation = (src_slot, dest_slot, task_id) => {
-        let data_to_send = {'slot_id': parseInt(src_slot), 'task_id': parseInt(task_id), 'user_id': props.userID}
-        fetch('http://localhost:5000/tasks/UpdateSchedule/' + dest_slot, {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data_to_send)
-        })
-            .then((response) => {
-                if (response.status === 201) {
-                    //console.log("User's tasks hes been sent successfully.");
-                    //console.log(response.text())
-                } else {
-                    //console.log("User's tasks hes been sent. HTTP request status code: " + response.status);
-                    //console.log(response.text())
-                }
-                //console.log('respones: ', response)
-            })
-            .catch((error) => {
-                console.error("Error while submitting task: " + error.message);
-            });
     }
 
     const updateTasksLocation = (dragged_tasks) => {
