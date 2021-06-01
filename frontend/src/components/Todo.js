@@ -15,6 +15,9 @@ const Todo = (props) => {
   const [task_number, setTaskNumber] = useState(10000)
   const [isLoaded, setIsLoaded] = useState(false)
   const [trigger, setTrigger] = useState(false)
+  const [pastDue, setPastDue] = useState({})
+  const pastDueRef = useRef();
+  pastDueRef.current = pastDue;
   const [firstRender, setFirstRender] = useState(true)
   const [todoIDs, setTodoIDs] = useState({})
   const todoIDRef = useRef();
@@ -39,7 +42,6 @@ const Todo = (props) => {
     props.getTasks()
   }, [props.userID]);
 
-
   useEffect(() => {
     if (firstUpdate.current) {
       firstUpdate.current = false
@@ -54,14 +56,15 @@ const Todo = (props) => {
       firstUpdate2.current = false
       return
     }
-    if (!isLoaded ) {
+    if (!isLoaded) {
       setIsLoaded(true)
+      // Load existing tasks.
       if (Object.keys(tasks).length > 0) {
         for (let key in tasks) {
           addTask(key, tasks[key])
-          // if (!(key in todoIDRef.current))
+          // console.log('TASK IS NOW ', jsxRef.current)
         }
-
+        updatePastDueTasks()
       }
       // TODO - put it at the bottom. When loading tasks it will always be the bottom task container.
       // addTask(i+1)
@@ -86,11 +89,11 @@ const Todo = (props) => {
     // }
   },[tasks_jsx])
 
-  const bin_task = (event,i) => {
+  const bin_task = (event,i, reschedule=false) => {
     //console.log('bin task')
     let timer;
     // Deletion animation, depending on closed/opened task.
-    if (event.currentTarget.parentNode.childNodes[1].className.startsWith('closed')) {
+    if (reschedule || event.currentTarget.parentNode.childNodes[2].className.startsWith('closed')) {
       document.getElementById('task_container'+i).classList.add('removed_container')
       timer = 300
       //TODO - prevent task from being seen outside of slot during animation (expanded)
@@ -101,8 +104,6 @@ const Todo = (props) => {
     setTimeout(()=> {
       setTasksJsx(jsxRef.current.filter(item => item.props.id !== 'task_container' + i))
     }, timer)
-    //if (i > tasks.length && !(i in updated_tasks)) return //TODO - add a message - 'cannot remove empty task'.
-
     for (let [key, value] of Object.entries(updated_tasks)) {
       if (value['temp_task_id'] === i) {
         let clone = updated_tasks;
@@ -110,7 +111,6 @@ const Todo = (props) => {
         setUpdatedTasks(clone)
       }
     }
-    // TODO - try to remove tasks by task_id and not index, to avoid bugs. Bug: add 2 tasks, remove first, submit, then try to remove the second. Removal is possible only after refreshing page.
     if (tasksRef.current[i] !== undefined) {
       setRemovedTasks(prevArr => [...prevArr, tasksRef.current[i].task_id])
     }
@@ -161,7 +161,7 @@ const Todo = (props) => {
   }
 
   const getDay = (slot_number) => {
-    return null ? slot_number===null : parseInt(parseInt(slot_number)/48)
+    return 'null' ? slot_number===null : parseInt(parseInt(slot_number)/48)
   }
 
   const getTime = (slot_number) => {
@@ -174,9 +174,24 @@ const Todo = (props) => {
     return hour+':'+minute+':00'
   }
 
+  const updatePastDueTasks = () => {
+    let day = new Date()
+    // TODO - change to today's slot.
+    let todays_slot = 200//props.timeToSlot(day.getDay(), null, day.getHours(), day.getMinutes())
+    let i = 0;
+    while (i < todays_slot) {
+      if (props.tasksID[i] !== -1) {
+        let past_due_task_id = props.tasksID[i]
+        console.log('Past due task is: ', past_due_task_id)
+        setPastDue(data=>({...data,[past_due_task_id]:1}))
+      }
+      i += 1
+    }
+  }
+
   const addTask = (index, values) => {
     if (values == null) {
-      values = {'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'','constraints':'000000000000000000000', 'pinned_slot':null}
+      values = {'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'-1','constraints':'000000000000000000000', 'pinned_slot':null}
     }
     let constraints_params = getConstraints(index, values['constraints']);
     let i = index
@@ -228,32 +243,56 @@ const Todo = (props) => {
     let constraints = <div key={'constraints'+index} id={'constraints'+index} className='task_elm' onChange={(e) => handleChange(e, i)}>Constraints:&nbsp;{constraints_params}<input name='constraints' type='text'/></div>;
     let task = <div key={'task'+index} id={'task'+index} className='closed_task'>{[pinned_calendar,title_and_thumbtack, duration, priority, category_id, recurrings, constraints]}</div>
     let sign = <div id='expand_icon' onClick={(e) =>  expandTask(e, task)} key='plus_sign'/>
-    let task_container = <div style={{zIndex:100000-index}} key={'task_container'+index} id={'task_container'+index} className='task_container' >{[sign, task,trash_bin]}</div>
+    let pastDue = <div key={'pastDue'+index} id={'pastDue_'+index} className={'past_due_hidden'}>
+    <span className={'dont_reschedule'} onClick={(e) => bin_task(e,index, true)}/>
+      Reschedule?
+    <span className={'reschedule'} onClick={(e) => {
+      removeFromPastDue(e, i);
+      // onSubmitHandler(e, i);
+      // setPastDueTrig(true);
+      handlePastDue(e, i);
+    }}/>
+    </div>
+    let task_container = <div style={{zIndex:100000-index}} key={'task_container'+index} id={'task_container'+index} className='task_container' >{[sign, pastDue, task,trash_bin]}</div>
     containerRef.current = task_container
     setTasksJsx(prevArr => [...prevArr,task_container])
     setTaskNumber(task_number+1)
   }
 
+  const removeFromPastDue = (e, i) => {
+    const copyPastDue = {...pastDueRef.current}
+    delete copyPastDue[i]
+    setPastDue(copyPastDue)
+  }
+
+  const handlePastDue = (event, i) => {
+    let parent = document.getElementById('pastDue_'+i)
+    parent.className = 'past_due_hidden'
+    // event.target.parentNode.style.display = 'none'
+  }
+
   const getConstraints = (index, values) => {
     let i;
     let int_values = []
-    let days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    let days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
     for (i=0;i<values.length;i++)
       int_values.push(parseInt(values[i]))
     let constraints = [];
     for (i=0;i<7;i++) {
       constraints.push(
-        <div key={days[i]}>
+        <div className='col-1' key={days[i]+index}>
           {days[i]}
-          <input type="checkbox" key={'morning_'+days[i]+index} id={'morning_'+days[i]+index} name="constraints" value={3*i} defaultChecked={int_values[3*i]}/>
-          <label htmlFor={'morning_'+days[i]+index}>M</label>
-          <input type="checkbox" key={'noon_'+days[i]+index} id={'noon_'+days[i]+index} name="constraints" value={3*i+1} defaultChecked={int_values[3*i+1]}/>
-          <label htmlFor={'noon_'+days[i]+index}>N</label>
-          <input type="checkbox" key={'evening_'+days[i]+index} id={'evening_'+days[i]+index} name="constraints" value={3*i+2} defaultChecked={int_values[3*i+2]} />
-          <label htmlFor={'evening_'+days[i]+index}>E</label>
+          <div className='daytime_icons'>
+            <input type="checkbox" className='days_checkbox' key={'morning_'+days[i]+index} id={'morning_'+days[i]+index} name="constraints" value={3*i} defaultChecked={int_values[3*i]}/>
+            <label className='row morning_icon' htmlFor={'morning_'+days[i]+index}/>
+            <input type="checkbox" className='days_checkbox' key={'noon_'+days[i]+index} id={'noon_'+days[i]+index} name="constraints" value={3*i+1} defaultChecked={int_values[3*i+1]}/>
+            <label className='row noon_icon' htmlFor={'noon_'+days[i]+index}/>
+            <input className='days_checkbox' type="checkbox" key={'evening_'+days[i]+index} id={'evening_'+days[i]+index} name="constraints" value={3*i+2} defaultChecked={int_values[3*i+2]} />
+            <label className='row evening_icon'  htmlFor={'evening_'+days[i]+index}/>
+          </div>
         </div>);
     }
-    return <div id='test1'>{constraints}</div>;
+    return <div id='test1' className='row'>{constraints}</div>;
   }
 
   //TODO - remove duplicates (exists in App.js file).
@@ -261,49 +300,65 @@ const Todo = (props) => {
     { 'opacity': 0, transform: 'translateY(50px)'},
     { 'opacity': 1, transform: 'translateY(0px)', visibility:'visible'}
   ], {duration: 500, fill: 'forwards', easing: 'ease-out'}];
-
   const endErrorAnimation = [[
     { 'opacity': 1, transform: 'translateY(0px))'},
+    { 'opacity': 0, transform: 'translateY(50px)', visibility:'hidden'}
+  ], { duration: 500, fill: 'forwards', easing: 'ease-in'}];
+  const dueDateAnimation = [[
+    { 'opacity': 0, transform: 'translateY(50px)'},
+    { 'opacity': 1, transform: 'translateY(-50px)', visibility:'visible'}
+  ], {duration: 500, fill: 'forwards', easing: 'ease-out'}];
+  const endDueDateAnimation = [[
+    { 'opacity': 1, transform: 'translateY(-50px))'},
     { 'opacity': 0, transform: 'translateY(50px)', visibility:'hidden'}
   ], { duration: 500, fill: 'forwards', easing: 'ease-in'}];
 
   const checkInputs = () => {
     let total_err = false
+    let pastDueErr = false
+    // Go through all jsx elements.
     for (let i=0; i<jsxRef.current.length; i++) {
       let task_err = false
       let task_index = jsxRef.current[i].props['id'].split('task_container')[1]
+      console.log('past due ', pastDueRef.current)
+      console.log('past due ', pastDue)
+      let past_due = document.getElementById('pastDue_' + task_index)
+      // Check if task is past due.
+      if (task_index in pastDueRef.current) {
+        past_due.className = 'past_due'
+        pastDueErr = true
+      }
+      // If current task wasn't updated, no need to check its input.
       if (!(task_index in updated_tasks)) continue
+      // Check title length.
       let temp_task = document.getElementById('title_textbox' + task_index)
+      // If title is too long
       if (updated_tasks[task_index]['task_title'].length > 20) {
-        //console.log('too long')
         temp_task.className = 'task_error'
-        task_err = true
         total_err = true
       } else {
         temp_task.className = 'task_elm'
       }
+      // Check recurrences length.
       let recurrences = document.getElementById('recurrings' + task_index)
       if (updated_tasks[task_index]['recurrings'] > 7) {
-        //console.log('Too many recurrences. ', updated_tasks[task_index]['recurrings'])
         recurrences.className = 'task_error'
         task_err = true
         total_err = true
       } else {
         recurrences.className = 'task_elm'
       }
+      // Present error.
       let container = document.getElementById('task' + task_index)
       if (task_err){
-        if(container.className === 'expanded_task')
-          container.className = 'expanded_task_error'
-        else if(container.className === 'closed_task')
-          container.className = 'closed_task_error'
+        container.classList.replace('expanded_task', 'closed_task_error')
+        container.classList.replace('closed_task', 'closed_task_error')
       } else {
-        if(container.className === 'expanded_task_error')
-          container.className = 'expanded_task'
-        else if(container.className === 'closed_task_error')
-          container.className = 'closed_task'
+        container.classList.replace('expanded_task_error', 'expanded_task')
+        container.classList.replace('closed_task_error', 'closed_task')
       }
     }
+
     if (total_err) {
       let popup = document.getElementById('error_popup')
       popup.animate(errorAnimation[0], errorAnimation[1])
@@ -311,7 +366,21 @@ const Todo = (props) => {
         popup.animate(endErrorAnimation[0], endErrorAnimation[1])
       }, 3000)
     }
-    return total_err
+
+    if (pastDueErr) {
+      let start_animation = [errorAnimation[0], errorAnimation[1]]
+      let end_animation = [endErrorAnimation[0], endErrorAnimation[1]]
+      if (total_err){
+        start_animation = [dueDateAnimation[0], dueDateAnimation[1]]
+        end_animation = [endDueDateAnimation[0], endDueDateAnimation[1]]
+      }
+      let pastDuePopup = document.getElementById('due_date_popup')
+      pastDuePopup.animate(start_animation[0], start_animation[1])
+      setTimeout(function() {
+        pastDuePopup.animate(end_animation[0], end_animation[1])
+      }, 3000)
+    }
+    return total_err || pastDueErr
   }
 
   // TODO - prevent changing order of edited existing tasks after submitting.
@@ -447,7 +516,7 @@ const Todo = (props) => {
     // convert duration to minutes.
     if (nam === 'duration')
       val *= 60;
-    let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'','constraints':'000000000000000000000', 'pinned_slot':null};
+    let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'-1','constraints':'000000000000000000000', 'pinned_slot':null};
     let updated = updatedRef.current
     // If task is new, create a new instance of it, else edit existing/
     //removes old task when submitting form.
@@ -478,7 +547,7 @@ const Todo = (props) => {
     //console.log('nam: ',nam)
     //console.log('val: ',val)
     // //console.log('print: ', '1'.repeat(val) + '0' + '1'.repeat(20-val))
-    let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'','constraints':'000000000000000000000', 'pinned_slot':null};
+    let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'-1','constraints':'000000000000000000000', 'pinned_slot':null};
     let updated = updatedRef.current
     // If task is new, create a new instance of it, else edit existing/
     //removes old task when submitting form.
@@ -517,6 +586,7 @@ const Todo = (props) => {
           </form><br/>
           <input id='submit_button' className="btn btn-primary btn-md" type='submit' form='container'/>
           <div id='add_a_new_task' onClick={() => addTask(task_number)}/>
+          <div id='due_date_popup'>Please handle past due tasks.</div>
           <div id='error_popup'>Could not generate schedule.</div>
         </header>
       </div>

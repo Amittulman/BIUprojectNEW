@@ -41,6 +41,7 @@ const App = () => {
     const taskIDTrig = () => {
         let day = new Date()
         trigTasks(timeToSlot(day.getDay(), null, day.getHours(), day.getMinutes()))
+        console.log('TASKS ID FROM trig ', tasksID)
         return tasksID
     }
 
@@ -48,6 +49,7 @@ const App = () => {
         if (tasksID.length === 0) {
             fetchTaskID('GetSchedule', userID)
         }
+        console.log('TASKS ID FROM GETSCHEDULE ', tasksID)
         return tasksID
     }
 
@@ -370,7 +372,7 @@ const App = () => {
     return (
         <div onClick={foo} className="App d-flex flex-column">
             <div id='site_top' className='row flex-grow-0'>
-                <div className='col-4'></div>
+                <div className='col-4'/>
                 <div data-toggle="tooltip" title="Modify Categories" onClick={showCategories} id='category_button' className='category_button'/>
                 <div data-toggle="tooltip" title="Type A" id='type_a_button' onClick={()=>setOption(0)} className='category_option'>Work</div>
                 <div data-toggle="tooltip" title="Type B" id='type_b_button' onClick={()=>setOption(1)} className='category_option'>Leisure</div>
@@ -387,7 +389,7 @@ const App = () => {
                 <div id='todo_parent' className='col-4'>
                     <div id='todo_component' className='sticky-top row'>
                         <div className='col-12'>
-                            <Todo timeToSlot={timeToSlot}  showCategories={showCategories} userID={userID} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setToOptimize={setToOptimize} updating_tasks={tasks} trigTasks={taskIDTrig} getTasks={taskGetter} setTasks={taskSetter}/>
+                            <Todo tasksID={tasksID} timeToSlot={timeToSlot}  showCategories={showCategories} userID={userID} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setToOptimize={setToOptimize} updating_tasks={tasks} trigTasks={taskIDTrig} getTasks={taskGetter} setTasks={taskSetter}/>
                         </div>
                     </div>
                 </div>

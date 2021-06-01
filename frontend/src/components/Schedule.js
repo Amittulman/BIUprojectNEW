@@ -6,6 +6,8 @@ const slots_per_day = 24*2
 
 const Table = (props) => {
     const [tasks, setTasks] = useState([])
+    let tasksRef = useRef();
+    tasksRef.current = tasks;
     const [tasksID, setTasksID] = useState([])
     const [tasksDict, setTasksDict] = useState([])
     const [draggedGroup, setDraggedGroup] = useState([])
@@ -35,6 +37,7 @@ const Table = (props) => {
     }, [props.tasksID, tasksID])
 
     useEffect(() => {
+        if (tasksID[0] === undefined) return;
         //console.log(props.categoryTrigger)
         if (!props.categoryTrigger) return
         let time_jsx = props.initialSchedule()
@@ -186,7 +189,10 @@ const Table = (props) => {
         }
         updateTasksLocation(slots_to_update)
         // Update new category after dropping task, if was dropped into one.
-        updateTaskCategory(tasks[target_element.id.split('_')[3]])
+        console.log('task to send ', tasks[target_element.id.split('_')[3]])
+        setTimeout(()=> {
+            updateTaskCategory(tasks[target_element.id.split('_')[3]])
+        }, 500)
         let temp_tasks = {...props.updating_tasks}
         // If task is dragged into a different category slot, change category and send changed to DB.
         if (temp_tasks[ids[0].split('_')[3]]['category_id'] !== parseInt(props.categoryTypes[event.target.id.split('_')[1]])) {
@@ -198,8 +204,7 @@ const Table = (props) => {
     }
 
     const updateTaskCategory = (task) => {
-        console.log('task to send ', [task])
-        fetch('http://localhost:5000/tasks/updatetasks/{dest_slot}', {
+        fetch('http://localhost:5000/tasks/updatetasks/{tasks}', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
