@@ -9,10 +9,12 @@ import {CreateScheduledTaskDto} from "../Dto's/createScheduledTask.dto";
 import {CreateTaskDto} from "../Dto's/createTask.dto";
 import {CreateToDoListDto} from "../Dto's/createToDoList.dto";
 import {CreateCategorySlotDto} from "../Dto's/createCategorySlot.dto";
+import {CreateUserDto} from "../Dto's/createUser.dto";
 
 const TASK_TABLE = 'tasks_table';
 const CATEGORY_SLOT_TABLE = 'category_slots';
 const SCHEDULE_TABLE = 'scheduled_tasks';
+const USERS_TABLE = 'user_table';
 @Injectable()
 export class TasksDal {
 
@@ -265,8 +267,6 @@ export class TasksDal {
     return suc;
   }
 
-  // }
-
   async getUserCategories(user_id: string): Promise<Array<number>> {
     const dataArr = new Array<number>();
 
@@ -290,6 +290,7 @@ export class TasksDal {
 
 
   }
+
   async getSchedule(user_id: string): Promise<Array<number>> {
     const dataArr = new Array<number>();
 
@@ -303,7 +304,6 @@ export class TasksDal {
 
 
   }
-
   async deleteSchedule(user_id: string): Promise<string> {
     let suc = 'Success';
     try{
@@ -343,4 +343,26 @@ export class TasksDal {
     return suc;
 
   }
+
+  //  USERS:
+
+
+  async checkUserCredentials(user: CreateUserDto){
+    const res = this.db(USERS_TABLE).select('*').where({'user_name': user['user_name']});
+    return  res;
+  }
+
+  async postNewUser(user: CreateUserDto){
+    let suc = 'Success';
+    try{
+
+      const res = await  this.db(USERS_TABLE).insert(user);
+    }
+    catch (e){
+      suc = e
+    }
+    return suc;
+  }
+
+
 }

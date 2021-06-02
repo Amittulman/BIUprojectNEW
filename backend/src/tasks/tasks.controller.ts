@@ -7,6 +7,7 @@ import {SchedulerService} from "../scheduler/scheduler.service";
 import {CreateScheduledTaskDto} from "../Dto's/createScheduledTask.dto";
 import {CreateToDoListDto} from "../Dto's/createToDoList.dto";
 import {CreateCategorySlotDto} from "../Dto's/createCategorySlot.dto";
+import {CreateUserDto} from "../Dto's/createUser.dto";
 
 @Controller('tasks')
 export class TasksController {
@@ -234,12 +235,23 @@ updateScheduledTasks(@Body() tasksArray: Array<any>) {
   }
 
 
-
   @Delete('DeleteTasks/:user_id')
   deleteTasks(@Body() tasksArray: Array<number>, @Param('user_id')user_id:string) {
     return this.tasksService.deleteTasks(user_id, tasksArray);
   }
 
+//USERS:
+  @Post('CheckUserCredentials/')
+  checkUserCredentials(@Body() user: CreateUserDto) {
+    console.log(user)
+    return this.tasksService.checkUserCredentials(user);
+  }
+
+  @Post('PostNewUser/')
+  postNewUser(@Body() user: CreateUserDto) {
+    console.log(user)
+    return this.tasksService.postNewUser(user);
+  }
 
 
   // TODO endpoints:
