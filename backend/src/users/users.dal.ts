@@ -12,7 +12,8 @@ export class UsersDal {
   }
 
   async getUser(): Promise<User> {
-    return { username: 'Amitush', id: 123 };
+    // return { user_name: 'Amitush', user_id: 123, user_pass: '1' };
+    return null;
   }
 
   async postUser(user: User): Promise<string> {
