@@ -99,8 +99,11 @@ export class TasksService {
     if(res === "Success"){
       return this.checkUserCredentials(user);
     }
+    else if(res['code'] === 'ER_DUP_ENTRY'){
+      return "-1";
+    }
     else{
-      return "fail";
+      return "-2";
     }
 
   }
