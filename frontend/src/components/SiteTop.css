@@ -1,0 +1,28 @@
+.greeting {
+    font-size: large;
+}
+
+#logout {
+    position: absolute;
+    right: 40px;
+    top: 20px;
+    cursor: pointer;
+}
+
+#logout:hover {
+    text-decoration: underline;
+}
+
+#login_title {
+    font: 70px "Brush Script MT";
+    user-select: none;
+    margin-left: 25px;
+}
+
+.userContainer {
+    display: flex;
+    flex-direction: column;
+    vertical-align: center;
+    margin-left: 25px;
+    padding-top: 25px;
+}

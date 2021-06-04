@@ -1,7 +1,11 @@
 import Todo from "./Todo";
 import Schedule from "./Schedule";
+import SiteTop from "./SiteTop";
+import Login from "./Login";
 import Categories from "./Categories";
 import React, {useState, useEffect, useRef} from 'react';
+import { Switch, Route } from 'react-router-dom';
+
 import '../components/App.css';
 
 
@@ -14,7 +18,6 @@ const App = () => {
     const [categoryTrigger, setCategoryTrigger] = useState(false)
     const [categoryTable, setCategoryTable] = useState([])
     const [option, setOption] = useState(0)
-    const [test, setTest] = useState(true);
     const optionRef = useRef();
     optionRef.current = option;
     const [scheduleTrigger, setScheduleTrigger] = useState(false)
@@ -28,6 +31,12 @@ const App = () => {
     const [scheduleJsx, setScheduleJsx] = useState([])
     const [userID, setUserID] = useState()
     // const user_id = 2
+
+    useEffect(() => {
+        if (userID !== undefined) {
+            console.log('ID IS ', userID)
+        }
+    },[userID])
 
     //TODO - check if possible to pass setTask to child component instead.
     const taskSetter = (received_tasks) => {
@@ -181,120 +190,6 @@ const App = () => {
             });
     }
 
-    const changeCategoryButton = () => {
-        let category_button = document.getElementById('category_button')
-        if (category_button.className === 'category_button') {
-            category_button.classList.remove('category_button')
-            category_button.classList.add('category_button_clicked')
-            category_button.title ='Back'
-        } else {
-            category_button.classList.remove('category_button_clicked')
-            category_button.classList.add('category_button')
-            category_button.title ='Modify Categories'
-        }
-    }
-
-    const showCategories = () => {
-        changeCategoryButton()
-        let category_options = document.getElementsByClassName('category_option')
-        let category_button = document.getElementById('category_button')
-        let sched = document.getElementById('schedule_component')
-        let cat = document.getElementById('category_component')
-        let display_type;
-        if (category_options[0].style.opacity === '0' || !category_options[0].style.opacity) {
-            display_type = 'block'
-        }
-        else {
-            display_type = 'none'
-        }
-        for (let i=0; i < category_options.length; i++) {
-            // category_options[i].style.display = display_type;
-            if (category_button.className === 'category_button') {
-                category_options[i].style.opacity = '0';
-                category_options[i].style.marginLeft = '-30px';
-            } else {
-                category_options[i].style.opacity = '1';
-                category_options[i].style.marginLeft = '2px';
-            }
-        }
-        if (display_type === 'block') {
-            setTest(false)
-            paintSlots(sched)
-        }
-        else {
-            setTest(true)
-            unpaintSlots(sched)
-            // TODO - prevent dragging scheduled tasks when marking categories.
-        }
-    }
-
-    const paintSlots = (sched) => {
-        let i, j;
-        for (i=1 ; i<8;i++) {
-            for (j=1 ; j < slots_per_day+1 ; j++) {
-                // let class_name = getClass( categoryTypes[slots_per_day * (i - 1) + (j-1)])
-                let node = sched.childNodes.item(0).childNodes.item(0).childNodes.item(0).childNodes.item(i).childNodes.item(j)
-                // node.className = class_name//class_name
-                node.ondragstart = dragStartCat
-                node.ondragover = allowDropCat
-                node.onclick = allowDropCat
-                // node.ondrop = null
-                // node.ondragleave = null
-                node.draggable = true
-            }
-        }
-    }
-
-    const unpaintSlots = (sched) => {
-        let i, j;
-        //console.log(sched.length)
-        for (i=1 ; i<8;i++) {
-            for (j=1 ; j < slots_per_day+1 ; j++) {
-                let node = sched.childNodes.item(0).childNodes.item(0).childNodes.item(0).childNodes.item(i).childNodes.item(j)
-                // node.className = 'empty_slot';
-                node.ondragstart = null
-                node.ondragover = null
-                node.onclick = null
-                node.ondrop = null
-                node.ondragleave = null
-                node.draggable = true
-            }
-        }
-    }
-
-
-    const dragStartCat = (event) => {
-        event.dataTransfer.setData('text/plain', event.target.id);
-    }
-
-    const allowDropCat = (event) => {
-        let ref = optionRef.current
-        event.preventDefault();
-        switch (optionRef.current){
-            case 0:
-                event.target.className = 'type_a'
-                break;
-            case 1:
-                event.target.className = 'type_b'
-                break;
-            case 2:
-                event.target.className = 'type_c'
-                break;
-            default:
-                event.target.className = 'empty_slot'
-                break;
-        }
-        let event_slot = event.target.id.split('_')[1]
-         categoryTypes[event_slot] = ref
-        setCategoryTypes( categoryTypes)
-    }
-
-    const findTask = (event) => {
-        if (event.key === 'Enter') {
-            event.preventDefault()
-            alert('You typed "' + event.target.value + '" in the search box.')
-        }
-    }
 
     //TODO - use this to minimize todo component.
     const closeTaskPane = () => {
@@ -322,31 +217,6 @@ const App = () => {
         }
     }
 
-    const userIDHandler = (event) => {
-        setUserID(parseInt(event.target.parentElement.childNodes[0].childNodes[0].value))
-    }
-
-    let login_input = <input onKeyPress={findTask} id='input' name='user_id_input' type='text' placeholder='Enter ID number'/>;
-    let login = <div className='row'><div>{login_input}</div><button onClick={userIDHandler}>Log in</button></div>
-
-
-    const switch_weeks = (event) => {
-        let checkBox = event.target
-        let thisWeek = document.getElementById('this_week')
-        let nextWeek = document.getElementById('next_week')
-        if (checkBox.checked) {
-            nextWeek.classList.remove('week')
-            nextWeek.classList.add('next_week_chosen')
-            thisWeek.classList.remove('this_week_chosen')
-            thisWeek.classList.add('week')
-        } else {
-            thisWeek.classList.remove('week')
-            thisWeek.classList.add('this_week_chosen')
-            nextWeek.classList.remove('next_week_chosen')
-            nextWeek.classList.add('week')
-        }
-    }
-
     const initialSchedule = () => {
         let jsx = []
         let hour;
@@ -369,41 +239,45 @@ const App = () => {
         // console.log(elements)
     }
 
+    const mainPage = () => {
+        console.log('main page, userid ', userID)
+       return (
+           <div onClick={foo} className="App d-flex flex-column">
+               <SiteTop optionRef={optionRef} setCategoryTypes={setCategoryTypes}  categoryTypes={categoryTypes} setUserID={setUserID} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setOption={setOption}/>
+               <div id='site_body' className='row flex-grow-1'>
+                   <div id='show_hide_todo' className='show_hide_todo' onClick={closeTaskPane}/>
+                   <div id='todo_parent' className='col-4 col-lg-3 col-xl-3'>
+                       <div id='todo_component' className='sticky-top row'>
+                       <div className='col-12'>
+                           <Todo tasksID={tasksID} timeToSlot={timeToSlot} userID={userID} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setToOptimize={setToOptimize} updating_tasks={tasks} trigTasks={taskIDTrig} getTasks={taskGetter} setTasks={taskSetter}/>
+                       </div>
+                       </div>
+                   </div>
+                   <div id='schedule_parent' className='col-8 col-lg-9 col-xlg-9 col-8_start'>
+                       <div id='schedule_component'>
+                           <Schedule userID={userID} categoryTrigger={categoryTrigger} setCategoryTypes={setCategoryTypes}  categoryTypes={categoryTypes} schedRef={schedRef} scheduleTable={scheduleTable} setScheduleTable={setScheduleTable} setScheduleJsx={setScheduleJsx} scheduleJsx={scheduleJsx} initialSchedule={initialSchedule} table1={table1} setTable={setTable} getCategoryTable={categoryTable} setCategoryTable={setCategoryTable} setToOptimize={setToOptimize} toOptimize={toOptimize} tasksID={tasksID} getTasksID={taskIDGetter} trigTasksID={taskIDTrig} updating_tasks={tasks} getTasks={taskGetter} setTasks={taskSetter}/>
+                           {/*<Categories userID={userID} setCategoryTrigger={setCategoryTrigger} categoryTrigger={categoryTrigger} setScheduleTrigger={setScheduleTrigger} scheduleTrigger={scheduleTrigger} table1={table1} categoryTable={categoryTable} setTable={setTable} optionRef={optionRef} setCategoryTable={setCategoryTable} setCategoryTypes={setCategoryTypes}  categoryTypes={ categoryTypes} initialScedule={initialSchedule} scheduleJsx={scheduleJsx} setScheduleJsx={setScheduleJsx} />*/}
+                       </div>
+                       <div id='category_component'>
+                           <Categories userID={userID} setCategoryTrigger={setCategoryTrigger} categoryTrigger={categoryTrigger} setScheduleTrigger={setScheduleTrigger} scheduleTrigger={scheduleTrigger} table1={table1} categoryTable={categoryTable} setTable={setTable} optionRef={optionRef} setCategoryTable={setCategoryTable} setCategoryTypes={setCategoryTypes}  categoryTypes={ categoryTypes} initialScedule={initialSchedule} scheduleJsx={scheduleJsx} setScheduleJsx={setScheduleJsx} />
+                       </div>
+                   </div>
+               </div>
+           </div>
+       );
+    }
+
     return (
-        <div onClick={foo} className="App d-flex flex-column">
-            <div id='site_top' className='row flex-grow-0'>
-                <div className='col-4'/>
-                <div data-toggle="tooltip" title="Modify Categories" onClick={showCategories} id='category_button' className='category_button'/>
-                <div data-toggle="tooltip" title="Type A" id='type_a_button' onClick={()=>setOption(0)} className='category_option'>Work</div>
-                <div data-toggle="tooltip" title="Type B" id='type_b_button' onClick={()=>setOption(1)} className='category_option'>Leisure</div>
-                <div data-toggle="tooltip" title="Type C" id='type_c_button' onClick={()=>setOption(2)} className='category_option'>Sleep</div>
-                {/*TODO - implement "add category button    "*/}
-                <div data-toggle="tooltip" title="Type C" id='add_category_button' onClick={()=>alert('Implement')} className='category_option'/>
-                <div data-toggle="tooltip" title="Clear" id='clear_category_button' onClick={()=>setOption(-1)} className='category_option'/>
-                {/*TODO:show indicator of sending category.*/}
-                <div data-toggle="tooltip" title="Send" id='category_send_button' onClick={()=>{handleCategoriesSubmission(); showCategories(); setCategoryTrigger(!categoryTrigger)}} className='category_option'/>
-                <div className='col-4'>{login}</div>
-            </div>
-            <div id='site_body' className='row flex-grow-1'>
-                <div id='show_hide_todo' className='show_hide_todo' onClick={closeTaskPane}/>
-                <div id='todo_parent' className='col-4'>
-                    <div id='todo_component' className='sticky-top row'>
-                        <div className='col-12'>
-                            <Todo tasksID={tasksID} timeToSlot={timeToSlot}  showCategories={showCategories} userID={userID} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setToOptimize={setToOptimize} updating_tasks={tasks} trigTasks={taskIDTrig} getTasks={taskGetter} setTasks={taskSetter}/>
-                        </div>
-                    </div>
-                </div>
-                <div id='schedule_parent' className='col-8 col-8_start'>
-                    <div id='schedule_component'>
-                        <Schedule userID={userID} categoryTrigger={categoryTrigger} test123={test} setCategoryTypes={setCategoryTypes}  categoryTypes={ categoryTypes} schedRef={schedRef} scheduleTable={scheduleTable} setScheduleTable={setScheduleTable} setScheduleJsx={setScheduleJsx} scheduleJsx={scheduleJsx} initialSchedule={initialSchedule} table1={table1} setTable={setTable} getCategoryTable={categoryTable} setCategoryTable={setCategoryTable} setToOptimize={setToOptimize} toOptimize={toOptimize} tasksID={tasksID} getTasksID={taskIDGetter} trigTasksID={taskIDTrig} updating_tasks={tasks} getTasks={taskGetter} setTasks={taskSetter}/>
-                    </div>
-                    <div id='category_component'>
-                        <Categories userID={userID} setCategoryTrigger={setCategoryTrigger} categoryTrigger={categoryTrigger} setScheduleTrigger={setScheduleTrigger} scheduleTrigger={scheduleTrigger} table1={table1} categoryTable={categoryTable} setTable={setTable} optionRef={optionRef} setCategoryTable={setCategoryTable} setCategoryTypes={setCategoryTypes}  categoryTypes={ categoryTypes} initialScedule={initialSchedule} scheduleJsx={scheduleJsx} setScheduleJsx={setScheduleJsx} />
-                    </div>
-                </div>
-            </div>
+        <div className='app-routes'>
+            {/*<Login setUserID={setUserID}/>*/}
+            <Switch>
+                <Route path='/mainPage' render={mainPage}/>
+                <Route path='/' component={()=><Login userID={userID} setUserID={setUserID}/>}/>
+                {/*<Route path='/signup' component={()=><div>HELLO</div>}/>*/}
+            </Switch>
         </div>
-    )
+
+    );
 }
 
 export default App

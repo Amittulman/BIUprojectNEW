@@ -30,9 +30,9 @@
     transition: background-color 0.2s ease-out;
 }
 
-.col-4 {
-    animation: appear 0.7s ease-out;
-}
+/*.col-4 {*/
+/*    animation: appear 0.7s ease-out;*/
+/*}*/
 .col-8_start {
     animation: appear_from_right 0.7s cubic-bezier(.55,.19,.46,1.06), opac 1.5s ease-out;
 }
@@ -95,6 +95,7 @@
     justify-content: center;
 }
 
+
 #todo_component, #schedule_component {
     position: absolute;
     height: 100%;
@@ -118,7 +119,7 @@
     width: 30px;
     position: absolute;
     top: 10%;
-    left: 32.2%;
+    left: 23%;
     z-index: 10000;
     background: url("../images/left_sign.svg") 110% 50% no-repeat;
     cursor: pointer;
