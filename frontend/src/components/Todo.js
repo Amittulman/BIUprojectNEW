@@ -16,6 +16,9 @@ const Todo = (props) => {
   const [isLoaded, setIsLoaded] = useState(false)
   const [trigger, setTrigger] = useState(false)
   const [pastDue, setPastDue] = useState({})
+  const [pressedDays, setPressedDays] = useState(0);
+  const daysRef = useRef();
+  daysRef.current = pressedDays;
   const pastDueRef = useRef();
   pastDueRef.current = pastDue;
   const [firstRender, setFirstRender] = useState(true)
@@ -116,20 +119,38 @@ const Todo = (props) => {
     }
   }
 
-  const expandTask = (event, task) => {
+  const anyNotHidden = (index) => {
+    console.log('check any surprises ', document.getElementsByClassName('daytime_icons')[0].childNodes[1])
+    for (let i=0; i<7; i++){
+      console.log(i)
+    if (!document.getElementsByClassName('daytime_icons')[i].childNodes[1].className.includes('hidden'))
+      return true
+    }
+    return false
+  }
+
+  const expandTask = (event, task, index) => {
+    let hyperExtended = anyNotHidden(index)
     let clicked_task = document.getElementById(task.props.id)
-    if (event.target.id === 'expand_icon') {
-      event.target.id = 'collapse_icon'
-      if (clicked_task.className === 'closed_task_error')
-        clicked_task.className = 'expanded_task_error'
-      else
+    if (event.target.className === 'expand_icon') {
+      event.target.className = 'collapse_icon'
+      if (clicked_task.className === 'closed_task_error') {
+        if (hyperExtended) {
+          clicked_task.className = 'expanded_task_daytime_error'
+        } else {
+          clicked_task.className = 'expanded_task_error'
+        }
+      } else if (hyperExtended) {
+        clicked_task.className = 'expanded_task_daytime'
+      } else {
         clicked_task.className = 'expanded_task'
+      }
     }
     else {
-      event.target.id = 'expand_icon'
-      if (clicked_task.className === 'expanded_task_error')
+      event.target.className = 'expand_icon'
+      if (clicked_task.className === 'expanded_task_error' || clicked_task.className === 'expanded_task_daytime_error') {
         clicked_task.className = 'closed_task_error'
-      else
+      } else
         clicked_task.className = 'closed_task'
     }
   }
@@ -174,6 +195,13 @@ const Todo = (props) => {
     return hour+':'+minute+':00'
   }
 
+  const tempRecurrenceIconChange = (e, i) => {
+    let recurrence = (parseInt(e.target.className.slice(-1)[0] )+ 1).toString()
+    if (recurrence === '8')
+      recurrence = '1';
+    e.target.className = 'temp_recurrence '+'temp_recurrence'+recurrence
+  }
+
   const updatePastDueTasks = () => {
     let day = new Date()
     // TODO - change to today's slot.
@@ -214,8 +242,9 @@ const Todo = (props) => {
     </select>
     <input onChange={(e) => handleChange(e, i)} name="pinned_choose_time" defaultValue={getTime(values['pinned_slot'])} key={'pinned_choose_time'+index} id={'pinned_choose_time'+index} className='pinned_choose_time' type="time"/>
     </span>;
-    let task_title = <span key={'task_title'+index} id={'task_title'+index} className='task_elm task_title col-sm-9' onChange={(e) => handleChange(e, i)}>Title:&nbsp;<input id={'title_textbox'+index} className='title_textbox' name='task_title' type='text' defaultValue={values['task_title']}/></span>
-    let title_and_thumbtack = <span key={'title_and_thumbtack'+index} className='row d-flex justify-content-between'>{task_title}{thumbtack}</span>;
+    let task_title = <span key={'task_title'+index} id={'task_title'+index} className='task_elm col-sm-8' onChange={(e) => handleChange(e, i)}>Title:&nbsp;<input id={'title_textbox'+index} className='title_input' name='task_title' type='text' defaultValue={values['task_title']}/></span>
+    let temp_recurrence = <div onClick={(e)=>tempRecurrenceIconChange(e,i)} className='temp_recurrence temp_recurrence1' id={'temp_recurrence'+index}/>;
+    let title_and_thumbtack = <span key={'title_and_thumbtack'+index} className='row d-flex justify-content-between'>{task_title}{temp_recurrence}{thumbtack}</span>;
     let duration = <div key={'duration'+index} className='task_elm'> Duration:
       <div id='options_arrow'/>&nbsp;
       <select size='1' id='duration_options' name='duration' defaultValue={values['duration']} onChange={(e) => handleChange(e, i)}>
@@ -225,10 +254,9 @@ const Todo = (props) => {
         <option value="2">2</option>
         <option value="2.5">2.5</option>
         <option value="3">3</option>
-        <option value="3.5">3.5</option>
-        <option value="4">4</option>
+        <option value="null">More</option>
       </select>
-      <input placeholder='____' id={'nums_input'+i} className='testclass' name='duration' type='text' defaultValue='' onChange={(e) => handleChange(e, i)}/>
+      <input placeholder='____' maxLength={3} id={'input_duration'+i} className='input_duration_hidden' name='duration' type='text' defaultValue='' onChange={(e) => handleChange(e, i)}/>
     </div>;
     let priority = <div key={'priority'+index} className='task_elm'>Priority:
       <div className='wrapper_options'><div id='options_arrow'/>&nbsp;</div>
@@ -239,10 +267,10 @@ const Todo = (props) => {
         <option value="3">High</option>
       </select></div>;
     let category_id = <div key={'category_id'+index} className='task_elm' onChange={(e) => handleChange(e, i)}>Category:&nbsp;<input name='category_id' type='text' defaultValue={values['category_id']}/></div>;
-    let recurrings = <div key={'recurrings'+index} id={'recurrings'+index} className='task_elm' onChange={(e) => handleChange(e, i)}>Recurrences:&nbsp;<input name='recurrings' type='text' defaultValue={values['recurrings']}/></div>;
-    let constraints = <div key={'constraints'+index} id={'constraints'+index} className='task_elm' onChange={(e) => handleChange(e, i)}>Constraints:&nbsp;{constraints_params}<input name='constraints' type='text'/></div>;
-    let task = <div key={'task'+index} id={'task'+index} className='closed_task'>{[pinned_calendar,title_and_thumbtack, duration, priority, category_id, recurrings, constraints]}</div>
-    let sign = <div id='expand_icon' onClick={(e) =>  expandTask(e, task)} key='plus_sign'/>
+    let recurrings = <div key={'recurrings'+index} id={'recurrings'+index} className='task_elm recurrence' onChange={(e) => handleChange(e, i)}>Recurrences:&nbsp;<input name='recurrings' type='text' defaultValue={values['recurrings']}/></div>;
+    let constraints = <div key={'constraints'+index} id={'constraints'+index} onChange={(e) => handleChange(e, i)}><div className='task_elm'>Constraints:&nbsp;</div><div className={'constraints_element'} >{constraints_params}</div></div>;
+    let task = <div key={'task'+index} id={'task'+index} className='closed_task'>{[pinned_calendar, title_and_thumbtack, duration, priority, category_id, recurrings, constraints]}</div>
+    let sign = <div id={'expand_icon'+index} className={'expand_icon'} onClick={(e) =>  expandTask(e, task, index)} key='plus_sign'/>
     let pastDue = <div key={'pastDue'+index} id={'pastDue_'+index} className={'past_due_hidden'}>
     <span className={'dont_reschedule'} onClick={(e) => bin_task(e,index, true)}/>
       Reschedule?
@@ -250,6 +278,7 @@ const Todo = (props) => {
       removeFromPastDue(e, i);
       // onSubmitHandler(e, i);
       // setPastDueTrig(true);
+      handleChange(e, i)
       handlePastDue(e, i);
     }}/>
     </div>
@@ -271,24 +300,81 @@ const Todo = (props) => {
     // event.target.parentNode.style.display = 'none'
   }
 
+  const showDaytimes = (e, index) => {
+    let day = document.getElementById('morning_label_'+e.target.innerText+index)
+    let noon = document.getElementById('noon_label_'+e.target.innerText+index)
+    let evening = document.getElementById('evening_label_'+e.target.innerText+index)
+    let hidden = '_hidden'
+    let not_hidden = ''
+    if (!day.className.includes('hidden')){
+      hidden = ''
+      not_hidden = '_hidden'
+      if (!day.className.includes('clicked')  && !noon.className.includes('clicked') && !evening.className.includes('clicked')) {
+        console.log('UNMARK')
+        setPressedDays(daysRef.current - 1)
+      }
+    } else {
+      console.log('MARK')
+      setPressedDays(daysRef.current+1)
+    }
+    // If no daytime icon is pressed, hide/show icons when clicking certain day button.
+    if (!day.className.includes('clicked') && !noon.className.includes('clicked') &&
+        !evening.className.includes('clicked')) {
+      day.classList.remove('morning_icon'+hidden)
+      day.classList.add('morning_icon'+not_hidden)
+      noon.classList.remove('noon_icon'+hidden)
+      noon.classList.add('noon_icon'+not_hidden)
+      evening.classList.remove('evening_icon'+hidden)
+      evening.classList.add('evening_icon'+not_hidden)
+      let task_container = document.getElementById('task'+index)
+      let error = task_container.className.split('_').slice(-1)[0] === 'error'?'_error':''
+      if (hidden)
+        task_container.className = 'expanded_task_daytime'+error
+      else if (daysRef.current === 1)
+        task_container.className = 'expanded_task'+error
+    }
+  }
+
+  const changeDayTimeIcon = (e) =>  {
+    console.log('change day ', e.target.className.includes('noon'))
+    let clicked = '_clicked'
+    let no_click = ''
+    if (e.target.className.includes('clicked')) {
+      clicked = ''
+      no_click = '_clicked'
+    }
+    if (e.target.className.includes('morning')) {
+      e.target.classList.remove('morning_icon'+no_click)
+      e.target.classList.add('morning_icon'+clicked)
+    } else if (e.target.className.includes('noon')) {
+      e.target.classList.remove('noon_icon'+no_click)
+      e.target.classList.add('noon_icon'+clicked)
+    } else if (e.target.className.includes('evening')){
+      e.target.classList.remove('evening_icon'+no_click)
+      e.target.classList.add('evening_icon'+clicked)
+    }
+  }
+
   const getConstraints = (index, values) => {
     let i;
     let int_values = []
-    let days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+    let days = ['Su', 'M', 'T', 'W', 'Th', 'F', 'S'];
     for (i=0;i<values.length;i++)
       int_values.push(parseInt(values[i]))
     let constraints = [];
     for (i=0;i<7;i++) {
       constraints.push(
-        <div className='col-1' key={days[i]+index}>
-          {days[i]}
-          <div className='daytime_icons'>
+        <div className='spacing_days' key={days[i]+index}>
+          <div onClick={(e)=>showDaytimes(e, index)} className='row day_of_week'>
+            {days[i]}
+          </div>
+          <div id={'daytime_icons'+index} className='daytime_icons'>
             <input type="checkbox" className='days_checkbox' key={'morning_'+days[i]+index} id={'morning_'+days[i]+index} name="constraints" value={3*i} defaultChecked={int_values[3*i]}/>
-            <label className='row morning_icon' htmlFor={'morning_'+days[i]+index}/>
+            <label onClick={(e)=>changeDayTimeIcon(e)} className='row morning_icon_hidden' id={'morning_label_'+days[i]+index} htmlFor={'morning_'+days[i]+index}/>
             <input type="checkbox" className='days_checkbox' key={'noon_'+days[i]+index} id={'noon_'+days[i]+index} name="constraints" value={3*i+1} defaultChecked={int_values[3*i+1]}/>
-            <label className='row noon_icon' htmlFor={'noon_'+days[i]+index}/>
+            <label onClick={(e)=>changeDayTimeIcon(e)} className='row noon_icon_hidden' id={'noon_label_'+days[i]+index} htmlFor={'noon_'+days[i]+index}/>
             <input className='days_checkbox' type="checkbox" key={'evening_'+days[i]+index} id={'evening_'+days[i]+index} name="constraints" value={3*i+2} defaultChecked={int_values[3*i+2]} />
-            <label className='row evening_icon'  htmlFor={'evening_'+days[i]+index}/>
+            <label onClick={(e)=>changeDayTimeIcon(e)} className='row evening_icon_hidden' id={'evening_label_'+days[i]+index} htmlFor={'evening_'+days[i]+index}/>
           </div>
         </div>);
     }
@@ -335,6 +421,7 @@ const Todo = (props) => {
       // If title is too long
       if (updated_tasks[task_index]['task_title'].length > 20) {
         temp_task.className = 'task_error'
+        task_err = true
         total_err = true
       } else {
         temp_task.className = 'task_elm'
@@ -350,12 +437,17 @@ const Todo = (props) => {
       }
       // Present error.
       let container = document.getElementById('task' + task_index)
+      let expansion_button = document.getElementById('expand_icon' + task_index)
+      console.log('task error: ',task_err)
       if (task_err){
         container.classList.replace('expanded_task', 'closed_task_error')
+        container.classList.replace('expanded_task_daytime', 'closed_task_error')
         container.classList.replace('closed_task', 'closed_task_error')
+        expansion_button.className = 'expand_icon'
       } else {
         container.classList.replace('expanded_task_error', 'expanded_task')
         container.classList.replace('closed_task_error', 'closed_task')
+        container.classList.replace('expanded_task_daytime_error', 'expanded_task_daytime')
       }
     }
 
@@ -514,8 +606,21 @@ const Todo = (props) => {
       val = pinned[1]
     }
     // convert duration to minutes.
-    if (nam === 'duration')
+    if (nam === 'duration') {
+      let input_text = event.target.parentNode.childNodes[event.target.parentNode.childNodes.length-1]
+      // If pressed manual input option.
+      if (val === 'null') {
+        event.target.id = 'duration_options_hidden'
+        input_text.className = 'input_duration'
+        return
+        // If not editing duration manual input
+      } else if (event.target.className !== 'input_duration') {
+        input_text.value = ''
+        event.target.id = 'duration_options'
+        input_text.className = 'input_duration_hidden'
+      }
       val *= 60;
+    }
     let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'-1','constraints':'000000000000000000000', 'pinned_slot':null};
     let updated = updatedRef.current
     // If task is new, create a new instance of it, else edit existing/

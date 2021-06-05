@@ -84,13 +84,13 @@ export class TasksService {
     let ret_user = await this.tasksDal.checkUserCredentials(user);
     ret_user = ret_user[0];
     if(ret_user === undefined){
-      return "User";
+      return "-1";
     }
     if(ret_user['user_pass'] === user['user_pass']){
       return ret_user['user_id'];
     }
     else{
-      return "Password"
+      return "-2"
     }
   }
 

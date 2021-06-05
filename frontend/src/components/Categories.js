@@ -51,6 +51,7 @@ const Categories = (props) => {
         props.setCategoryTable(empty_table)
     }
 
+    //TODO - check duplicate (exists in sitetop also).
     const dragStart = (event) => {
         event.dataTransfer.setData('text/plain', event.target.id);
     }
