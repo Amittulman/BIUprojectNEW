@@ -144,7 +144,6 @@ const Table = (props) => {
         });
         // Calculate the difference between src and dst.
         // //  If out of range for any slot in array, or dropped on an occupied slot, do not drop.
-        // TODO - do not allow drop if performed on an occupied slot (self, one slot or more than one slot being dragged).
         if (!availableSlots(ids, distance)) return
         // let diff = parseInt(dragged_element.id.split('_')[1]) - parseInt(target_element.id.split('_')[1])
         //Drop all slots with the same ID.
@@ -172,25 +171,14 @@ const Table = (props) => {
                     dragged_element.textContent = '';
                     tasks_id[src_slot] = -1
                 }
-                else if (temp_target_element_text !== ''){
-                    // dragged_element.textContent = 'temp_target_element_text';
-                    // tasks_id[src_slot] = parseInt(target_element.id.split('_')[3])
-                }
                 dragged_element.id = (dragged_element.id.split('_').slice(0,3) + '_' + tasks_id[src_slot]).replaceAll(',','_');
                 target_element.id = (target_element.id.split('_').slice(0,3) + '_' + src_task_id).replaceAll(',','_');
-                console.log('target_element', target_element)
-                console.log('src_task_id', src_task_id)
-                console.log('src_slot', src_slot)
-                console.log('dest_slot', dest_slot)
                 setTasksID(tasks_id)
-                //TODO - update slots value according to dragged_element.textContent and target_element.textContent
                 slots_to_update.push({'slot_id':src_slot, 'task_id':src_task_id, 'user_id':props.userID, 'new_slot':dest_slot})
-                // updateTaskLocation(src_slot, dest_slot, src_task_id)
             }
         }
         updateTasksLocation(slots_to_update)
         // Update new category after dropping task, if was dropped into one.
-        console.log('task to send ', tasks[target_element.id.split('_')[3]])
         setTimeout(()=> {
             updateTaskCategory(tasks[target_element.id.split('_')[3]])
         }, 500)
@@ -199,7 +187,6 @@ const Table = (props) => {
         if (temp_tasks[ids[0].split('_')[3]]['category_id'] !== parseInt(props.categoryTypes[event.target.id.split('_')[1]])) {
             temp_tasks[ids[0].split('_')[3]]['category_id'] = parseInt(props.categoryTypes[event.target.id.split('_')[1]])
             props.setTasks(temp_tasks)
-            // TODO - update category change on DB & update in UI.
         }
         event.dataTransfer.clearData();
     }

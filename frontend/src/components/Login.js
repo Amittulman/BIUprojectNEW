@@ -68,7 +68,6 @@ const Login = (props) => {
                 localStorage.setItem('userID', loginAnswer)
                 console.log('this will be added: ', document.getElementById('remember_me_input').checked)
                 localStorage.setItem('rememberMe', document.getElementById('remember_me_input').checked === true)
-                // TODO - move to main page.
                 break;
         }
         console.log(text_to_client)

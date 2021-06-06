@@ -111,7 +111,6 @@ const SiteTop = (props) => {
         else {
             setTest(true)
             unpaintSlots(sched)
-            // TODO - prevent dragging scheduled tasks when marking categories.
         }
     }
 

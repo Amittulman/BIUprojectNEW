@@ -55,12 +55,13 @@ const Todo = (props) => {
   }, [props.updating_tasks])
 
   useEffect(() => {
+    console.log('ABCDEEEEE')
     if (firstUpdate2.current) {
       firstUpdate2.current = false
       return
     }
-    if (!isLoaded) {
-      setIsLoaded(true)
+    if (!props.isLoaded) {
+      props.setIsLoaded(true)
       // Load existing tasks.
       if (Object.keys(tasks).length > 0) {
         for (let key in tasks) {
@@ -76,21 +77,25 @@ const Todo = (props) => {
   }, [tasks])
 
   useEffect(() => {
-    //TODO - think of a way of an alternative if statement 4 lines below.
-    // let element = document.getElementById('todo_status')
-    // if (Object.keys(tasks_jsx).length === 0) {
-    //   //console.log('loaded?', isLoaded)
-    //   if (!isLoaded) {
-    //     element.classList.add('loader')
-    //   } else {
-    //     element.classList.remove('loader')
-    //     element.textContent = 'Empty'
-    //   }
-    // } else {
-    //   element.classList.remove('loader')
-    //   element.textContent = ''
-    // }
-  },[tasks_jsx])
+    // TODO - think of a way of an alternative if statement 4 lines below.
+    let empty_element = document.getElementById('empty_todo')
+    let loading_element = document.getElementById('loading_todo')
+    if (Object.keys(tasks_jsx).length === 0) {
+      //console.log('loaded?', isLoaded)
+      if (!props.isLoaded) {
+        loading_element.className = 'loader'
+        empty_element.className = ''
+        empty_element.textContent = ''
+      } else {
+        loading_element.className = ''
+        empty_element.className = 'empty_todo!'
+        empty_element.textContent = 'Add tasks!'
+      }
+    } else {
+      loading_element.className = ''
+      empty_element.textContent = ''
+    }
+  },[tasks_jsx, props.isLoaded])
 
   const bin_task = (event,i, reschedule=false) => {
     //console.log('bin task')
@@ -98,11 +103,11 @@ const Todo = (props) => {
     // Deletion animation, depending on closed/opened task.
     if (reschedule || event.currentTarget.parentNode.childNodes[2].className.startsWith('closed')) {
       document.getElementById('task_container'+i).classList.add('removed_container')
-      timer = 300
+      timer = 380
       //TODO - prevent task from being seen outside of slot during animation (expanded)
     } else {
       document.getElementById('task_container'+i).classList.add('removed_container_expanded')
-      timer = 500
+      timer = 580
     }
     setTimeout(()=> {
       setTasksJsx(jsxRef.current.filter(item => item.props.id !== 'task_container' + i))
@@ -204,8 +209,7 @@ const Todo = (props) => {
 
   const updatePastDueTasks = () => {
     let day = new Date()
-    // TODO - change to today's slot.
-    let todays_slot = 200//props.timeToSlot(day.getDay(), null, day.getHours(), day.getMinutes())
+    let todays_slot = props.timeToSlot(day.getDay(), null, day.getHours(), day.getMinutes())
     let i = 0;
     while (i < todays_slot) {
       if (props.tasksID[i] !== -1) {
@@ -223,8 +227,6 @@ const Todo = (props) => {
     }
     let constraints_params = getConstraints(index, values['constraints']);
     let i = index
-    //TODO - resolve a bug: after opening a task and adding a new one, it is created as duplicate(container id)
-    //TODO - when hovering a task, emphasis only its text(?) [or do not emphasis title when hovering thumbtack]
     let trash_bin = <svg className='bin_icon' id={'trash_bin'+index} onClick={(e) => bin_task(e,index)}  key={'trash_bin'+index} height="30px" viewBox="-40 0 427 427.00131" width="30px" xmlns="http://www.w3.org/2000/svg"><path d="m232.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0"/><path d="m114.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0"/><path d="m28.398438 127.121094v246.378906c0 14.5625 5.339843 28.238281 14.667968 38.050781 9.285156 9.839844 22.207032 15.425781 35.730469 15.449219h189.203125c13.527344-.023438 26.449219-5.609375 35.730469-15.449219 9.328125-9.8125 14.667969-23.488281 14.667969-38.050781v-246.378906c18.542968-4.921875 30.558593-22.835938 28.078124-41.863282-2.484374-19.023437-18.691406-33.253906-37.878906-33.257812h-51.199218v-12.5c.058593-10.511719-4.097657-20.605469-11.539063-28.03125-7.441406-7.421875-17.550781-11.5546875-28.0625-11.46875h-88.796875c-10.511719-.0859375-20.621094 4.046875-28.0625 11.46875-7.441406 7.425781-11.597656 17.519531-11.539062 28.03125v12.5h-51.199219c-19.1875.003906-35.394531 14.234375-37.878907 33.257812-2.480468 19.027344 9.535157 36.941407 28.078126 41.863282zm239.601562 279.878906h-189.203125c-17.097656 0-30.398437-14.6875-30.398437-33.5v-245.5h250v245.5c0 18.8125-13.300782 33.5-30.398438 33.5zm-158.601562-367.5c-.066407-5.207031 1.980468-10.21875 5.675781-13.894531 3.691406-3.675781 8.714843-5.695313 13.925781-5.605469h88.796875c5.210937-.089844 10.234375 1.929688 13.925781 5.605469 3.695313 3.671875 5.742188 8.6875 5.675782 13.894531v12.5h-128zm-71.199219 32.5h270.398437c9.941406 0 18 8.058594 18 18s-8.058594 18-18 18h-270.398437c-9.941407 0-18-8.058594-18-18s8.058593-18 18-18zm0 0"/><path d="m173.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0"/></svg>
     let thumbtack = <div onClick={(e)=>showPinnedCalendar(e,i)} className='col-1 thumbtack' id={'thumbtack'+index}/>;
     // let pinned_calendar = <DatePicker shouldCloseOnSelect={false} selected={startDate} onChange={(e,date) => handleChange(['pinned_slot',date,e], i)} name='pinned_slot' dateFormat="dd/MM/yyyy h:mm aa" showTimeInput calendarContainer={calendarContainer} id={'pinned_calendar'+index} key={'pinned_calendar'+index} customInput={thumbtack}/>;
@@ -384,15 +386,6 @@ const Todo = (props) => {
     return <div id='test1' className='row'>{constraints}</div>;
   }
 
-  //TODO - remove duplicates (exists in App.js file).
-  const errorAnimation = [[
-    { 'opacity': 0, transform: 'translateY(50px)'},
-    { 'opacity': 1, transform: 'translateY(0px)', visibility:'visible'}
-  ], {duration: 500, fill: 'forwards', easing: 'ease-out'}];
-  const endErrorAnimation = [[
-    { 'opacity': 1, transform: 'translateY(0px))'},
-    { 'opacity': 0, transform: 'translateY(50px)', visibility:'hidden'}
-  ], { duration: 500, fill: 'forwards', easing: 'ease-in'}];
   const dueDateAnimation = [[
     { 'opacity': 0, transform: 'translateY(50px)'},
     { 'opacity': 1, transform: 'translateY(-50px)', visibility:'visible'}
@@ -456,15 +449,15 @@ const Todo = (props) => {
 
     if (total_err) {
       let popup = document.getElementById('error_popup')
-      popup.animate(errorAnimation[0], errorAnimation[1])
+      popup.animate(props.errorAnimation[0], props.errorAnimation[1])
       setTimeout(function() {
-        popup.animate(endErrorAnimation[0], endErrorAnimation[1])
+        popup.animate(props.endErrorAnimation[0], props.endErrorAnimation[1])
       }, 3000)
     }
 
     if (pastDueErr) {
-      let start_animation = [errorAnimation[0], errorAnimation[1]]
-      let end_animation = [endErrorAnimation[0], endErrorAnimation[1]]
+      let start_animation = [props.errorAnimation[0], props.errorAnimation[1]]
+      let end_animation = [props.endErrorAnimation[0], props.endErrorAnimation[1]]
       if (total_err){
         start_animation = [dueDateAnimation[0], dueDateAnimation[1]]
         end_animation = [endDueDateAnimation[0], endDueDateAnimation[1]]
@@ -483,7 +476,7 @@ const Todo = (props) => {
   const onSubmitHandler = (event) => {
     event.preventDefault();
     if (checkInputs()) return
-    setIsLoaded(false)
+    props.setIsLoaded(false)
     sendTasksToRemove();
     sendTasksToPost();
     props.setTasks({})
@@ -502,7 +495,7 @@ const Todo = (props) => {
   };
 
   useEffect(() => {
-  },[isLoaded])
+  },[props.isLoaded])
 
   const sendTasksToRemove = () => {
     fetch('http://localhost:5000/tasks/DeleteTasks/'+props.userID, {
@@ -694,8 +687,9 @@ const Todo = (props) => {
         <header className="App-header">
           <h1 id='header'>Enter your tasks</h1>
           <form id='container' onSubmit={onSubmitHandler}>
-            <div id='todo_status'/>
-            {tasks_jsx}
+            <div id='tasks'>{tasks_jsx}</div>
+            <div id='empty_todo'/>
+            <div id='loading_todo'/>
           </form><br/>
           <input id='submit_button' className="btn btn-primary btn-md" type='submit' form='container'/>
           <div id='add_a_new_task' onClick={() => addTask(task_number)}/>

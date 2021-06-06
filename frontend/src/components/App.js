@@ -19,6 +19,8 @@ const App = () => {
     const [categoryTable, setCategoryTable] = useState([])
     const [rememberMe, setRememberMe] = useState();
     const [option, setOption] = useState(0)
+    const [todoMinimized, setTodoMinimized] = useState(false);
+    const [todoIsLoaded, setTodoIsLoaded] = useState(false);
     const optionRef = useRef();
     optionRef.current = option;
     const [scheduleTrigger, setScheduleTrigger] = useState(false)
@@ -44,11 +46,6 @@ const App = () => {
             console.log('ID IS ', userID)
         }
     },[userID])
-
-    //TODO - check if possible to pass setTask to child component instead.
-    const taskSetter = (received_tasks) => {
-        setTasks(received_tasks)
-    }
 
     const taskGetter = () => {
         fetchTasks('gettasks', userID)
@@ -94,10 +91,13 @@ const App = () => {
                     for (let i=0; i<result['tasks'].length; i++){
                         tasks2[result['tasks'][i]['task_id']] = result['tasks'][i]
                     }
+                    if (Object.keys(tasks2).length === 0) {
+                        setTodoIsLoaded(true)
+                    }
                     setTasks(tasks2)
                 })
             .catch((error) => {
-                //console.log(error)
+                console.log(error)
             });
     }
 
@@ -116,6 +116,7 @@ const App = () => {
 
     const trigTasks = (slot) => {
         console.log('TRIG ', slot)
+        console.log('TRIG ', tasks)
         fetch("http://localhost:5000/tasks/trig/"+userID+"/"+slot)
             .then(res => res.json())
             .then(
@@ -198,29 +199,21 @@ const App = () => {
     }
 
 
-    //TODO - use this to minimize todo component.
     const closeTaskPane = () => {
         let todo_element = document.getElementById('todo_parent')
         let schedule_element = document.getElementById('schedule_parent')
         let show_hide_todo = document.getElementById('show_hide_todo')
-        if (todo_element.className === 'col-4') {
-            todo_element.classList.remove('col-4')
-            todo_element.classList.add('gone')
-            schedule_element.classList.remove('col-8')
-            schedule_element.classList.add('col-12_2')
-            schedule_element.classList.add('col-12')
-            schedule_element.classList.add('schedule_parent_expanded')
-            show_hide_todo.classList.remove('show_hide_todo')
-            show_hide_todo.classList.add('show_hide_todo_reverse')
+        if (!todoMinimized) {
+            setTodoMinimized(true)
+            todo_element.className = 'gone'
+            schedule_element.className = 'col-12_2 col schedule_parent_expanded'
+            show_hide_todo.className = 'show_hide_todo_reverse'
+
         } else {
-            todo_element.classList.remove('gone')
-            todo_element.classList.add('col-4')
-            schedule_element.classList.remove('col-12_2')
-            schedule_element.classList.remove('col-12')
-            schedule_element.classList.remove('schedule_parent_expanded')
-            schedule_element.classList.add('col-8')
-            show_hide_todo.classList.remove('show_hide_todo_reverse')
-            show_hide_todo.classList.add('show_hide_todo')
+            setTodoMinimized(false)
+            todo_element.className = 'col-4'
+            schedule_element.className = 'col-8'
+            show_hide_todo.className = 'show_hide_todo'
         }
     }
 
@@ -253,16 +246,16 @@ const App = () => {
                <SiteTop optionRef={optionRef} setCategoryTypes={setCategoryTypes}  categoryTypes={categoryTypes} setUserID={setUserID} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setOption={setOption}/>
                <div id='site_body' className='row flex-grow-1'>
                    <div id='show_hide_todo' className='show_hide_todo' onClick={closeTaskPane}/>
-                   <div id='todo_parent' className='col-4 col-lg-3 col-xl-3'>
+                   <div id='todo_parent' className='col-4'>
                        <div id='todo_component' className='sticky-top row'>
                        <div className='col-12'>
-                           <Todo tasksID={tasksID} timeToSlot={timeToSlot} userID={userID} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setToOptimize={setToOptimize} updating_tasks={tasks} trigTasks={taskIDTrig} getTasks={taskGetter} setTasks={taskSetter}/>
+                           <Todo tasksID={tasksID} timeToSlot={timeToSlot} userID={userID} isLoaded={todoIsLoaded} setIsLoaded={setTodoIsLoaded} errorAnimation={errorAnimation} endErrorAnimation={endErrorAnimation} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setToOptimize={setToOptimize} updating_tasks={tasks} trigTasks={taskIDTrig} getTasks={taskGetter} setTasks={setTasks}/>
                        </div>
                        </div>
                    </div>
-                   <div id='schedule_parent' className='col-8 col-lg-9 col-xlg-9 col-8_start'>
+                   <div id='schedule_parent' className='col-8 col-8_start'>
                        <div id='schedule_component'>
-                           <Schedule userID={userID} categoryTrigger={categoryTrigger} setCategoryTypes={setCategoryTypes}  categoryTypes={categoryTypes} schedRef={schedRef} scheduleTable={scheduleTable} setScheduleTable={setScheduleTable} setScheduleJsx={setScheduleJsx} scheduleJsx={scheduleJsx} initialSchedule={initialSchedule} table1={table1} setTable={setTable} getCategoryTable={categoryTable} setCategoryTable={setCategoryTable} setToOptimize={setToOptimize} toOptimize={toOptimize} tasksID={tasksID} getTasksID={taskIDGetter} trigTasksID={taskIDTrig} updating_tasks={tasks} getTasks={taskGetter} setTasks={taskSetter}/>
+                           <Schedule userID={userID} categoryTrigger={categoryTrigger} setCategoryTypes={setCategoryTypes}  categoryTypes={categoryTypes} schedRef={schedRef} scheduleTable={scheduleTable} setScheduleTable={setScheduleTable} setScheduleJsx={setScheduleJsx} scheduleJsx={scheduleJsx} initialSchedule={initialSchedule} table1={table1} setTable={setTable} getCategoryTable={categoryTable} setCategoryTable={setCategoryTable} setToOptimize={setToOptimize} toOptimize={toOptimize} tasksID={tasksID} getTasksID={taskIDGetter} trigTasksID={taskIDTrig} updating_tasks={tasks} getTasks={taskGetter} setTasks={setTasks}/>
                            {/*<Categories userID={userID} setCategoryTrigger={setCategoryTrigger} categoryTrigger={categoryTrigger} setScheduleTrigger={setScheduleTrigger} scheduleTrigger={scheduleTrigger} table1={table1} categoryTable={categoryTable} setTable={setTable} optionRef={optionRef} setCategoryTable={setCategoryTable} setCategoryTypes={setCategoryTypes}  categoryTypes={ categoryTypes} initialScedule={initialSchedule} scheduleJsx={scheduleJsx} setScheduleJsx={setScheduleJsx} />*/}
                        </div>
                        <div id='category_component'>

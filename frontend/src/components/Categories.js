@@ -51,7 +51,6 @@ const Categories = (props) => {
         props.setCategoryTable(empty_table)
     }
 
-    //TODO - check duplicate (exists in sitetop also).
     const dragStart = (event) => {
         event.dataTransfer.setData('text/plain', event.target.id);
     }
@@ -84,10 +83,7 @@ const Categories = (props) => {
     }, [props.scheduleJsx])
 
     const getCategories = () => {
-        // TODO - get categories from server
-        // let user_id = 2
         fetchCategories('GetUserCategorySlots')
-        // TODO - after that, call markCategories and add classname to relevant slots, based on slot value received.
         props.setTable(props.categoryTable)
     }
 

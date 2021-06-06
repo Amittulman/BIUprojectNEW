@@ -120,9 +120,9 @@
 .show_hide_todo, .show_hide_todo_reverse {
     height: 30px;
     width: 30px;
-    position: absolute;
-    top: 10%;
-    left: 23%;
+    position: fixed;
+    top: 12%;
+    left: 31.5%;
     z-index: 10000;
     background: url("../images/left_sign.svg") 110% 50% no-repeat;
     cursor: pointer;

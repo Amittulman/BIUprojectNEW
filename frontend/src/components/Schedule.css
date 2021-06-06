@@ -23,6 +23,12 @@ th {
     user-select: none;
 }
 
+#empty_todo {
+    padding-top: 50%;
+    color: #dad7d8;
+    font-size: 40px;
+}
+
 #category_component1 {
     position: relative;
     overflow-y: scroll;
