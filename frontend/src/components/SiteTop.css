@@ -1,5 +1,7 @@
 .greeting {
     font-size: large;
+    position: absolute;
+    width: 100%;
 }
 
 #logout {
@@ -19,10 +21,45 @@
     margin-left: 25px;
 }
 
+#one {
+    /*margin-top: 25px;*/
+    text-align: left;
+}
+
+#adding_category_container {
+    width: 100%;
+    display: table;
+    margin-top: 30px;
+    text-align: left;
+}
+
+#category_dialog {
+    display: table-cell;
+    margin: 0 10px;
+    width: 100px;
+    height: 25px;
+    box-shadow: 1px 1px 1px 0px #ccc;
+    padding: 0 10px;
+    border-radius: 5px;
+}
+
+#new_category_option_1 {
+    display: table-cell;
+
+    background: red;
+    border-radius: 20%;
+    height: 30px;
+    width: 30px;
+    cursor: pointer;
+}
+
 .userContainer {
     display: flex;
     flex-direction: column;
     vertical-align: center;
     margin-left: 25px;
     padding-top: 25px;
+}
+
+#site_top {
 }

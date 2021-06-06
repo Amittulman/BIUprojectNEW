@@ -104,7 +104,9 @@ const Todo = (props) => {
     if (reschedule || event.currentTarget.parentNode.childNodes[2].className.startsWith('closed')) {
       document.getElementById('task_container'+i).classList.add('removed_container')
       timer = 380
-      //TODO - prevent task from being seen outside of slot during animation (expanded)
+    } else if (event.currentTarget.parentNode.childNodes[2].className.endsWith('daytime')) {
+      document.getElementById('task_container'+i).classList.add('removed_container_expanded_daytime')
+      timer = 600
     } else {
       document.getElementById('task_container'+i).classList.add('removed_container_expanded')
       timer = 580
@@ -311,6 +313,7 @@ const Todo = (props) => {
     let evening = document.getElementById('evening_label_'+e.target.innerText+index)
     let hidden = '_hidden'
     let not_hidden = ''
+    console.log('kuskus ', day.className)
     if (!day.className.includes('hidden')){
       hidden = ''
       not_hidden = '_hidden'
@@ -368,6 +371,15 @@ const Todo = (props) => {
       int_values.push(parseInt(values[i]))
     let constraints = [];
     for (i=0;i<7;i++) {
+      let hidden = '_hidden';
+      let clicked1 = '', clicked2 = '', clicked3 = '';
+      if (int_values[3*i] === 1 || int_values[3*i+1] === 1 || int_values[3*i+2] === 1) {
+        hidden = ''
+        setPressedDays(pressedDays+1)
+        if (int_values[3*i] === 1) clicked1 = '_clicked'
+        if (int_values[3*i+1] === 1) clicked2 = '_clicked'
+        if (int_values[3*i+2] === 1) clicked3 = '_clicked'
+      }
       constraints.push(
         <div className='spacing_days' key={days[i]+index}>
           <div onClick={(e)=>showDaytimes(e, index)} className='row day_of_week'>
@@ -375,14 +387,15 @@ const Todo = (props) => {
           </div>
           <div id={'daytime_icons'+index} className='daytime_icons'>
             <input type="checkbox" className='days_checkbox' key={'morning_'+days[i]+index} id={'morning_'+days[i]+index} name="constraints" value={3*i} defaultChecked={int_values[3*i]}/>
-            <label onClick={(e)=>changeDayTimeIcon(e)} className='row morning_icon_hidden' id={'morning_label_'+days[i]+index} htmlFor={'morning_'+days[i]+index}/>
+            <label onClick={(e)=>changeDayTimeIcon(e)} className={'row morning_icon' + hidden + clicked1} id={'morning_label_'+days[i]+index} htmlFor={'morning_'+days[i]+index}/>
             <input type="checkbox" className='days_checkbox' key={'noon_'+days[i]+index} id={'noon_'+days[i]+index} name="constraints" value={3*i+1} defaultChecked={int_values[3*i+1]}/>
-            <label onClick={(e)=>changeDayTimeIcon(e)} className='row noon_icon_hidden' id={'noon_label_'+days[i]+index} htmlFor={'noon_'+days[i]+index}/>
+            <label onClick={(e)=>changeDayTimeIcon(e)} className={'row noon_icon'+hidden+clicked2} id={'noon_label_'+days[i]+index} htmlFor={'noon_'+days[i]+index}/>
             <input className='days_checkbox' type="checkbox" key={'evening_'+days[i]+index} id={'evening_'+days[i]+index} name="constraints" value={3*i+2} defaultChecked={int_values[3*i+2]} />
-            <label onClick={(e)=>changeDayTimeIcon(e)} className='row evening_icon_hidden' id={'evening_label_'+days[i]+index} htmlFor={'evening_'+days[i]+index}/>
+            <label onClick={(e)=>changeDayTimeIcon(e)} className={'row evening_icon'+hidden+clicked3} id={'evening_label_'+days[i]+index} htmlFor={'evening_'+days[i]+index}/>
           </div>
         </div>);
     }
+    console.log('CONSTRAINTS: ', constraints)
     return <div id='test1' className='row'>{constraints}</div>;
   }
 
@@ -658,9 +671,13 @@ const Todo = (props) => {
     // If task is new, create a new instance of it, else edit existing/
     //removes old task when submitting form.
     if (typeof (updated[index]) ==='undefined') {
+      console.log('1')
       if (typeof (tasks[index]) ==='undefined') {
+        console.log('2')
         empty_task['constraints'] = empty_task['constraints'].substring(0,val) + checked_num + empty_task['constraints'].substring(val+1)
         updated[index] = empty_task
+        console.log('3 ',empty_task['constraints'].substring(0,val) + checked_num + empty_task['constraints'].substring(val+1))
+
       } else {
         update_task(index)
         let task_copy = Object.assign({}, tasks[index])
@@ -668,8 +685,10 @@ const Todo = (props) => {
         task_copy['temp_task_id'] = index
         task_copy['constraints'] = task_copy['constraints'].substring(0,val) + checked_num + task_copy['constraints'].substring(val+1)
         updated[index] = task_copy
+        console.log('3 ',task_copy['constraints'].substring(0,val) + checked_num + task_copy['constraints'].substring(val+1))
       }
     } else {
+      console.log('4 ', updated[index]['constraints'].substring(0,val) + checked_num + updated[index]['constraints'].substring(val+1))
       // //console.log('the val: ', updated)
       updated[index][nam] = updated[index]['constraints'].substring(0,val) + checked_num + updated[index]['constraints'].substring(val+1)
     }

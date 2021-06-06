@@ -102,6 +102,10 @@
     width: 100%;
 }
 
+#todo_component {
+    /*overflow: scroll;*/
+}
+
 #category_component {
     position: absolute;
     height: 100%;
@@ -474,12 +478,4 @@ input:checked + .slider:before {
     -webkit-transform: translateX(40px);
     -ms-transform: translateX(40px);
     transform: translateX(40px);
-}
-
-.slider.round {
-    border-radius: 34px;
-}
-
-.slider.round:before {
-    border-radius: 50%;
 }

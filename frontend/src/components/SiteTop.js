@@ -1,6 +1,5 @@
 import './SiteTop.css'
 import React, {useState} from 'react';
-import {Redirect} from "react-router";
 
 const slots_per_day = 24*2;
 
@@ -140,17 +139,27 @@ const SiteTop = (props) => {
     else greeting = 'Good evening'
     return (
         <div id='site_top' className='row flex-grow-0'>
-            <div id='login_title'>BeeZee</div>
-            <div className='col-2'/>
+
             {/*<div className='userContainer'>*/}
             {/*    <div className='greeting'>{greeting}, Moshe! 👋</div>*/}
             {/*</div>*/}
+            <div id='login_title'>BeeZee</div>
+            <div className='col-2'/>
             <div data-toggle="tooltip" title="Modify Categories" onClick={showCategories} id='category_button' className='category_button'/>
             <div data-toggle="tooltip" title="Type A" id='type_a_button' onClick={()=>props.setOption(0)} className='category_option'>Work</div>
             <div data-toggle="tooltip" title="Type B" id='type_b_button' onClick={()=>props.setOption(1)} className='category_option'>Leisure</div>
             <div data-toggle="tooltip" title="Type C" id='type_c_button' onClick={()=>props.setOption(2)} className='category_option'>Sleep</div>
             {/*TODO - implement "add category button    "*/}
-            <div data-toggle="tooltip" title="Type C" id='add_category_button' onClick={()=>alert('Implement')} className='category_option'/>
+            <div data-toggle="tooltip" title="Type C" id='add_category_button' onClick={(e)=>{
+                let x = document.getElementById('add_category_button')
+                console.log(e.target === x)
+            }} className='category_option'>
+            <span id='adding_category_container'>
+                Title: <input id='category_dialog'/>
+                {/*Color: <input id='category_dialog'/>*/}
+                Color: <span id='new_category_option_1'/><span id='new_category_option_1'/><span id='new_category_option_1'/>
+            </span>
+            </div>
             <div data-toggle="tooltip" title="Clear" id='clear_category_button' onClick={()=>props.setOption(-1)} className='category_option'/>
             {/*TODO:show indicator of sending category.*/}
             <div data-toggle="tooltip" title="Send" id='category_send_button' onClick={()=>{props.handleCategoriesSubmission(); showCategories(); props.setCategoryTrigger(!props.categoryTrigger)}} className='category_option'/>

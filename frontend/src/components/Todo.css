@@ -9,6 +9,7 @@
   font-size: calc(22px);
   color: rgb(12, 13, 13);
   user-select: none;
+  /*overflow-y: scroll;*/
 }
 
 .App-link {
@@ -449,14 +450,16 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   }
 }
 
-.removed_container_expanded {
+.removed_container_expanded, .removed_container_expanded_daytime {
   width: 100%;
-  /*display: none;*/
   justify-content: center;
-  animation: minimize_expanded 0.6s ease;
-  /*background-color: red;*/
+  animation: minimize_expanded 0.60s ease;
   position: relative;
   z-index: 1;
+}
+
+.removed_container_expanded_daytime {
+  animation: minimize_expanded_daytime 0.62s ease;
 }
 
 @keyframes minimize_expanded {
@@ -466,7 +469,18 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   }
   to {
     opacity: 0;
-    margin-top:-230px;
+    margin-top:-250px;
+  }
+}
+
+@keyframes minimize_expanded_daytime {
+  from {
+    opacity: 1;
+
+  }
+  to {
+    opacity: 0;
+    margin-top:-330px;
   }
 }
 
@@ -700,3 +714,18 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 }
 
 
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
