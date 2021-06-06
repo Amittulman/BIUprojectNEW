@@ -260,6 +260,7 @@ select option {
   margin-left: 40px;
   cursor: pointer;
   caret-color: transparent !important;
+  user-select: none;
 }
 
 .recurrence:hover {

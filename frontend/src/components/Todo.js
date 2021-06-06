@@ -246,7 +246,7 @@ const Todo = (props) => {
     let recurrence = <input key={'recurrence'+index} name='recurrings' onClick={(e)=> {
       handleChange(e, i);
       recurrenceIconChange(e, i);
-    }} onChange={(e) => handleChange(e, i)} className='recurrence recurrence1' id={'recurrings'+index} />;
+    }} onChange={(e) => handleChange(e, i)} className={'recurrence recurrence'+values['recurrings']} id={'recurrings'+index}/>;
     let recurrings = <div key={'recurrings'+index} id={'recurrings'+index} className='task_elm recurrence' onChange={(e) => handleChange(e, i)}>Recurrences:&nbsp;<input name='recurrings' type='text' defaultValue={values['recurrings']}/></div>;
     let title_and_thumbtack = <span key={'title_and_thumbtack'+index} className='row d-flex justify-content-between'>{task_title}{recurrence}{thumbtack}</span>;
     let duration = <div key={'duration'+index} className='task_elm'> Duration:
