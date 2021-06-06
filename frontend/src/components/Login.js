@@ -15,7 +15,6 @@ const Login = (props) => {
     const [signUpPassClicked, setSignUpPassClicked] = useState(false);
     const [loginAnswer, setLoginAnswer] = useState();
     const [signUpAnswer, setSignUpAnswer] = useState();
-    const [secondRender, setSecondRender] = useState(false);
     const [loggedIn, setLoggedIn] = useState(false);
     const history = useHistory();
     const login_userNode = useRef();
@@ -26,22 +25,20 @@ const Login = (props) => {
     const signup_emailNode = useRef();
 
     useEffect(() => {
-        let login = document.getElementById('login_container');
-        let signup = document.getElementById('signup_container');
-        setTimeout(() => {
-            if (login !== null) {
-                login.animate(loginAppearAnimation[0], loginAppearAnimation[1]);
-            }
-            else if(signup !== null) {
-                signup.animate(loginAppearAnimation[0], loginAppearAnimation[1]);
-            }
-        }, 100)
+        // let login = document.getElementById('login_container');
+        // let signup = document.getElementById('signup_container');
+        console.log('check login ', localStorage.getItem('rememberMe') === 'true', localStorage.getItem('userID') > 0)
+        console.log('it worths ', localStorage.getItem('rememberMe'))
+        if (localStorage.getItem('rememberMe') === 'true' && localStorage.getItem('userID') > 0) {
+            console.log('YUPS')
+            history.push('/mainPage')
+        }
     }, [])
 
 
     const loginAppearAnimation = [[
-        { 'opacity': 0},
-        { 'opacity': 1}
+        { 'opacity': 0, 'visibility': 'none'},
+        { 'opacity': 1, 'visibility': 'visible'}
     ], {duration: 350, fill: 'forwards', easing: 'ease-in'}];
 
     useEffect(() => {
@@ -67,6 +64,10 @@ const Login = (props) => {
             default:
                 text_to_client = 'Success!';
                 props.setUserID(loginAnswer);
+                props.setRememberMe(document.getElementById('remember_me_input').checked);
+                localStorage.setItem('userID', loginAnswer)
+                console.log('this will be added: ', document.getElementById('remember_me_input').checked)
+                localStorage.setItem('rememberMe', document.getElementById('remember_me_input').checked === true)
                 // TODO - move to main page.
                 break;
         }
@@ -244,11 +245,13 @@ const Login = (props) => {
             .then((response) => {
                 if (response.status !== 201) {
                     console.log("User's tasks hes been sent successfully.");
+                    // If logging in
                     if (requestName === 'checkusercredentials') {
                         setLoginAnswer(undefined)
                         setLoginAnswer(response)
                         setLoggedIn(true)
                         history.push('/mainPage')
+                    // If signing up.
                     } else {
                         setSignUpAnswer(undefined)
                         setSignUpAnswer(response)
@@ -284,11 +287,14 @@ const Login = (props) => {
                 <div className='login_subtitle'>Hello, please log in.</div>
                 <div id='username' ref={login_userNode} className={loginUserClicked?'textbox_title_clicked':'textbox_title'}>Username<span onMouseEnter={(e)=>showInputError(e)} onMouseLeave={(e)=>removeInputError(e)} id='err_username' className='no_error_sign'>*</span><div className='hidden_input_error' id='username_input_error_login'/><input id='username_text' maxLength='10' className={loginUserClicked?'input_clicked':'input'} type='text'/></div>
                 <div id='password' ref={login_passNode} className={loginPassClicked?'textbox_title_clicked':'textbox_title'}>Password<span onMouseEnter={(e)=>showInputError(e)} onMouseLeave={(e)=>removeInputError(e)} id='err_password' className='no_error_sign'>*</span><div className='hidden_input_error' id='password_input_error_login'/><input id='password_text' maxLength='12' className={loginPassClicked?'input_clicked':'input'} type='password'/></div>
+                <div id='remember_me_container'>
+                    <input type="checkbox" id="remember_me_input" defaultValue={props.rememberMe}/>
+                    <label className='remember_me' id="remember_me_label" htmlFor="rememberMe">Remember me</label>
+                </div>
                 <div className='log_in' onClick={()=> {
                     unmarkLoginFields()
                     checkLoginInputAndSend()
                 }}>Log In</div>
-
                 <Link to='./signup' className='sign_up'>Sign Up</Link>
                 <div className='forgot_password'>Forgot password?</div>
             </form>

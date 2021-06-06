@@ -128,6 +128,8 @@ const SiteTop = (props) => {
 
     const LogoutWrapper = () => {
         props.setUserID(undefined)
+        localStorage.setItem('userID', null)
+        localStorage.setItem('rememberMe', 'false')
         window.location.href = '/'
     }
 

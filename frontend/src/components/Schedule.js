@@ -15,7 +15,8 @@ const Table = (props) => {
     let day = ['Time', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
     useEffect(() => {
-        if (!props.userID) return
+        console.log('In sched, user id: ', props.userID)
+        if (props.userID === undefined || props.userID === null) return
         props.getTasksID();
     }, [props.userID])
 

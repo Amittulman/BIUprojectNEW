@@ -185,6 +185,14 @@ input:focus {
     transition: opacity 350ms ease-in;
 }
 
+#remember_me_container {
+    margin-right: 45%;
+}
+
+#remember_me_label {
+    padding-left: 5px;
+}
+
 .hidden_input_error {
     visibility: hidden;
     border-radius: 15px;

@@ -17,6 +17,7 @@ const App = () => {
     const [toOptimize, setToOptimize] = useState(false)
     const [categoryTrigger, setCategoryTrigger] = useState(false)
     const [categoryTable, setCategoryTable] = useState([])
+    const [rememberMe, setRememberMe] = useState();
     const [option, setOption] = useState(0)
     const optionRef = useRef();
     optionRef.current = option;
@@ -30,10 +31,16 @@ const App = () => {
     timeRef.current =  categoryTypes;
     const [scheduleJsx, setScheduleJsx] = useState([])
     const [userID, setUserID] = useState()
-    // const user_id = 2
 
     useEffect(() => {
-        if (userID !== undefined) {
+        console.log('DUUUUDE!')
+        console.log(localStorage.getItem('userID'))
+        console.log(localStorage.getItem('rememberMe'))
+        setUserID(localStorage.getItem('userID'))
+        setRememberMe(localStorage.getItem('rememberMe'))
+    }, [])
+    useEffect(() => {
+        if (userID !== undefined && userID !== null) {
             console.log('ID IS ', userID)
         }
     },[userID])
@@ -272,7 +279,7 @@ const App = () => {
             {/*<Login setUserID={setUserID}/>*/}
             <Switch>
                 <Route path='/mainPage' render={mainPage}/>
-                <Route path='/' component={()=><Login userID={userID} setUserID={setUserID}/>}/>
+                <Route path='/' component={()=><Login rememberMe={rememberMe} setRememberMe={setRememberMe} userID={userID} setUserID={setUserID}/>}/>
                 {/*<Route path='/signup' component={()=><div>HELLO</div>}/>*/}
             </Switch>
         </div>
