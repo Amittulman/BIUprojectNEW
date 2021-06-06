@@ -113,6 +113,9 @@
 .schedule_parent_expanded {
     margin-left: 30px;
 }
+.td1 {
+    user-select: none;
+}
 
 .show_hide_todo, .show_hide_todo_reverse {
     height: 30px;

@@ -243,7 +243,7 @@ select option {
   scroll-snap-type: y proximity;
 }
 
-.thumbtack, .thumbtack_clicked, .temp_recurrence {
+.thumbtack, .thumbtack_clicked, .recurrence {
   border-radius: 50%;
   transition: box-shadow 0.2s ease-out, margin-left 0.2s ease-out, opacity 0.2s ease-out;
   cursor: pointer;
@@ -252,48 +252,49 @@ select option {
   margin-right: 10px;
 }
 
-.temp_recurrence {
+.recurrence {
   border-radius: 50%;
   transition: box-shadow 0.2s ease-out, margin-left 0.2s ease-out, opacity 0.2s ease-out, background-image 0.1s ease-out;
   width: 30px;
   height: 30px;
   margin-left: 40px;
   cursor: pointer;
+  caret-color: transparent !important;
 }
 
-.temp_recurrence:hover {
+.recurrence:hover {
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 }
-.temp_recurrence:active {
+.recurrence:active {
   box-shadow: rgba(0, 0, 0, 0.5) 0px 1px 4px;
 }
 
 
-.temp_recurrence1 {
+.recurrence1 {
   background-image: url("../images/repeat_1.svg");
 }
 
-.temp_recurrence2 {
+.recurrence2 {
   background-image: url("../images/repeat_2.svg");
 }
 
-.temp_recurrence3 {
+.recurrence3 {
   background-image: url("../images/repeat_3.svg");
 }
 
-.temp_recurrence4 {
+.recurrence4 {
   background-image: url("../images/repeat_4.svg");
 }
 
-.temp_recurrence5 {
+.recurrence5 {
   background-image: url("../images/repeat_5.svg");
 }
 
-.temp_recurrence6 {
+.recurrence6 {
   background-image: url("../images/repeat_6.svg");
 }
 
-.temp_recurrence7 {
+.recurrence7 {
   background-image: url("../images/repeat_7.svg");
 }
 

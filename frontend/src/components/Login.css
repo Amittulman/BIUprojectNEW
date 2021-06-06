@@ -1,10 +1,9 @@
-.login_container, .login_container_gone {
+.login_container,.signup_container {
     display: flex;
     position: absolute;
     visibility: visible;
     left: 0;
     right: 0;
-    visibility: visible;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
@@ -19,13 +18,19 @@
     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
     padding: 20px 20px 20px 20px;
     box-sizing: border-box;
+    opacity: 1;
+    transition: visibility 0.4s ease-in, opacity 0.4s ease-in;
 }
 
 .login_container_gone {
     visibility: hidden;
+    opacity: 0;
+    /*transition: visibility 3s linear, opacity 3s linear;*/
+    /*transition: visibility 3s linear;*/
+
 }
 
-.login_title {
+.login_title, .signup_title {
     font: 70px "Brush Script MT";
     user-select: none;
 }
@@ -172,16 +177,12 @@ input:focus {
 
 .fade-enter.fade-enter-active {
     opacity: 1;
-    transition: opacity 350ms ease-in;
-}
-
-.fade-exit {
-    opacity: 1;
+    transition: opacity 1000ms ease-in;
 }
 
 .fade-exit.fade-exit-active {
     opacity: 0;
-    transition: opacity 150ms ease-in;
+    transition: opacity 350ms ease-in;
 }
 
 .hidden_input_error {

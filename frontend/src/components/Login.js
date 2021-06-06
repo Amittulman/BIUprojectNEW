@@ -4,6 +4,7 @@ import { Switch, Route, Redirect, withRouter } from 'react-router';
 import { Link, useLocation, useHistory } from 'react-router-dom';
 import { TransitionGroup, CSSTransition} from "react-transition-group";
 
+
 const Login = (props) => {
     const location = useLocation();
     const [loginUserClicked, setLoginUserClicked] = useState(false);
@@ -14,6 +15,7 @@ const Login = (props) => {
     const [signUpPassClicked, setSignUpPassClicked] = useState(false);
     const [loginAnswer, setLoginAnswer] = useState();
     const [signUpAnswer, setSignUpAnswer] = useState();
+    const [secondRender, setSecondRender] = useState(false);
     const [loggedIn, setLoggedIn] = useState(false);
     const history = useHistory();
     const login_userNode = useRef();
@@ -24,9 +26,23 @@ const Login = (props) => {
     const signup_emailNode = useRef();
 
     useEffect(() => {
-        console.log('should have reset userid')
-        // props.setUserID(undefined)
+        let login = document.getElementById('login_container');
+        let signup = document.getElementById('signup_container');
+        setTimeout(() => {
+            if (login !== null) {
+                login.animate(loginAppearAnimation[0], loginAppearAnimation[1]);
+            }
+            else if(signup !== null) {
+                signup.animate(loginAppearAnimation[0], loginAppearAnimation[1]);
+            }
+        }, 100)
     }, [])
+
+
+    const loginAppearAnimation = [[
+        { 'opacity': 0},
+        { 'opacity': 1}
+    ], {duration: 350, fill: 'forwards', easing: 'ease-in'}];
 
     useEffect(() => {
         // add when mounted
@@ -263,7 +279,7 @@ const Login = (props) => {
     const LoginPage = () =>
     {
         return(
-            <form className='login_container'>
+            <form className='login_container' id='login_container' >
                 <div className='login_title'>BeeZee</div>
                 <div className='login_subtitle'>Hello, please log in.</div>
                 <div id='username' ref={login_userNode} className={loginUserClicked?'textbox_title_clicked':'textbox_title'}>Username<span onMouseEnter={(e)=>showInputError(e)} onMouseLeave={(e)=>removeInputError(e)} id='err_username' className='no_error_sign'>*</span><div className='hidden_input_error' id='username_input_error_login'/><input id='username_text' maxLength='10' className={loginUserClicked?'input_clicked':'input'} type='text'/></div>
@@ -272,30 +288,17 @@ const Login = (props) => {
                     unmarkLoginFields()
                     checkLoginInputAndSend()
                 }}>Log In</div>
-                {/*<div className='d-flex justify-content-between remember_me_signup_container'>*/}
-                {/*    <div>*/}
-                {/*        <input type="checkbox" id="rememberMe" name="rememberMe" value="no"/>*/}
-                {/*        <label className='remember_me' htmlFor="rememberMe">Remember me</label>*/}
-                {/*    </div>*/}
-                {/*    <div className='log_in' onClick={()=> {*/}
-                {/*        unmarkLoginFields()*/}
-                {/*        checkLoginInputAndSend()*/}
-                {/*    }}>Log In</div>*/}
-                {/*</div>*/}
+
                 <Link to='./signup' className='sign_up'>Sign Up</Link>
                 <div className='forgot_password'>Forgot password?</div>
             </form>
         );
     }
 
-    const disappear = (e) => {
-        e.target.parentNode.className = 'login_container_gone'
-    }
-
     const SignUpPage = () =>
     {
         return(
-            <div className='login_container'>
+            <div className='signup_container' id='signup_container'>
                 <div className='login_title'>BeeZee</div>
                 {/*<div className='login_subtitle'>Please sign up.</div>*/}
                 <div ref={signup_userNode} id='username' className={signUpUserClicked?'textbox_title_clicked':'textbox_title'}>Username<span onMouseEnter={(e)=>showInputError(e)} onMouseLeave={(e)=>removeInputError(e)} id='err_username' className='no_error_sign'>*</span><div className='hidden_input_error' id='username_input_error_signup'/><input id='username_text' maxLength='10' className={signUpUserClicked?'input_clicked':'input'} type='text'/></div>
@@ -311,14 +314,6 @@ const Login = (props) => {
         );
     }
 
-    const AppWrapper = (e) => {
-        // console.log('ABC ', e.history.location.pathname)
-        if (!props.userID > 0)
-            return (LoginPage());
-        return (<Redirect to='/mainPage' />)
-    }
-
-
     return (
         <div className='login-route'>
             <TransitionGroup>
@@ -328,10 +323,10 @@ const Login = (props) => {
                     key={location.key}
                     unmountOnExit
                 >
-                    <Switch location={location}>
-                        <Route exact path='/' location={location} render={LoginPage}/>
-                        <Route path='/signup' location={location} render={SignUpPage}/>
-                    </Switch>
+                <Switch location={location}>
+                    <Route exact path='/' location={location} render={LoginPage}/>
+                    <Route path='/signup' location={location} render={SignUpPage}/>
+                </Switch>
                 </CSSTransition>
             </TransitionGroup>
         </div>

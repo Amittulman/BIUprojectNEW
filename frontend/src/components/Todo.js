@@ -195,11 +195,11 @@ const Todo = (props) => {
     return hour+':'+minute+':00'
   }
 
-  const tempRecurrenceIconChange = (e, i) => {
+  const recurrenceIconChange = (e, i) => {
     let recurrence = (parseInt(e.target.className.slice(-1)[0] )+ 1).toString()
     if (recurrence === '8')
       recurrence = '1';
-    e.target.className = 'temp_recurrence '+'temp_recurrence'+recurrence
+    e.target.className = 'recurrence recurrence'+recurrence
   }
 
   const updatePastDueTasks = () => {
@@ -243,8 +243,12 @@ const Todo = (props) => {
     <input onChange={(e) => handleChange(e, i)} name="pinned_choose_time" defaultValue={getTime(values['pinned_slot'])} key={'pinned_choose_time'+index} id={'pinned_choose_time'+index} className='pinned_choose_time' type="time"/>
     </span>;
     let task_title = <span key={'task_title'+index} id={'task_title'+index} className='task_elm col-sm-8' onChange={(e) => handleChange(e, i)}>Title:&nbsp;<input id={'title_textbox'+index} className='title_input' name='task_title' type='text' defaultValue={values['task_title']}/></span>
-    let temp_recurrence = <div onClick={(e)=>tempRecurrenceIconChange(e,i)} className='temp_recurrence temp_recurrence1' id={'temp_recurrence'+index}/>;
-    let title_and_thumbtack = <span key={'title_and_thumbtack'+index} className='row d-flex justify-content-between'>{task_title}{temp_recurrence}{thumbtack}</span>;
+    let recurrence = <input key={'recurrence'+index} name='recurrings' onClick={(e)=> {
+      handleChange(e, i);
+      recurrenceIconChange(e, i);
+    }} onChange={(e) => handleChange(e, i)} className='recurrence recurrence1' id={'recurrings'+index} />;
+    let recurrings = <div key={'recurrings'+index} id={'recurrings'+index} className='task_elm recurrence' onChange={(e) => handleChange(e, i)}>Recurrences:&nbsp;<input name='recurrings' type='text' defaultValue={values['recurrings']}/></div>;
+    let title_and_thumbtack = <span key={'title_and_thumbtack'+index} className='row d-flex justify-content-between'>{task_title}{recurrence}{thumbtack}</span>;
     let duration = <div key={'duration'+index} className='task_elm'> Duration:
       <div id='options_arrow'/>&nbsp;
       <select size='1' id='duration_options' name='duration' defaultValue={values['duration']} onChange={(e) => handleChange(e, i)}>
@@ -267,9 +271,8 @@ const Todo = (props) => {
         <option value="3">High</option>
       </select></div>;
     let category_id = <div key={'category_id'+index} className='task_elm' onChange={(e) => handleChange(e, i)}>Category:&nbsp;<input name='category_id' type='text' defaultValue={values['category_id']}/></div>;
-    let recurrings = <div key={'recurrings'+index} id={'recurrings'+index} className='task_elm recurrence' onChange={(e) => handleChange(e, i)}>Recurrences:&nbsp;<input name='recurrings' type='text' defaultValue={values['recurrings']}/></div>;
-    let constraints = <div key={'constraints'+index} id={'constraints'+index} onChange={(e) => handleChange(e, i)}><div className='task_elm'>Constraints:&nbsp;</div><div className={'constraints_element'} >{constraints_params}</div></div>;
-    let task = <div key={'task'+index} id={'task'+index} className='closed_task'>{[pinned_calendar, title_and_thumbtack, duration, priority, category_id, recurrings, constraints]}</div>
+    let constraints = <div key={'constraints'+index} id={'constraints'+index} onChange={(e) => handleChange(e, i)}><div className='task_elm'>Day of Week:&nbsp;</div><div className={'constraints_element'} >{constraints_params}</div></div>;
+    let task = <div key={'task'+index} id={'task'+index} className='closed_task'>{[pinned_calendar, title_and_thumbtack, duration, priority, category_id, constraints]}</div>
     let sign = <div id={'expand_icon'+index} className={'expand_icon'} onClick={(e) =>  expandTask(e, task, index)} key='plus_sign'/>
     let pastDue = <div key={'pastDue'+index} id={'pastDue_'+index} className={'past_due_hidden'}>
     <span className={'dont_reschedule'} onClick={(e) => bin_task(e,index, true)}/>
@@ -620,6 +623,11 @@ const Todo = (props) => {
         input_text.className = 'input_duration_hidden'
       }
       val *= 60;
+    }
+    else if (nam === 'recurrings') {
+      let current_value = parseInt(event.target.className.slice(-1)[0])
+      if (current_value === 7) current_value = 0;
+      val = current_value + 1;
     }
     let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'-1','constraints':'000000000000000000000', 'pinned_slot':null};
     let updated = updatedRef.current
