@@ -318,7 +318,7 @@ const Todo = (props) => {
       hidden = ''
       not_hidden = '_hidden'
       if (!day.className.includes('clicked')  && !noon.className.includes('clicked') && !evening.className.includes('clicked')) {
-        console.log('UNMARK')
+        console.log('UNMARK ', daysRef.current)
         setPressedDays(daysRef.current - 1)
       }
     } else {
@@ -338,7 +338,7 @@ const Todo = (props) => {
       let error = task_container.className.split('_').slice(-1)[0] === 'error'?'_error':''
       if (hidden)
         task_container.className = 'expanded_task_daytime'+error
-      else if (daysRef.current === 1)
+      else if (daysRef.current === 0)
         task_container.className = 'expanded_task'+error
     }
   }
@@ -375,7 +375,7 @@ const Todo = (props) => {
       let clicked1 = '', clicked2 = '', clicked3 = '';
       if (int_values[3*i] === 1 || int_values[3*i+1] === 1 || int_values[3*i+2] === 1) {
         hidden = ''
-        setPressedDays(pressedDays+1)
+        setPressedDays(daysRef.current+1)
         if (int_values[3*i] === 1) clicked1 = '_clicked'
         if (int_values[3*i+1] === 1) clicked2 = '_clicked'
         if (int_values[3*i+2] === 1) clicked3 = '_clicked'
