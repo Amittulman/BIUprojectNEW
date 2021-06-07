@@ -51,8 +51,9 @@
     /*margin-bottom: -100px;*/
 }
 
-.textbox_title_clicked {
+.textbox_title_clicked, .textbox_title:focus  {
     color: blue;
+    outline: none;
 }
 
 .textbox_title_error {
@@ -260,7 +261,7 @@ input:focus {
 }
 
 #username_input_error_signup:after {
-    content: 'Username is incorrect.';
+    content: 'Username is already taken.';
 }
 
 #password_input_error_signup {
@@ -278,7 +279,8 @@ input:focus {
 }
 
 #confirm_password_input_error_signup:after {
-    content: 'Confirm is incorrect.';
+    content: 'Passwords do not match.';
+    font-size: smaller;
 }
 
 #email_input_error_signup {

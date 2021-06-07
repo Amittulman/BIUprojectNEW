@@ -35,6 +35,10 @@ const Login = (props) => {
         }
     }, [])
 
+    useEffect(() => {
+        console.log('login user cliced: ', loginUserClicked)
+    }, [loginUserClicked])
+
 
     const loginAppearAnimation = [[
         { 'opacity': 0, 'visibility': 'none'},
@@ -57,9 +61,13 @@ const Login = (props) => {
         switch(loginAnswer) {
             case -1:
                 text_to_client = 'Wrong username.';
+                removeInputError(document.getElementById('password'))
+                showInputError(document.getElementById('username'))
                 break;
             case -2:
                 text_to_client = 'Wrong password';
+                removeInputError(document.getElementById('username'))
+                showInputError(document.getElementById('password'))
                 break;
             default:
                 text_to_client = 'Success!';
@@ -80,9 +88,11 @@ const Login = (props) => {
         switch(signUpAnswer) {
             case -1:
                 text_to_client = 'Username already taken.';
+                showInputError(document.getElementById('username'))
                 break;
             case -2:
                 text_to_client = 'An error occurred. Please try again late.';
+                removeInputError(document.getElementById('username'))
                 break;
             default:
                 text_to_client = 'Signed up successfully.';
@@ -118,27 +128,27 @@ const Login = (props) => {
         if (!!signup_rePassNode.current)
             unmarkSignUpFields()
         switch (e.target) {
-            case login_userNode.current && login_userNode.current.childNodes[2]:
+            case login_userNode.current && login_userNode.current.childNodes[3]:
                 login_userNode.current.childNodes[1].classList.add('input_clicked')
                 setLoginUserClicked(true);
                 break;
-            case login_passNode.current && login_passNode.current.childNodes[2]:
+            case login_passNode.current && login_passNode.current.childNodes[3]:
                 login_passNode.current.childNodes[1].classList.add('input_clicked')
                 setLoginPassClicked(true);
                 break;
-            case signup_userNode.current && signup_userNode.current.childNodes[2]:
+            case signup_userNode.current && signup_userNode.current.childNodes[3]:
                 signup_userNode.current.childNodes[1].classList.add('input_clicked')
                 setSignUpUserClicked(true);
                 break;
-            case signup_passNode.current && signup_passNode.current.childNodes[2]:
+            case signup_passNode.current && signup_passNode.current.childNodes[3]:
                 signup_passNode.current.childNodes[1].classList.add('input_clicked')
                 setSignUpPassClicked(true);
                 break;
-            case signup_rePassNode.current && signup_rePassNode.current.childNodes[2]:
+            case signup_rePassNode.current && signup_rePassNode.current.childNodes[3]:
                 signup_rePassNode.current.childNodes[1].classList.add('input_clicked')
                 setRePassClicked(true);
                 break;
-            case signup_emailNode.current && signup_emailNode.current.childNodes[2]:
+            case signup_emailNode.current && signup_emailNode.current.childNodes[3]:
                 signup_emailNode.current.childNodes[1].classList.add('input_clicked')
                 setEmailClicked(true);
                 break;
@@ -245,16 +255,20 @@ const Login = (props) => {
                 if (response.status !== 201) {
                     console.log("User's tasks hes been sent successfully.");
                     // If logging in
+                    console.log('RESPONSE CONTENT: ', response)
                     if (requestName === 'checkusercredentials') {
                         setLoginAnswer(undefined)
                         setLoginAnswer(response)
-                        setLoggedIn(true)
-                        history.push('/mainPage')
+                        if (response > 0) {
+                            setLoggedIn(true)
+                            history.push('/mainPage')
+                        }
                     // If signing up.
                     } else {
                         setSignUpAnswer(undefined)
                         setSignUpAnswer(response)
-                        history.push('/')
+                        if (response > 0)
+                        {history.push('/')}
                     }
                     return response;
                 } else {
@@ -267,15 +281,21 @@ const Login = (props) => {
     }
 
     const showInputError = (e) => {
-        // console.log(e.target.parentNode.childNodes[2])
-        e.target.parentNode.childNodes[2].classList.replace('hidden_input_error', 'input_error')
+        // e.target.parentNode.childNodes[2].classList.replace('hidden_input_error', 'input_error')
+        if (e.target !== undefined)
+            e.target.parentNode.childNodes[2].classList.replace('hidden_input_error', 'input_error')
+        else
+            e.childNodes[2].classList.replace('hidden_input_error', 'input_error')
     }
 
     const removeInputError = (e) => {
         // console.log(e.target.parentNode.childNodes[2])
-        setTimeout(()=>{
-            e.target.parentNode.childNodes[2].classList.replace('input_error', 'hidden_input_error')
-        },200)
+        if (e.target !== undefined)
+            setTimeout(() => {
+                e.target.parentNode.childNodes[2].classList.replace('input_error', 'hidden_input_error')
+            }, 300)
+        else
+            e.childNodes[2].classList.replace('input_error', 'hidden_input_error')
     }
 
     const LoginPage = () =>
