@@ -33,6 +33,9 @@ export class TasksController {
   async trig(@Param('id') user_id: string, @Param('slot') current_time_slot: number): Promise<any[]> {
     console.log(current_time_slot)
     const tasks = await this.getToDoList(user_id);
+    if(typeof tasks[0] === undefined){
+      return null;
+    }
     // if recurring task - need to duplicate here.
     const categorySlots = await  this.getUserCategorySlots(user_id);
     // for (let i = 0; i< categorySlots.length; i++){
