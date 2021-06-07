@@ -40,8 +40,7 @@ const Categories = (props) => {
                 let class_name = getClass(props.categoryTypes[slots_per_day * (i - 1) + j])
                 empty_content.push(<td key={'cell_' + (slots_per_day * (i - 1) + j) + '_empty'}
                                        id={'cell_' + (slots_per_day * (i - 1) + j) + '_empty'} className={class_name}
-                                       draggable='true' onDragStart={dragStart} onClick={allowDropCategory} onDragOver={allowDropCategory}
-                />);
+                                       draggable='true' onDragStart={dragStart} onClick={allowDropCategory} onDragOver={allowDropCategory}/>);
             }
             props.scheduleJsx.push(<tr key={'tr' + i + '_empty'}>
                 <th key={'th' + i + '_empty'}>{day[i]}</th>

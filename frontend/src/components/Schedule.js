@@ -38,6 +38,9 @@ const Table = (props) => {
     }, [props.tasksID, tasksID])
 
     useEffect(() => {
+        let date = new Date();
+        let today_slot = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
+        let passed_day = ''
         if (tasksID[0] === undefined) return;
         //console.log(props.categoryTrigger)
         if (!props.categoryTrigger) return
@@ -51,12 +54,17 @@ const Table = (props) => {
             for (let i = 1; i < 8; i++) {
                 let content = [];
                 for (let j = 0; j < slots_per_day; j++) {
+                    passed_day = ''
                     let data = tasks_id[j + (i - 1) * slots_per_day]
+                    console.log('today ', today_slot, (j + (i - 1) * slots_per_day))
+                    if (today_slot > (j + (i - 1) * slots_per_day))
+                        passed_day = ' passed'
                     let class_name = getClass(props.categoryTypes[slots_per_day * (i - 1) + j])
+                    console.log('AAAAAAAAAA ' , class_name)
                     content.push(<td key={'cell_' + (slots_per_day * (i - 1) + j)} className={class_name}
-                                     id={'cell_' + (slots_per_day * (i - 1) + j) + '_taskID_' + tasksID[j + (i - 1) * slots_per_day]}
-                                     draggable='true' onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop}
-                                     onDragLeave={leaveDropArea}>{data}</td>);//{data}
+                                          id={'cell_' + (slots_per_day * (i - 1) + j) + '_taskID_' + tasksID[j + (i - 1) * slots_per_day]}
+                                          draggable='true' onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop}
+                                          onDragLeave={leaveDropArea}><div className={passed_day}>{data}</div></td>);//{data}
                 }
                 jsx.push(<tr key={'tr' + i}><th key={'th' + i}>{day[i]}</th>{content}</tr>);
             }
