@@ -629,6 +629,7 @@ const Todo = (props) => {
   const handlePinned = (index) => {
     let day = document.getElementById('pinned_choose_day'+index).value;
     let time = document.getElementById('pinned_choose_time'+index).value;
+    console.log('TIMEEEEEEEEEE ', time)
     let pin = document.getElementById('thumbtack'+index);
     let calendar = document.getElementById('pinned_calendar'+index);
     if (day === '') {
@@ -641,6 +642,7 @@ const Todo = (props) => {
       // calendar.style.visibility = 'hidden'
       // calendar.style.opacity = '0'
       let nam = 'pinned_slot';
+      console.log('DAY DAY!!!! ', day, time)
       let val = props.timeToSlot(day, time);
       return [nam, val];
     } else return null;

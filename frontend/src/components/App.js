@@ -89,12 +89,13 @@ const App = () => {
             hours = parseInt(time.substr(0, 2));
             minutes = parseInt(time.substr(3, 2));
         }
-        if (minutes < 30 && minutes > 0)
+        if (minutes <= 30 && minutes > 0)
             minutes = 1
         else if (minutes !== 0) {
             hours += 1
             minutes = 0
         }
+        console.log('HALO HALO ', day, hours, minutes)
         return day*48 + hours*2+minutes
     }
 

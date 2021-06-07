@@ -297,15 +297,15 @@ const Login = (props) => {
         else
             e.childNodes[2].classList.replace('input_error', 'hidden_input_error')
     }
-
+// TODO - add effect to error in sign up .
     const LoginPage = () =>
     {
         return(
             <form className='login_container' id='login_container' >
                 <div className='login_title'>BeeZee</div>
                 <div className='login_subtitle'>Hello, please log in.</div>
-                <div id='username' ref={login_userNode} className={loginUserClicked?'textbox_title_clicked':'textbox_title'}>Username<span onMouseEnter={(e)=>showInputError(e)} onMouseLeave={(e)=>removeInputError(e)} id='err_username' className='no_error_sign'>*</span><div className='hidden_input_error' id='username_input_error_login'/><input id='username_text' maxLength='10' className={loginUserClicked?'input_clicked':'input'} type='text'/></div>
-                <div id='password' ref={login_passNode} className={loginPassClicked?'textbox_title_clicked':'textbox_title'}>Password<span onMouseEnter={(e)=>showInputError(e)} onMouseLeave={(e)=>removeInputError(e)} id='err_password' className='no_error_sign'>*</span><div className='hidden_input_error' id='password_input_error_login'/><input id='password_text' maxLength='12' className={loginPassClicked?'input_clicked':'input'} type='password'/></div>
+                <div id='username' ref={login_userNode} className={loginUserClicked?'textbox_title_clicked':'textbox_title'}>Username<span id='err_username' className='no_error_sign'>*</span><div className='hidden_input_error' id='username_input_error_login'/><input id='username_text' maxLength='10' className={loginUserClicked?'input_clicked':'input'} type='text'/></div>
+                <div id='password' ref={login_passNode} className={loginPassClicked?'textbox_title_clicked':'textbox_title'}>Password<span  id='err_password' className='no_error_sign'>*</span><div className='hidden_input_error' id='password_input_error_login'/><input id='password_text' maxLength='12' className={loginPassClicked?'input_clicked':'input'} type='password'/></div>
                 <div id='remember_me_container'>
                     <input type="checkbox" id="remember_me_input" defaultValue={props.rememberMe}/>
                     <label className='remember_me' id="remember_me_label" htmlFor="rememberMe">Remember me</label>
@@ -326,10 +326,10 @@ const Login = (props) => {
             <div className='signup_container' id='signup_container'>
                 <div className='login_title'>BeeZee</div>
                 {/*<div className='login_subtitle'>Please sign up.</div>*/}
-                <div ref={signup_userNode} id='username' className={signUpUserClicked?'textbox_title_clicked':'textbox_title'}>Username<span onMouseEnter={(e)=>showInputError(e)} onMouseLeave={(e)=>removeInputError(e)} id='err_username' className='no_error_sign'>*</span><div className='hidden_input_error' id='username_input_error_signup'/><input id='username_text' maxLength='10' className={signUpUserClicked?'input_clicked':'input'} type='text'/></div>
-                <div ref={signup_passNode} id='password' className={signUpPassClicked?'textbox_title_clicked':'textbox_title'}>Password<span onMouseEnter={(e)=>showInputError(e)} onMouseLeave={(e)=>removeInputError(e)} id='err_password' className='no_error_sign'>*</span><div className='hidden_input_error' id='password_input_error_signup'/><input id='password_text' maxLength='12' className={signUpPassClicked?'input_clicked':'input'} type='password'/></div>
-                <div ref={signup_rePassNode} id='confirm_password' className={rePassClicked?'textbox_title_clicked':'textbox_title'}>Confirm Password<span onMouseEnter={(e)=>showInputError(e)} onMouseLeave={(e)=>removeInputError(e)} id='err_confirm_password' className='no_error_sign'>*</span><div className='hidden_input_error' id='confirm_password_input_error_signup'/><input id='confirm_password_text' maxLength='12' type='password'/></div>
-                <div ref={signup_emailNode} id='email' className={emailClicked?'textbox_title_clicked':'textbox_title'}>Email<span onMouseEnter={(e)=>showInputError(e)} onMouseLeave={(e)=>removeInputError(e)} id='err_email' className='no_error_sign'>*</span><div className='hidden_input_error' id='email_input_error_signup'/><input id='email_text' className={emailClicked?'input_clicked':'input'} type='email'/></div>
+                <div ref={signup_userNode} id='username' className={signUpUserClicked?'textbox_title_clicked':'textbox_title'}>Username<span id='err_username' className='no_error_sign'>*</span><div className='hidden_input_error' id='username_input_error_signup'/><input id='username_text' maxLength='10' className={signUpUserClicked?'input_clicked':'input'} type='text'/></div>
+                <div ref={signup_passNode} id='password' className={signUpPassClicked?'textbox_title_clicked':'textbox_title'}>Password<span id='err_password' className='no_error_sign'>*</span><div className='hidden_input_error' id='password_input_error_signup'/><input id='password_text' maxLength='12' className={signUpPassClicked?'input_clicked':'input'} type='password'/></div>
+                <div ref={signup_rePassNode} id='confirm_password' className={rePassClicked?'textbox_title_clicked':'textbox_title'}>Confirm Password<span id='err_confirm_password' className='no_error_sign'>*</span><div className='hidden_input_error' id='confirm_password_input_error_signup'/><input id='confirm_password_text' maxLength='12' type='password'/></div>
+                <div ref={signup_emailNode} id='email' className={emailClicked?'textbox_title_clicked':'textbox_title'}>Email<span id='err_email' className='no_error_sign'>*</span><div className='hidden_input_error' id='email_input_error_signup'/><input id='email_text' className={emailClicked?'input_clicked':'input'} type='email'/></div>
                 <input className='signing_up' onClick={()=> {
                     unmarkSignUpFields()
                     checkSignUpInputAndSend();

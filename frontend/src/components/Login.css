@@ -243,7 +243,7 @@ input:focus {
 }
 
 #username_input_error_login:after {
-    content: 'Username is incorrect.';
+    content: 'User does not exist.';
 }
 
 #password_input_error_login {
