@@ -7,6 +7,7 @@ import React, {useState, useEffect, useRef} from 'react';
 import { Switch, Route } from 'react-router-dom';
 
 import '../components/App.css';
+import {current} from "@reduxjs/toolkit";
 
 
 const slots_per_day = 24*2
@@ -51,12 +52,11 @@ const App = () => {
     },[userID])
 
     const detectOutsideClicking = (e) => {
-        console.log(e.target)
         let i;
         for (i of Object.keys(taskRef.current)) {
             let current_pinnedd = document.getElementById('pinned_calendar'+i)
             let time = document.getElementById('pinned_choose_time'+i)
-            if (e.target.id !== 'pinned_choose_day'+i && e.target.id !== 'pinned_choose_time'+i && e.target.id !== 'thumbtack'+i ) {
+            if (current_pinnedd !== null && time!== null && e.target.id !== 'pinned_choose_day'+i && e.target.id !== 'pinned_choose_time'+i && e.target.id !== 'thumbtack'+i ) {
                 current_pinnedd.style.visibility = 'hidden'
                 current_pinnedd.style.opacity = '0'
                 console.log(time.value)
