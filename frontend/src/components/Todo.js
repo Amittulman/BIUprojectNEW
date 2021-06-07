@@ -161,12 +161,26 @@ const Todo = (props) => {
     let calendar = document.getElementById('pinned_calendar'+index);
     let day = document.getElementById('pinned_choose_day'+index);
     let time = document.getElementById('pinned_choose_time'+index);
+    let thumbtack = document.getElementById('thumbtack'+index);
     console.log('day ', day.value)
     console.log('time ', time.value)
-    if (calendar.style.display === 'block') {
-      calendar.style.display = 'none';
+    console.log('more info ',thumbtack.className)
+    if (thumbtack.className.includes('thumbtack_done')) {
+      day.value = '';
+      time.value = null;
+      let temp_arr = updatedRef.current
+      temp_arr[index].pinned_slot = null
+      setUpdatedTasks(temp_arr)
+      thumbtack.className = 'col-1 thumbtack'
+      return;
+    }
+    // Opening/closing pinned.
+    if (calendar.style.visibility === 'visible') {
+      calendar.style.visibility = 'hidden';
+      calendar.style.opacity = '0';
     }    else {
-      calendar.style.display = 'block';
+      calendar.style.visibility = 'visible';
+      calendar.style.opacity = '1';
     }
     let pin = document.getElementById('thumbtack'+index);
     if (pin.classList.contains('thumbtack_done')) {
@@ -175,7 +189,6 @@ const Todo = (props) => {
     } else if (pin.classList.contains('thumbtack')) {
       pin.classList.remove('thumbtack');
       pin.classList.add('thumbtack_clicked');
-
     } else {
       pin.classList.remove('thumbtack_clicked');
       pin.classList.add('thumbtack');
@@ -617,6 +630,7 @@ const Todo = (props) => {
     let day = document.getElementById('pinned_choose_day'+index).value;
     let time = document.getElementById('pinned_choose_time'+index).value;
     let pin = document.getElementById('thumbtack'+index);
+    let calendar = document.getElementById('pinned_calendar'+index);
     if (day === '') {
       if (pin.classList.contains('thumbtack_clicked') === false)
         pin.className = 'thumbtack_clicked';
@@ -624,6 +638,8 @@ const Todo = (props) => {
     }
     else if (time !== '') {
       pin.className = 'thumbtack_done';
+      // calendar.style.visibility = 'hidden'
+      // calendar.style.opacity = '0'
       let nam = 'pinned_slot';
       let val = props.timeToSlot(day, time);
       return [nam, val];

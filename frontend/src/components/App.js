@@ -23,6 +23,8 @@ const App = () => {
     const [todoIsLoaded, setTodoIsLoaded] = useState(false);
     const optionRef = useRef();
     optionRef.current = option;
+    const taskRef = useRef();
+    taskRef.current = tasks;
     const [scheduleTrigger, setScheduleTrigger] = useState(false)
     const [table1, setTable] = useState([])
     const [scheduleTable, setScheduleTable] = useState([])
@@ -35,17 +37,32 @@ const App = () => {
     const [userID, setUserID] = useState()
 
     useEffect(() => {
-        console.log('DUUUUDE!')
+        window.addEventListener('click', detectOutsideClicking)
         console.log(localStorage.getItem('userID'))
         console.log(localStorage.getItem('rememberMe'))
         setUserID(localStorage.getItem('userID'))
         setRememberMe(localStorage.getItem('rememberMe'))
     }, [])
+
     useEffect(() => {
         if (userID !== undefined && userID !== null) {
             console.log('ID IS ', userID)
         }
     },[userID])
+
+    const detectOutsideClicking = (e) => {
+        console.log(e.target)
+        let i;
+        for (i of Object.keys(taskRef.current)) {
+            let current_pinnedd = document.getElementById('pinned_calendar'+i)
+            let time = document.getElementById('pinned_choose_time'+i)
+            if (e.target.id !== 'pinned_choose_day'+i && e.target.id !== 'pinned_choose_time'+i && e.target.id !== 'thumbtack'+i ) {
+                current_pinnedd.style.visibility = 'hidden'
+                current_pinnedd.style.opacity = '0'
+                console.log(time.value)
+            }
+        }
+    }
 
     const taskGetter = () => {
         fetchTasks('gettasks', userID)
