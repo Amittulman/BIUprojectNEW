@@ -16,9 +16,9 @@ const Todo = (props) => {
   const [isLoaded, setIsLoaded] = useState(false)
   const [trigger, setTrigger] = useState(false)
   const [pastDue, setPastDue] = useState({})
-  const [pressedDays, setPressedDays] = useState(0);
+  const [chosenDays, setChosenDays] = useState({});
   const daysRef = useRef();
-  daysRef.current = pressedDays;
+  daysRef.current = chosenDays;
   const pastDueRef = useRef();
   pastDueRef.current = pastDue;
   const [firstRender, setFirstRender] = useState(true)
@@ -127,13 +127,8 @@ const Todo = (props) => {
   }
 
   const anyNotHidden = (index) => {
-    console.log('check any surprises ', document.getElementsByClassName('daytime_icons')[0].childNodes[1])
-    for (let i=0; i<7; i++){
-      console.log(i)
-    if (!document.getElementsByClassName('daytime_icons')[i].childNodes[1].className.includes('hidden'))
-      return true
-    }
-    return false
+    console.log('check any surprises ', daysRef.current[index])
+    return daysRef.current[index] !== 0
   }
 
   const expandTask = (event, task, index) => {
@@ -227,6 +222,8 @@ const Todo = (props) => {
     if (values == null) {
       values = {'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'-1','constraints':'000000000000000000000', 'pinned_slot':null}
     }
+    if (values['constraints'] === '111111111111111111111')
+      values['constraints'] = '000000000000000000000'
     let constraints_params = getConstraints(index, values['constraints']);
     let i = index
     let trash_bin = <svg className='bin_icon' id={'trash_bin'+index} onClick={(e) => bin_task(e,index)}  key={'trash_bin'+index} height="30px" viewBox="-40 0 427 427.00131" width="30px" xmlns="http://www.w3.org/2000/svg"><path d="m232.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0"/><path d="m114.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0"/><path d="m28.398438 127.121094v246.378906c0 14.5625 5.339843 28.238281 14.667968 38.050781 9.285156 9.839844 22.207032 15.425781 35.730469 15.449219h189.203125c13.527344-.023438 26.449219-5.609375 35.730469-15.449219 9.328125-9.8125 14.667969-23.488281 14.667969-38.050781v-246.378906c18.542968-4.921875 30.558593-22.835938 28.078124-41.863282-2.484374-19.023437-18.691406-33.253906-37.878906-33.257812h-51.199218v-12.5c.058593-10.511719-4.097657-20.605469-11.539063-28.03125-7.441406-7.421875-17.550781-11.5546875-28.0625-11.46875h-88.796875c-10.511719-.0859375-20.621094 4.046875-28.0625 11.46875-7.441406 7.425781-11.597656 17.519531-11.539062 28.03125v12.5h-51.199219c-19.1875.003906-35.394531 14.234375-37.878907 33.257812-2.480468 19.027344 9.535157 36.941407 28.078126 41.863282zm239.601562 279.878906h-189.203125c-17.097656 0-30.398437-14.6875-30.398437-33.5v-245.5h250v245.5c0 18.8125-13.300782 33.5-30.398438 33.5zm-158.601562-367.5c-.066407-5.207031 1.980468-10.21875 5.675781-13.894531 3.691406-3.675781 8.714843-5.695313 13.925781-5.605469h88.796875c5.210937-.089844 10.234375 1.929688 13.925781 5.605469 3.695313 3.671875 5.742188 8.6875 5.675782 13.894531v12.5h-128zm-71.199219 32.5h270.398437c9.941406 0 18 8.058594 18 18s-8.058594 18-18 18h-270.398437c-9.941407 0-18-8.058594-18-18s8.058593-18 18-18zm0 0"/><path d="m173.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0"/></svg>
@@ -308,43 +305,73 @@ const Todo = (props) => {
   }
 
   const showDaytimes = (e, index) => {
-    let day = document.getElementById('morning_label_'+e.target.innerText+index)
+    let days_dct = {'Su':0, 'M':1, 'T':2, 'W':3, 'Th':4, 'F':5, 'S':6};
+    let day = e.target.innerHTML;
+    let morning = document.getElementById('morning_label_'+e.target.innerText+index)
+    let morning_input = document.getElementById('morning_'+e.target.innerText+index)
     let noon = document.getElementById('noon_label_'+e.target.innerText+index)
+    let noon_input = document.getElementById('noon_'+e.target.innerText+index)
     let evening = document.getElementById('evening_label_'+e.target.innerText+index)
+    let evening_input = document.getElementById('evening_'+e.target.innerText+index)
     let hidden = '_hidden'
     let not_hidden = ''
-    console.log('kuskus ', day.className)
-    if (!day.className.includes('hidden')){
+    let temp_arr = daysRef.current
+    // If all clicked, unmark all and reduce value by 3.
+    if (morning.className.includes('clicked') && noon.className.includes('clicked') &&
+        evening.className.includes('clicked')){
+      temp_arr[index] -= 3
+      morning_input.click()
+      noon_input.click()
+      document.getElementById('evening_'+e.target.innerText+index).click()
+    // If none are visible, show them and add by 3.
+    } else {
+      if (!morning.className.includes('clicked')) {
+        morning_input.click()
+        temp_arr[index] += 1
+      }
+      if (!noon.className.includes('clicked')) {
+        noon_input.click()
+        temp_arr[index] += 1
+      }
+      if (!evening.className.includes('clicked')) {
+        evening_input.click()
+        temp_arr[index] += 1
+      }
+    }
+    if (!morning.className.includes('clicked') && !noon.className.includes('clicked') &&
+        !evening.className.includes('clicked')) {
+      morning.className = 'row morning_icon'
+      noon.className = 'row noon_icon'
+      evening.className = 'row evening_icon'
+    }
+    setChosenDays(temp_arr)
+    console.log('kuskus ', morning.className)
+    console.log('kuskus ', noon.className)
+    console.log('kuskus ', evening.className)
+    if (morning.className.endsWith('morning_icon') || noon.className.endsWith('noon_icon') || evening.className.endsWith('evening_icon')){
       hidden = ''
       not_hidden = '_hidden'
-      if (!day.className.includes('clicked')  && !noon.className.includes('clicked') && !evening.className.includes('clicked')) {
-        console.log('UNMARK ', daysRef.current)
-        setPressedDays(daysRef.current - 1)
-      }
-    } else {
-      console.log('MARK')
-      setPressedDays(daysRef.current+1)
+      morning.className = 'row morning_icon_clicked'
+      noon.className = 'row noon_icon_clicked'
+      evening.className = 'row evening_icon_clicked'
+    } else if (morning.className.endsWith('clicked') & noon.className.endsWith('clicked') && evening.className.endsWith('clicked')){
+      morning.className = 'row morning_icon'
+      noon.className = 'row noon_icon'
+      evening.className = 'row evening_icon'
     }
-    // If no daytime icon is pressed, hide/show icons when clicking certain day button.
-    if (!day.className.includes('clicked') && !noon.className.includes('clicked') &&
-        !evening.className.includes('clicked')) {
-      day.classList.remove('morning_icon'+hidden)
-      day.classList.add('morning_icon'+not_hidden)
-      noon.classList.remove('noon_icon'+hidden)
-      noon.classList.add('noon_icon'+not_hidden)
-      evening.classList.remove('evening_icon'+hidden)
-      evening.classList.add('evening_icon'+not_hidden)
       let task_container = document.getElementById('task'+index)
       let error = task_container.className.split('_').slice(-1)[0] === 'error'?'_error':''
-      if (hidden)
+      if (daysRef.current[index] === 0) {
+      task_container.className = 'expanded_task' + error
+      } else {
         task_container.className = 'expanded_task_daytime'+error
-      else if (daysRef.current === 0)
-        task_container.className = 'expanded_task'+error
-    }
+      }
+    console.log('XXXXXXXXXXX ', daysRef.current[index] === 0)
   }
 
-  const changeDayTimeIcon = (e) =>  {
+  const changeDayTimeIcon = (e, index) =>  {
     console.log('change day ', e.target.className.includes('noon'))
+    let temp_arr = daysRef.current
     let clicked = '_clicked'
     let no_click = ''
     if (e.target.className.includes('clicked')) {
@@ -361,6 +388,11 @@ const Todo = (props) => {
       e.target.classList.remove('evening_icon'+no_click)
       e.target.classList.add('evening_icon'+clicked)
     }
+    if (clicked === '')
+      temp_arr[index] -= 1
+    else
+      temp_arr[index] += 1
+    setChosenDays(temp_arr)
   }
 
   const getConstraints = (index, values) => {
@@ -370,12 +402,17 @@ const Todo = (props) => {
     for (i=0;i<values.length;i++)
       int_values.push(parseInt(values[i]))
     let constraints = [];
+    let temp_chosen_days = 0
     for (i=0;i<7;i++) {
-      let hidden = '_hidden';
+      // let hidden = '_hidden';
+      let hidden = '';
       let clicked1 = '', clicked2 = '', clicked3 = '';
+      let morning_val = parseInt(int_values[3*i])
+      let noon_val = parseInt(int_values[3*i+1])
+      let evening_val = parseInt(int_values[3*i+2])
+      temp_chosen_days += morning_val+noon_val+evening_val
       if (int_values[3*i] === 1 || int_values[3*i+1] === 1 || int_values[3*i+2] === 1) {
         hidden = ''
-        setPressedDays(daysRef.current+1)
         if (int_values[3*i] === 1) clicked1 = '_clicked'
         if (int_values[3*i+1] === 1) clicked2 = '_clicked'
         if (int_values[3*i+2] === 1) clicked3 = '_clicked'
@@ -387,15 +424,18 @@ const Todo = (props) => {
           </div>
           <div id={'daytime_icons'+index} className='daytime_icons'>
             <input type="checkbox" className='days_checkbox' key={'morning_'+days[i]+index} id={'morning_'+days[i]+index} name="constraints" value={3*i} defaultChecked={int_values[3*i]}/>
-            <label onClick={(e)=>changeDayTimeIcon(e)} className={'row morning_icon' + hidden + clicked1} id={'morning_label_'+days[i]+index} htmlFor={'morning_'+days[i]+index}/>
+            <label onClick={(e)=>changeDayTimeIcon(e, index)} className={'row morning_icon' + hidden + clicked1} id={'morning_label_'+days[i]+index} htmlFor={'morning_'+days[i]+index}/>
             <input type="checkbox" className='days_checkbox' key={'noon_'+days[i]+index} id={'noon_'+days[i]+index} name="constraints" value={3*i+1} defaultChecked={int_values[3*i+1]}/>
-            <label onClick={(e)=>changeDayTimeIcon(e)} className={'row noon_icon'+hidden+clicked2} id={'noon_label_'+days[i]+index} htmlFor={'noon_'+days[i]+index}/>
+            <label onClick={(e)=>changeDayTimeIcon(e, index)} className={'row noon_icon'+hidden+clicked2} id={'noon_label_'+days[i]+index} htmlFor={'noon_'+days[i]+index}/>
             <input className='days_checkbox' type="checkbox" key={'evening_'+days[i]+index} id={'evening_'+days[i]+index} name="constraints" value={3*i+2} defaultChecked={int_values[3*i+2]} />
-            <label onClick={(e)=>changeDayTimeIcon(e)} className={'row evening_icon'+hidden+clicked3} id={'evening_label_'+days[i]+index} htmlFor={'evening_'+days[i]+index}/>
+            <label onClick={(e)=>changeDayTimeIcon(e, index)} className={'row evening_icon'+hidden+clicked3} id={'evening_label_'+days[i]+index} htmlFor={'evening_'+days[i]+index}/>
           </div>
         </div>);
     }
-    console.log('CONSTRAINTS: ', constraints)
+    let temp_arr = daysRef.current
+    temp_arr[index] = temp_chosen_days
+    setChosenDays(temp_arr)
+    console.log('CONSTRAINTS: ', temp_chosen_days)
     return <div id='test1' className='row'>{constraints}</div>;
   }
 
@@ -658,11 +698,25 @@ const Todo = (props) => {
   }
 
   const handleConstraints = (event, index) => {
-    const nam = event.target.name;
-    const val = parseInt(event.target.value);
-    let checked_num = 0;
-    if (event.target.checked)
-      checked_num = 1;
+    console.log('THE EVENT0: ', event)
+    let task_container = document.getElementById('task'+index)
+    let error = task_container.className.split('_').slice(-1)[0] === 'error'?'_error':''
+    let nam, val, checked_num;
+    if (event.target !== undefined) {
+      console.log('THE EVENT: ', event.target.checked)
+      nam = event.target.name;
+      val = parseInt(event.target.value);
+      checked_num = 0;
+      if (event.target.checked)
+        checked_num = 1;
+    } else {
+      console.log('THE EVENT2: ', event.checked)
+      nam = event.name;
+      val = parseInt(event.value);
+      checked_num = 0;
+      if (event.checked)
+        checked_num = 1;
+    }
     //console.log('nam: ',nam)
     //console.log('val: ',val)
     // //console.log('print: ', '1'.repeat(val) + '0' + '1'.repeat(20-val))
@@ -691,6 +745,11 @@ const Todo = (props) => {
       console.log('4 ', updated[index]['constraints'].substring(0,val) + checked_num + updated[index]['constraints'].substring(val+1))
       // //console.log('the val: ', updated)
       updated[index][nam] = updated[index]['constraints'].substring(0,val) + checked_num + updated[index]['constraints'].substring(val+1)
+    }
+    if (daysRef.current[index] === 0) {
+      task_container.className = 'expanded_task' + error
+    } else {
+      task_container.className = 'expanded_task_daytime'+error
     }
     setUpdatedTasks(updated)
   }

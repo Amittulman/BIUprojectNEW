@@ -126,6 +126,7 @@ input:focus {
 }
 
 .daytime_icons {
+  margin-top: 8px;
 }
 
 .morning_icon, .noon_icon, .evening_icon, .noon_icon_clicked, .morning_icon_clicked, .evening_icon_clicked {
