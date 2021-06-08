@@ -151,8 +151,9 @@ const SiteTop = (props) => {
             <div data-toggle="tooltip" title="Type C" id='type_c_button' onClick={()=>props.setOption(2)} className='category_option'>Sleep</div>
             {/*TODO - implement "add category button    "*/}
             <div data-toggle="tooltip" title="Type C" id='add_category_button' onClick={(e)=>{
-                let x = document.getElementById('add_category_button')
-                console.log(e.target === x)
+                let new_cat_container = document.getElementById('adding_category_container')
+                if (new_cat_container.style.visibility === 'visible') new_cat_container.style.visibility = 'hidden'
+                else new_cat_container.style.visibility = 'visible'
             }} className='category_option'>
             <div id='adding_category_container'>
                 Title: <input id='category_dialog'/>
