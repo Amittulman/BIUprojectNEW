@@ -152,19 +152,22 @@ const SiteTop = (props) => {
             {/*TODO - implement "add category button    "*/}
             <div data-toggle="tooltip" title="Type C" id='add_category_button' onClick={(e)=>{
                 let new_cat_container = document.getElementById('adding_category_container')
-                if (new_cat_container.style.visibility === 'visible') new_cat_container.style.visibility = 'hidden'
+                if (new_cat_container.style.visibility === 'visible') {
+                    if (e.target.id === 'add_category_button')
+                        new_cat_container.style.visibility = 'hidden'
+                }
                 else new_cat_container.style.visibility = 'visible'
             }} className='category_option'>
+            </div>
+            <div data-toggle="tooltip" title="Clear" id='clear_category_button' onClick={()=>props.setOption(-1)} className='category_option'/>
+            {/*TODO:show indicator of sending category.*/}
+            <div data-toggle="tooltip" title="Send" id='category_send_button' onClick={()=>{props.handleCategoriesSubmission(); showCategories(); props.setCategoryTrigger(!props.categoryTrigger)}} className='category_option'/>
             <div id='adding_category_container'>
                 Title: <input id='category_dialog'/>
                 {/*Color: <input id='category_dialog'/>*/}
                 Color: <span id='new_category_option_1'/><span id='new_category_option_2'/><span id='new_category_option_3'/>
                 <span id='category_accept_changes'/>
             </div>
-            </div>
-            <div data-toggle="tooltip" title="Clear" id='clear_category_button' onClick={()=>props.setOption(-1)} className='category_option'/>
-            {/*TODO:show indicator of sending category.*/}
-            <div data-toggle="tooltip" title="Send" id='category_send_button' onClick={()=>{props.handleCategoriesSubmission(); showCategories(); props.setCategoryTrigger(!props.categoryTrigger)}} className='category_option'/>
             {/*<div className='col-4'>{login}</div>*/}
             <div id='logout' onClick={LogoutWrapper}>Log out</div>
         </div>

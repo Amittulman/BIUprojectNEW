@@ -31,9 +31,11 @@
     /*background-color: red;*/
     display: flex;
     flex-direction: row;
-    margin-top: 30px;
+    margin-top: 60px;
+    margin-left: -150px;
     text-align: left;
     visibility: hidden;
+    user-select: none;
 }
 
 #category_dialog {
