@@ -11,7 +11,6 @@ const Todo = (props) => {
   const [tasks_jsx, setTasksJsx] = useState(new Set())
   const [tasks, setTasks] = useState([])
   const [removed_tasks, setRemovedTasks] = useState([])
-  const [updated_tasks, setUpdatedTasks] = useState({})
   const [task_number, setTaskNumber] = useState(10000)
   const [isLoaded, setIsLoaded] = useState(false)
   const [trigger, setTrigger] = useState(false)
@@ -28,7 +27,7 @@ const Todo = (props) => {
   const firstUpdate = useRef(true)
   const firstUpdate2 = useRef(true)
   const updatedRef = useRef();
-  updatedRef.current = updated_tasks;
+  updatedRef.current = props.updated_tasks;
   const removedRef = useRef();
   removedRef.current = removed_tasks;
   const jsxRef = useRef();
@@ -114,11 +113,11 @@ const Todo = (props) => {
     setTimeout(()=> {
       setTasksJsx(jsxRef.current.filter(item => item.props.id !== 'task_container' + i))
     }, timer)
-    for (let [key, value] of Object.entries(updated_tasks)) {
+    for (let [key, value] of Object.entries(props.updated_tasks)) {
       if (value['temp_task_id'] === i) {
-        let clone = updated_tasks;
+        let clone = props.updated_tasks;
         delete clone[key]
-        setUpdatedTasks(clone)
+        props.setUpdatedTasks(clone)
       }
     }
     if (tasksRef.current[i] !== undefined) {
@@ -162,15 +161,21 @@ const Todo = (props) => {
     let day = document.getElementById('pinned_choose_day'+index);
     let time = document.getElementById('pinned_choose_time'+index);
     let thumbtack = document.getElementById('thumbtack'+index);
-    console.log('day ', day.value)
-    console.log('time ', time.value)
-    console.log('more info ',thumbtack.className)
     if (thumbtack.className.includes('thumbtack_done')) {
       day.value = '';
       time.value = null;
       let temp_arr = updatedRef.current
-      temp_arr[index].pinned_slot = null
-      setUpdatedTasks(temp_arr)
+      if (temp_arr[index] !== undefined) {
+        temp_arr[index].pinned_slot = null
+        props.setUpdatedTasks(temp_arr)
+      } else {
+        //TODO check if ok
+        update_task(index)
+        let task_copy = Object.assign({}, tasks[index])
+        delete task_copy['task_id']
+        task_copy['temp_task_id'] = index
+        temp_arr[index] = {...task_copy, 'pinned_slot': null}
+      }
       thumbtack.className = 'col-1 thumbtack'
       return;
     }
@@ -196,8 +201,9 @@ const Todo = (props) => {
     pin.classList.add('col-1');
   }
 
-  const getDay = (slot_number) => {
-    return 'null' ? slot_number===null : parseInt(parseInt(slot_number)/48)
+  const getDay = (slot_number, i) => {
+    if (slot_number === null) return ''
+    return parseInt(parseInt(slot_number)/48)
   }
 
   const getTime = (slot_number) => {
@@ -240,11 +246,11 @@ const Todo = (props) => {
     let constraints_params = getConstraints(index, values['constraints']);
     let i = index
     let trash_bin = <svg className='bin_icon' id={'trash_bin'+index} onClick={(e) => bin_task(e,index)}  key={'trash_bin'+index} height="30px" viewBox="-40 0 427 427.00131" width="30px" xmlns="http://www.w3.org/2000/svg"><path d="m232.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0"/><path d="m114.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0"/><path d="m28.398438 127.121094v246.378906c0 14.5625 5.339843 28.238281 14.667968 38.050781 9.285156 9.839844 22.207032 15.425781 35.730469 15.449219h189.203125c13.527344-.023438 26.449219-5.609375 35.730469-15.449219 9.328125-9.8125 14.667969-23.488281 14.667969-38.050781v-246.378906c18.542968-4.921875 30.558593-22.835938 28.078124-41.863282-2.484374-19.023437-18.691406-33.253906-37.878906-33.257812h-51.199218v-12.5c.058593-10.511719-4.097657-20.605469-11.539063-28.03125-7.441406-7.421875-17.550781-11.5546875-28.0625-11.46875h-88.796875c-10.511719-.0859375-20.621094 4.046875-28.0625 11.46875-7.441406 7.425781-11.597656 17.519531-11.539062 28.03125v12.5h-51.199219c-19.1875.003906-35.394531 14.234375-37.878907 33.257812-2.480468 19.027344 9.535157 36.941407 28.078126 41.863282zm239.601562 279.878906h-189.203125c-17.097656 0-30.398437-14.6875-30.398437-33.5v-245.5h250v245.5c0 18.8125-13.300782 33.5-30.398438 33.5zm-158.601562-367.5c-.066407-5.207031 1.980468-10.21875 5.675781-13.894531 3.691406-3.675781 8.714843-5.695313 13.925781-5.605469h88.796875c5.210937-.089844 10.234375 1.929688 13.925781 5.605469 3.695313 3.671875 5.742188 8.6875 5.675782 13.894531v12.5h-128zm-71.199219 32.5h270.398437c9.941406 0 18 8.058594 18 18s-8.058594 18-18 18h-270.398437c-9.941407 0-18-8.058594-18-18s8.058593-18 18-18zm0 0"/><path d="m173.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0"/></svg>
-    let thumbtack = <div onClick={(e)=>showPinnedCalendar(e,i)} className='col-1 thumbtack' id={'thumbtack'+index}/>;
+    let thumbtack = <div onClick={(e)=>showPinnedCalendar(e,i)} className={values['pinned_slot']?'col-1 thumbtack_done':'col-1 thumbtack'} id={'thumbtack'+index}/>;
     // let pinned_calendar = <DatePicker shouldCloseOnSelect={false} selected={startDate} onChange={(e,date) => handleChange(['pinned_slot',date,e], i)} name='pinned_slot' dateFormat="dd/MM/yyyy h:mm aa" showTimeInput calendarContainer={calendarContainer} id={'pinned_calendar'+index} key={'pinned_calendar'+index} customInput={thumbtack}/>;
     // let pinned_calendar = <div onChange={console.log('changed1')} id={'pinned_calendar'+index} key={'pinned_calendar'+index} className='pinned_calendar' ><Datetime onChange={console.log('changed2')} closeOnClickOutside={true} input={false} isValidDate={checkValidity}/></div>;
     let pinned_calendar = <span key={'pinned_calendar'+index} className='pinned_calendar' id={'pinned_calendar'+index}>
-      <select onChange={(e) => handleChange(e, i)} defaultValue={getDay(values['pinned_slot'])} className='pinned_choose_day' name="pinned_choose_day" id={"pinned_choose_day"+index}>
+      <select onChange={(e) => handleChange(e, i)} defaultValue={getDay(values['pinned_slot'], i)} className='pinned_choose_day' name="pinned_choose_day" id={"pinned_choose_day"+index}>
         <option value="">Day</option>
         <option value="0">Sunday</option>
         <option value="1">Monday</option>
@@ -258,8 +264,10 @@ const Todo = (props) => {
     </span>;
     let task_title = <span key={'task_title'+index} id={'task_title'+index} className='task_elm col-sm-8' onChange={(e) => handleChange(e, i)}>Title:&nbsp;<input id={'title_textbox'+index} className='title_input' name='task_title' type='text' defaultValue={values['task_title']}/></span>
     let recurrence = <input key={'recurrence'+index} name='recurrings' onClick={(e)=> {
-      handleChange(e, i);
-      recurrenceIconChange(e, i);
+      if (document.getElementById('thumbtack'+index).className !== 'thumbtack_done') {
+        handleChange(e, i);
+        recurrenceIconChange(e, i);
+      }
     }} onChange={(e) => handleChange(e, i)} className={'recurrence recurrence'+values['recurrings']} id={'recurrings'+index}/>;
     let recurrings = <div key={'recurrings'+index} id={'recurrings'+index} className='task_elm recurrence' onChange={(e) => handleChange(e, i)}>Recurrences:&nbsp;<input name='recurrings' type='text' defaultValue={values['recurrings']}/></div>;
     let title_and_thumbtack = <span key={'title_and_thumbtack'+index} className='row d-flex justify-content-between'>{task_title}{recurrence}{thumbtack}</span>;
@@ -477,11 +485,11 @@ const Todo = (props) => {
         pastDueErr = true
       }
       // If current task wasn't updated, no need to check its input.
-      if (!(task_index in updated_tasks)) continue
+      if (!(task_index in props.updated_tasks)) continue
       // Check title length.
       let temp_task = document.getElementById('title_textbox' + task_index)
       // If title is too long
-      if (updated_tasks[task_index]['task_title'].length > 20) {
+      if (props.updated_tasks[task_index]['task_title'].length > 20) {
         temp_task.className = 'task_error'
         task_err = true
         total_err = true
@@ -490,7 +498,7 @@ const Todo = (props) => {
       }
       // Check recurrences length.
       let recurrences = document.getElementById('recurrings' + task_index)
-      if (updated_tasks[task_index]['recurrings'] > 7) {
+      if (props.updated_tasks[task_index]['recurrings'] > 7) {
         recurrences.className = 'task_error'
         task_err = true
         total_err = true
@@ -547,7 +555,7 @@ const Todo = (props) => {
     sendTasksToPost();
     props.setTasks({})
     // props.getTasks()
-    setUpdatedTasks({})
+    props.setUpdatedTasks({})
     setRemovedTasks([])
     setTodoIDs({})
     setTasksJsx(new Set())
@@ -595,18 +603,21 @@ const Todo = (props) => {
   }, [trigger])
 
   const sendTasksToPost = () => {
-    console.log('updated tasks: ', updated_tasks)
+    console.log('updated tasks: ', props.updated_tasks)
     let s = 'temp_task_id'
-    for (const key of Object.keys(updated_tasks))
-      delete updated_tasks[key][s]
-    //console.log('updated tasks(before post)2: ', Object.values(updated_tasks))
+    for (const key of Object.keys(props.updated_tasks)){
+      if (props.updated_tasks[key]['pinned_slot'] !== null)
+        props.updated_tasks[key]['recurrings'] = 1
+      delete props.updated_tasks[key][s]
+    }
+    //console.log('updated tasks(before post)2: ', Object.values(props.updated_tasks))
     fetch('http://localhost:5000/tasks/PostTasks/{tasks}', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(Object.values(updated_tasks))
+      body: JSON.stringify(Object.values(props.updated_tasks))
     })
         .then((response) => {
           setTrigger(!trigger)
@@ -623,8 +634,8 @@ const Todo = (props) => {
   }
 
   useEffect(() => {
-    console.log('updated tasks: ', updated_tasks)
-  }, [updated_tasks])
+    console.log('updated tasks: ', props.updated_tasks)
+  }, [props.updated_tasks])
 
   const handlePinned = (index) => {
     let day = document.getElementById('pinned_choose_day'+index).value;
@@ -639,8 +650,9 @@ const Todo = (props) => {
     }
     else if (time !== '') {
       pin.className = 'thumbtack_done';
-      // calendar.style.visibility = 'hidden'
-      // calendar.style.opacity = '0'
+      // If pinned, reset value of recurrence (cannot happen simultaneously).
+      document.getElementById('recurrings'+index).className = 'recurrence recurrence1'
+      // handleChange(e, i);
       let nam = 'pinned_slot';
       console.log('DAY DAY!!!! ', day, time)
       let val = props.timeToSlot(day, time);
@@ -712,7 +724,7 @@ const Todo = (props) => {
     }
       console.log('val: ',val)
       console.log('updated: ', updated)
-    setUpdatedTasks(updated)
+    props.setUpdatedTasks(updated)
   }
 
   const handleConstraints = (event, index) => {
@@ -769,7 +781,7 @@ const Todo = (props) => {
     } else {
       task_container.className = 'expanded_task_daytime'+error
     }
-    setUpdatedTasks(updated)
+    props.setUpdatedTasks(updated)
   }
 
   const update_task = (i) => {

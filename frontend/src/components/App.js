@@ -22,6 +22,9 @@ const App = () => {
     const [option, setOption] = useState(0)
     const [todoMinimized, setTodoMinimized] = useState(false);
     const [todoIsLoaded, setTodoIsLoaded] = useState(false);
+    const [updated_tasks, setUpdatedTasks] = useState({})
+    const updatedRef = useRef();
+    updatedRef.current = updated_tasks;
     const optionRef = useRef();
     optionRef.current = option;
     const taskRef = useRef();
@@ -51,16 +54,24 @@ const App = () => {
         }
     },[userID])
 
+    const checkClick = (e,i) => {
+        let current_pinnedd = document.getElementById('pinned_calendar'+i)
+        let time = document.getElementById('pinned_choose_time'+i)
+        if (current_pinnedd !== null && time!== null && e.target.id !== 'pinned_choose_day'+i && e.target.id !== 'pinned_choose_time'+i && e.target.id !== 'thumbtack'+i ) {
+            current_pinnedd.style.visibility = 'hidden'
+            current_pinnedd.style.opacity = '0'
+            console.log(current_pinnedd, time.value)
+        }
+    }
+
     const detectOutsideClicking = (e) => {
         let i;
+        console.log('ALL ', updatedRef.current)
         for (i of Object.keys(taskRef.current)) {
-            let current_pinnedd = document.getElementById('pinned_calendar'+i)
-            let time = document.getElementById('pinned_choose_time'+i)
-            if (current_pinnedd !== null && time!== null && e.target.id !== 'pinned_choose_day'+i && e.target.id !== 'pinned_choose_time'+i && e.target.id !== 'thumbtack'+i ) {
-                current_pinnedd.style.visibility = 'hidden'
-                current_pinnedd.style.opacity = '0'
-                console.log(time.value)
-            }
+            checkClick(e,i)
+        }
+        for (i of Object.keys(updatedRef.current)) {
+            checkClick(e,i)
         }
     }
 
@@ -152,13 +163,13 @@ const App = () => {
     }
 
     const errorAnimation = [[
-        { 'opacity': 0, transform: 'translateY(50px)'},
-        { 'opacity': 1, transform: 'translateY(0px)', visibility:'visible'}
+        { 'opacity': 0, transform: 'translateY(50px)', zIndex:'0'},
+        { 'opacity': 1, transform: 'translateY(0px)', visibility:'visible', zIndex:'999'}
     ], {duration: 500, fill: 'forwards', easing: 'ease-out'}];
 
     const endErrorAnimation = [[
-        { 'opacity': 1, transform: 'translateY(0px))'},
-        { 'opacity': 0, transform: 'translateY(50px)', visibility:'hidden'}
+        { 'opacity': 1, transform: 'translateY(0px))', zIndex:'999'},
+        { 'opacity': 0, transform: 'translateY(50px)', visibility:'hidden', zIndex:'0'}
     ], { duration: 500, fill: 'forwards', easing: 'ease-in'}];
 
     const handleCategoriesSubmission = () => {
@@ -267,7 +278,7 @@ const App = () => {
                    <div id='todo_parent' className='col-4'>
                        <div id='todo_component' className='sticky-top row'>
                        <div className='col-12'>
-                           <Todo tasksID={tasksID} timeToSlot={timeToSlot} userID={userID} isLoaded={todoIsLoaded} setIsLoaded={setTodoIsLoaded} errorAnimation={errorAnimation} endErrorAnimation={endErrorAnimation} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setToOptimize={setToOptimize} updating_tasks={tasks} trigTasks={taskIDTrig} getTasks={taskGetter} setTasks={setTasks}/>
+                           <Todo setUpdatedTasks={setUpdatedTasks} updated_tasks={updated_tasks} tasksID={tasksID} timeToSlot={timeToSlot} userID={userID} isLoaded={todoIsLoaded} setIsLoaded={setTodoIsLoaded} errorAnimation={errorAnimation} endErrorAnimation={endErrorAnimation} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setToOptimize={setToOptimize} updating_tasks={tasks} trigTasks={taskIDTrig} getTasks={taskGetter} setTasks={setTasks}/>
                        </div>
                        </div>
                    </div>

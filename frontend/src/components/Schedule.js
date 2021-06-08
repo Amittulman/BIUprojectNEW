@@ -56,11 +56,9 @@ const Table = (props) => {
                 for (let j = 0; j < slots_per_day; j++) {
                     passed_day = ''
                     let data = tasks_id[j + (i - 1) * slots_per_day]
-                    console.log('today ', today_slot, (j + (i - 1) * slots_per_day))
                     if (today_slot > (j + (i - 1) * slots_per_day))
                         passed_day = ' passed'
                     let class_name = getClass(props.categoryTypes[slots_per_day * (i - 1) + j])
-                    console.log('AAAAAAAAAA ' , class_name)
                     content.push(<td key={'cell_' + (slots_per_day * (i - 1) + j)} className={class_name}
                                           id={'cell_' + (slots_per_day * (i - 1) + j) + '_taskID_' + tasksID[j + (i - 1) * slots_per_day]}
                                           draggable='true' onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop}
@@ -71,6 +69,9 @@ const Table = (props) => {
             let table = [<table key='table_schedule'><tbody key='tbody_schedule'>{time_jsx}{jsx}</tbody></table>]
             props.setScheduleTable(table)
             props.setTable(table)
+            setTimeout(() => {
+                scrollToThisMoment();
+            }, 0)
         }
     }, [tasks, tasksID, props.categoryTrigger])
 
@@ -78,6 +79,14 @@ const Table = (props) => {
     let jsx = [];
     let morning = new Set()
     let tasks_id = Array(slots_per_day * 7).fill(null);
+
+    const scrollToThisMoment = () => {
+        let date = new Date()
+        let today_slot = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
+        today_slot -= (Math.ceil(today_slot/slots_per_day)-1) * slots_per_day
+        console.log('BOOM! ', today_slot)
+        document.getElementById('schedule_component1').scrollTop += (window.innerHeight * 0.06) * today_slot;
+    }
 
     const getClass = (number) => {
         switch(number) {

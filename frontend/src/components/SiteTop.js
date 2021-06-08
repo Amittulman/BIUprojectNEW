@@ -154,11 +154,12 @@ const SiteTop = (props) => {
                 let x = document.getElementById('add_category_button')
                 console.log(e.target === x)
             }} className='category_option'>
-            <span id='adding_category_container'>
+            <div id='adding_category_container'>
                 Title: <input id='category_dialog'/>
                 {/*Color: <input id='category_dialog'/>*/}
-                Color: <span id='new_category_option_1'/><span id='new_category_option_1'/><span id='new_category_option_1'/>
-            </span>
+                Color: <span id='new_category_option_1'/><span id='new_category_option_2'/><span id='new_category_option_3'/>
+                <span id='category_accept_changes'/>
+            </div>
             </div>
             <div data-toggle="tooltip" title="Clear" id='clear_category_button' onClick={()=>props.setOption(-1)} className='category_option'/>
             {/*TODO:show indicator of sending category.*/}
