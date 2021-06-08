@@ -10,9 +10,11 @@ import {CreateTaskDto} from "../Dto's/createTask.dto";
 import {CreateToDoListDto} from "../Dto's/createToDoList.dto";
 import {CreateCategorySlotDto} from "../Dto's/createCategorySlot.dto";
 import {CreateUserDto} from "../Dto's/createUser.dto";
+import {CreateCategoryDto} from "../Dto's/createCategoryDto";
 
 const TASK_TABLE = 'tasks_table';
 const CATEGORY_SLOT_TABLE = 'category_slots';
+const CATEGORY_LOOKUP_TABLE = 'category_lookup';
 const SCHEDULE_TABLE = 'scheduled_tasks';
 const USERS_TABLE = 'user_table';
 @Injectable()
@@ -244,7 +246,7 @@ export class TasksDal {
     return suc;
   }
 
-  async postCategories(categories: Array<CreateCategorySlotDto>){
+  async PostCategorySlots(categories: Array<CreateCategorySlotDto>){
     let suc = 'Success';
     try{
 
@@ -364,5 +366,60 @@ export class TasksDal {
     return suc;
   }
 
+//Categories
+  async postCategories(categories: Array<CreateCategoryDto>){
+
+    console.log(categories);
+    const queries = [];
+    categories.forEach(category=>{
+      queries.push(
+          // "INSERT INTO "+CATEGORY_LOOKUP_TABLE+" VALUES(" +
+          // " `user_id` = " + category.user_id +
+          // ", `category_id` = " + category.category_id +
+          // ", `category_name` = '" + category.category_name +
+          // "', `category` = '" + category.color +
+          // "') ON DUPLICATE KEY UPDATE " +
+          // "user_id="+ category.user_id +
+          // "category_name=" + category.category_name +
+          // "color=" + category.color
+
+          "INSERT INTO "+CATEGORY_LOOKUP_TABLE+" VALUES(" +
+          category.user_id +
+          ", " + category.category_id +
+          ", '" + category.category_name +
+          "', '" + category.color +
+          "') ON DUPLICATE KEY UPDATE " +
+          "category_name='" + category.category_name +
+          "', color='" + category.color +
+          "'"
+      )
+    })
+
+    // console.log(queries);
+    return this.db.transaction(trx => {
+
+      const whole_query = [];
+      queries.forEach(quer =>{
+        whole_query.push(this.db.raw(quer).transacting(trx),
+        )
+      } );
+
+
+      return Promise.all(whole_query);
+    });
+  }
+
+
+  async getCategories(user_id: string): Promise<Array<CreateCategoryDto>> {
+    const dataArr = new Array<CreateCategoryDto>();
+
+    const res = await this.db.from(CATEGORY_LOOKUP_TABLE).select('*').where('user_id',parseInt(user_id));
+    res.forEach(function(value) {
+      dataArr.push(value)
+    });
+    return  dataArr;
+  }
+
 
 }
+

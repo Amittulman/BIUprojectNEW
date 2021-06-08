@@ -8,6 +8,7 @@ import {CreateScheduledTaskDto} from "../Dto's/createScheduledTask.dto";
 import {CreateToDoListDto} from "../Dto's/createToDoList.dto";
 import {CreateCategorySlotDto} from "../Dto's/createCategorySlot.dto";
 import {CreateUserDto} from "../Dto's/createUser.dto";
+import {CreateCategoryDto} from "../Dto's/createCategoryDto";
 
 @Controller('tasks')
 export class TasksController {
@@ -191,11 +192,7 @@ updateScheduledTasks(@Body() tasksArray: Array<any>) {
   }
 
 
-  //Categories shit
-  @Get('GetUserCategories/:id')
-  async getUserCategories(@Param('id') user_id: string): Promise<Array<number>> {
-    return this.tasksService.getUserCategories(user_id);
-  }
+  //Categories-Slots shit
 
   @Get('GetUserCategorySlots/:id')
   async getUserCategorySlots(@Param('id') user_id: string): Promise<Array<number>> {
@@ -210,7 +207,7 @@ updateScheduledTasks(@Body() tasksArray: Array<any>) {
     return category_slots_array;
   }
 
-  @Post('PostCategories/:user_id')
+  @Post('PostCategorySlots/:user_id')
   postCategorySlots(@Body() categorySlots: Array<number>, @Param('user_id')user_id:string) {
     const categories: Array<CreateCategorySlotDto> = [];
     for (const slot in categorySlots) {
@@ -224,7 +221,7 @@ updateScheduledTasks(@Body() tasksArray: Array<any>) {
 
       }
     }
-    return this.tasksService.postCategories(categories);
+    return this.tasksService.PostCategorySlots(categories);
   }
 
   @Delete('DeleteSchedule/:id')
@@ -257,21 +254,14 @@ updateScheduledTasks(@Body() tasksArray: Array<any>) {
   }
 
   /// Categories Lookup:
-  @Post('PostCategorie/:user_id')
-  postCategories(@Body() categorySlots: Array<number>, @Param('user_id')user_id:string) {
-    const categories: Array<CreateCategorySlotDto> = [];
-    for (const slot in categorySlots) {
-      if (categorySlots[slot] != -1) {
-        const category_slot: CreateCategorySlotDto = {
-          category_id: categorySlots[slot],
-          user_id: parseInt(user_id),
-          slot_id: parseInt(slot)
-        };
-        categories.push(category_slot);
-
-      }
-    }
+  @Post('PostCategories/')
+  postCategories(@Body() categories: Array<CreateCategoryDto>) {
     return this.tasksService.postCategories(categories);
+  }
+
+  @Get('GetCategories/:id')
+  async getCategories(@Param('id') user_id: string): Promise<Array<CreateCategoryDto>> {
+    return this.tasksService.getCategories(user_id);
   }
 
 

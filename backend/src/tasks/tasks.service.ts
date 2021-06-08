@@ -8,6 +8,7 @@ import {TasksDal} from "./tasks.dal";
 import {CreateTaskDto} from "../Dto's/createTask.dto";
 import {CreateCategorySlotDto} from "../Dto's/createCategorySlot.dto";
 import {CreateUserDto} from "../Dto's/createUser.dto";
+import {CreateCategoryDto} from "../Dto's/createCategoryDto";
 
 @Injectable()
 export class TasksService {
@@ -54,8 +55,8 @@ export class TasksService {
   async postSchedule(createScheduleDto: Array<CreateScheduledTaskDto>): Promise<string>{
     return this.tasksDal.postSchedule(createScheduleDto);
   }
-  async postCategories(categories: Array<CreateCategorySlotDto>): Promise<string>{
-    return this.tasksDal.postCategories(categories);
+  async PostCategorySlots(categories: Array<CreateCategorySlotDto>): Promise<string>{
+    return this.tasksDal.PostCategorySlots(categories);
   }
   async updateScheduleSlot(createScheduleDto: CreateScheduledTaskDto, slot: number): Promise<string>{
     return this.tasksDal.updateScheduleSlot(createScheduleDto, slot);
@@ -108,4 +109,12 @@ export class TasksService {
 
   }
 
+  async postCategories(categories: Array<CreateCategoryDto>): Promise<any>{
+    return this.tasksDal.postCategories(categories);
+
+}
+
+  async getCategories(user_id):Promise<Array<CreateCategoryDto>>{
+    return this.tasksDal.getCategories(user_id);
+  }
 }
