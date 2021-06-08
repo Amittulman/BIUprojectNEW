@@ -211,7 +211,7 @@ updateScheduledTasks(@Body() tasksArray: Array<any>) {
   }
 
   @Post('PostCategories/:user_id')
-  postCategories(@Body() categorySlots: Array<number>, @Param('user_id')user_id:string) {
+  postCategorySlots(@Body() categorySlots: Array<number>, @Param('user_id')user_id:string) {
     const categories: Array<CreateCategorySlotDto> = [];
     for (const slot in categorySlots) {
       if (categorySlots[slot] != -1) {
@@ -254,6 +254,24 @@ updateScheduledTasks(@Body() tasksArray: Array<any>) {
   postNewUser(@Body() user: CreateUserDto) {
     console.log(user)
     return this.tasksService.postNewUser(user);
+  }
+
+  /// Categories Lookup:
+  @Post('PostCategorie/:user_id')
+  postCategories(@Body() categorySlots: Array<number>, @Param('user_id')user_id:string) {
+    const categories: Array<CreateCategorySlotDto> = [];
+    for (const slot in categorySlots) {
+      if (categorySlots[slot] != -1) {
+        const category_slot: CreateCategorySlotDto = {
+          category_id: categorySlots[slot],
+          user_id: parseInt(user_id),
+          slot_id: parseInt(slot)
+        };
+        categories.push(category_slot);
+
+      }
+    }
+    return this.tasksService.postCategories(categories);
   }
 
 
