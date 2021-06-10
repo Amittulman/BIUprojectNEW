@@ -15,6 +15,12 @@ const Table = (props) => {
     let day = ['Time', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
     useEffect(() => {
+        setTimeout(() => {
+            scrollToThisMoment();
+        }, 0)
+    }, [])
+
+    useEffect(() => {
         console.log('In sched, user id: ', props.userID)
         if (props.userID === undefined || props.userID === null) return
         props.getTasksID();
@@ -69,9 +75,6 @@ const Table = (props) => {
             let table = [<table key='table_schedule'><tbody key='tbody_schedule'>{time_jsx}{jsx}</tbody></table>]
             props.setScheduleTable(table)
             props.setTable(table)
-            setTimeout(() => {
-                scrollToThisMoment();
-            }, 0)
         }
     }, [tasks, tasksID, props.categoryTrigger])
 
