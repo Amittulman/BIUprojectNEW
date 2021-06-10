@@ -54,7 +54,6 @@ const Todo = (props) => {
   }, [props.updating_tasks])
 
   useEffect(() => {
-    console.log('ABCDEEEEE')
     if (firstUpdate2.current) {
       firstUpdate2.current = false
       return

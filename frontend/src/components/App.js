@@ -106,7 +106,6 @@ const App = () => {
             hours += 1
             minutes = 0
         }
-        console.log('HALO HALO ', day, hours, minutes)
         return day*48 + hours*2+minutes
     }
 

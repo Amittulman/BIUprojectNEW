@@ -140,7 +140,6 @@ const Table = (props) => {
     }
 
     const allowDrop = (event) => {
-        console.log(event.target)
         event.preventDefault();
         // do the same for all moved slots
         event.target.style.boxShadow = 'rgba(0, 0, 0, 0.46) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px';
@@ -213,8 +212,8 @@ const Table = (props) => {
         // If task is dragged into a different category slot, change category and send changed to DB.
         if (temp_tasks[ids[0].split('_')[3]]['category_id'] !== parseInt(props.categoryTypes[event.target.id.split('_')[1]])) {
             temp_tasks[ids[0].split('_')[3]]['category_id'] = parseInt(props.categoryTypes[event.target.id.split('_')[1]])
-            props.setTasks(temp_tasks)
         }
+        props.setTasks(temp_tasks)
         event.dataTransfer.clearData();
     }
 
