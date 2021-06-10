@@ -65,6 +65,11 @@ td {
     pointer-events: none;
 }
 
+.test123 {
+    pointer-events: none;
+    z-index: -100;
+}
+
 table th {
     text-align: center;
     z-index: 1;

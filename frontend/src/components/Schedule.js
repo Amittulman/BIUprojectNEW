@@ -68,7 +68,7 @@ const Table = (props) => {
                     content.push(<td key={'cell_' + (slots_per_day * (i - 1) + j)} className={class_name}
                                           id={'cell_' + (slots_per_day * (i - 1) + j) + '_taskID_' + tasksID[j + (i - 1) * slots_per_day]}
                                           draggable='true' onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop}
-                                          onDragLeave={leaveDropArea}><div className={passed_day}>{data}</div></td>);//{data}
+                                          onDragLeave={leaveDropArea}><div className={passed_day + ' test123'}>{data}</div></td>);//{data}
                 }
                 jsx.push(<tr key={'tr' + i}><th key={'th' + i}>{day[i]}</th>{content}</tr>);
             }
@@ -140,6 +140,7 @@ const Table = (props) => {
     }
 
     const allowDrop = (event) => {
+        console.log(event.target)
         event.preventDefault();
         // do the same for all moved slots
         event.target.style.boxShadow = 'rgba(0, 0, 0, 0.46) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px';
