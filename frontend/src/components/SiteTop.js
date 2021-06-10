@@ -1,11 +1,16 @@
 import './SiteTop.css'
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 const slots_per_day = 24*2;
 
 const SiteTop = (props) => {
     const [test, setTest] = useState(true);
+    const [categoryColor, setCategoryColor] = useState(0);
+    const [totalNewCat, setTotalNewCat] = useState(0);
 
+    useEffect(()=> {
+        console.log('OPTIONS REF')
+    }, [props.optionRef])
     const changeCategoryButton = () => {
         let category_button = document.getElementById('category_button')
         if (category_button.className === 'category_button') {
@@ -36,6 +41,15 @@ const SiteTop = (props) => {
                 break;
             case 2:
                 event.target.className = 'type_c'
+                break;
+            case 3:
+                event.target.className = 'type_d'
+                break;
+            case 4:
+                event.target.className = 'type_e'
+                break;
+            case 5:
+                event.target.className = 'type_f'
                 break;
             default:
                 event.target.className = 'empty_slot'
@@ -131,6 +145,25 @@ const SiteTop = (props) => {
         window.location.href = '/'
     }
 
+    const createNewCategory = () => {
+        console.log('category color ', categoryColor)
+        if (totalNewCat >= 3) return
+        let title = document.getElementById('category_dialog').value
+        let colors = document.getElementsByClassName('category_colors')
+        if (title.length === 0 || categoryColor === 0) return
+        let container = document.getElementById('site_top')
+        let new_category = document.createElement('div');
+        new_category.id='added_button_'+categoryColor
+        new_category.className = 'category_option';
+        new_category.innerText = title
+        new_category.style.opacity = '1'
+        new_category.style.marginLeft = '2px'
+        new_category.style.backgroundColor = '2px'
+        new_category.onclick =  () => props.setOption(2+categoryColor)
+        container.insertBefore(new_category, container.childNodes[container.childNodes.length-5]);
+        setTotalNewCat(totalNewCat+1)
+    }
+
     let login_input = <input onKeyPress={findTask} id='input' name='user_id_input' type='text' placeholder='Enter ID number'/>;
     let time_of_day = new Date().getHours()
     let greeting;
@@ -148,7 +181,7 @@ const SiteTop = (props) => {
             <div data-toggle="tooltip" title="Modify Categories" onClick={showCategories} id='category_button' className='category_button'/>
             <div data-toggle="tooltip" title="Type A" id='type_a_button' onClick={()=>props.setOption(0)} className='category_option'>Work</div>
             <div data-toggle="tooltip" title="Type B" id='type_b_button' onClick={()=>props.setOption(1)} className='category_option'>Leisure</div>
-            <div data-toggle="tooltip" title="Type C" id='type_c_button' onClick={()=>props.setOption(2)} className='category_option'>Sleep</div>
+            <div id='type_c_button' data-toggle="tooltip" title="Type B"  onClick={()=>props.setOption(2)} className='category_option'>Sleep</div>
             {/*TODO - implement "add category button    "*/}
             <div data-toggle="tooltip" title="Type C" id='add_category_button' onClick={(e)=>{
                 let new_cat_container = document.getElementById('adding_category_container')
@@ -163,10 +196,13 @@ const SiteTop = (props) => {
             {/*TODO:show indicator of sending category.*/}
             <div data-toggle="tooltip" title="Send" id='category_send_button' onClick={()=>{props.handleCategoriesSubmission(); showCategories(); props.setCategoryTrigger(!props.categoryTrigger)}} className='category_option'/>
             <div id='adding_category_container'>
-                Title: <input id='category_dialog'/>
-                {/*Color: <input id='category_dialog'/>*/}
-                Color: <span id='new_category_option_1'/><span id='new_category_option_2'/><span id='new_category_option_3'/>
-                <span id='category_accept_changes'/>
+                Title:
+                <input id='category_dialog'/>
+                Color:
+                <span id='new_category_option_1' className='category_colors' onClick={()=>setCategoryColor(1)}/>
+                <span id='new_category_option_2' className='category_colors' onClick={()=>setCategoryColor(2)}/><
+                span id='new_category_option_3' className='category_colors' onClick={()=>setCategoryColor(3)}/>
+                <span onClick={createNewCategory} id='category_accept_changes'/>
             </div>
             {/*<div className='col-4'>{login}</div>*/}
             <div id='logout' onClick={LogoutWrapper}>Log out</div>

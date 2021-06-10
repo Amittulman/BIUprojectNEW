@@ -57,7 +57,6 @@ td {
 }
 
 .passed {
-    /*background: url("../images/texture.jpg");*/
     background: url("../images/texture.jpg");
     /*background-size: cover;*/
     height: 100%;

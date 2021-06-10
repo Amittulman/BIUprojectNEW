@@ -96,6 +96,12 @@ const Table = (props) => {
                 return 'type_b'
             case 2:
                 return 'type_c'
+            case 3:
+                return 'type_d'
+            case 4:
+                return 'type_e'
+            case 5:
+                return 'type_f'
             default:
                 return 'empty_slot'
         }
@@ -178,14 +184,14 @@ const Table = (props) => {
             if (dragged_element.textContent && target_element !== dragged_element) {
                 let temp_target_element_text = target_element.textContent
                 // Swapping text contents between source and destination slots.
-                target_element.textContent = dragged_element.textContent;
+                target_element.childNodes[0].textContent = dragged_element.textContent;
                 let src_data = ids[i].split('_')
                 let dest_slot = target_element.id.split('_')[1]
                 let src_slot = src_data[1]
                 let src_task_id = tasks_id[src_slot]
                 tasks_id[dest_slot] = parseInt(src_task_id)
                 if ((distance > 0 && i < distance) || (distance < 0 && Math.abs(i-(ids.length-1)) < Math.abs(distance))) {
-                    dragged_element.textContent = '';
+                    dragged_element.childNodes[0].textContent = '';
                     tasks_id[src_slot] = -1
                 }
                 dragged_element.id = (dragged_element.id.split('_').slice(0,3) + '_' + tasks_id[src_slot]).replaceAll(',','_');

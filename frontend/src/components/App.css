@@ -226,7 +226,7 @@
     }
 }
 
-#type_a_button {
+#type_a_button, #added_button_1, #added_button_2, #added_button_3 {
     background-color: #EBFFE2;
     border-radius: 20%;
     transition: background-color 0.2s ease-out, margin-left 0.5s ease-out, opacity 0.5s ease-out;
@@ -234,6 +234,45 @@
     width: 55px;
     cursor: pointer;
     /*animation: slide-aside_a 0.4s ease;*/
+}
+
+#added_button_1 {
+    background-color: #FFFD88;
+    transition: background-color 0.5s ease-out;
+}
+
+#added_button_2 {
+    background-color: #dab17f;
+    transition: background-color 0.5s ease-out;
+}
+
+#added_button_3 {
+    background-color: #D8F3FF;
+    transition: background-color 0.5s ease-out;
+}
+
+#added_button_1:hover {
+    background-color: #F0EE7A;
+}
+
+#added_button_2:hover {
+    background-color: #C6A277;
+}
+
+#added_button_3:hover {
+    background-color: #C8DFE9;
+}
+
+#added_button_1:active {
+    background-color: #D3D16D;
+}
+
+#added_button_2:active {
+    background-color: #AB8B65;
+}
+
+#added_button_3:active {
+    background-color: #B2C5CD;
 }
 
 #type_a_button:hover {
@@ -263,7 +302,6 @@
     width: 55px;
     cursor: pointer;
     /*animation: slide-aside_b 0.4s ease;*/
-
 }
 
 #type_b_button:hover {
@@ -295,7 +333,7 @@
 .type_c:before {
 }
 
-#type_c_button {
+#type_c_button, #type_d_button {
     background-color: #E4E6FF;
     border-radius: 20%;
     transition: background-color 0.2s ease-out, margin-left 0.5s ease-out, opacity 0.5s ease-out;
@@ -325,6 +363,24 @@
         opacity: 1;
         transform: translateX(0px);
     }
+}
+
+.type_d {
+    background-color: #FFFD88;
+    transition: background-color 0.2s ease;
+    opacity: 0.9;
+}
+
+.type_e {
+    background-color: #dab17f;
+    transition: background-color 0.2s ease;
+    opacity: 0.9;
+}
+
+.type_f {
+    background-color: #D8F3FF;
+    transition: background-color 0.2s ease;
+    opacity: 0.9;
 }
 
 #clear_category_button, #add_category_button, #category_send_button {

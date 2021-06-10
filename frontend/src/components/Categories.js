@@ -27,6 +27,12 @@ const Categories = (props) => {
                 return 'type_b'
             case 2:
                 return 'type_c'
+            case 3:
+                return 'type_d'
+            case 4:
+                return 'type_e'
+            case 5:
+                return 'type_f'
             default:
                 return 'empty_slot'
         }
@@ -55,6 +61,7 @@ const Categories = (props) => {
     }
 
     const allowDropCategory = (event) => {
+        console.log('ALLOW DROP CATEGORY')
         let ref = props.optionRef.current
         event.preventDefault();
         switch (props.optionRef.current){
