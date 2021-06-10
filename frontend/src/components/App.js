@@ -191,7 +191,7 @@ const App = () => {
                 if (response.status === 200) {
                     //console.log("User's tasks hes been removed successfully.");
                     // setCategoryTypes([])
-                    postCategories()
+                    PostCategorySlots()
                     // setCategoryTable()
                 } else {
                     //console.log("Request status code: " + response.status);
@@ -204,8 +204,8 @@ const App = () => {
     }
 
     //TODO - check how to send the data without receiving an error.
-    const postCategories = (event) => {
-        fetch('http://localhost:5000/tasks/PostCategories/'+userID, {
+    const PostCategorySlots = (event) => {
+        fetch('http://localhost:5000/tasks/PostCategorySlots/'+userID, {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
