@@ -66,13 +66,18 @@ const Todo = (props) => {
           addTask(key, tasks[key])
           // console.log('TASK IS NOW ', jsxRef.current)
         }
-        updatePastDueTasks()
+        // updatePastDueTasks()
       }
       // TODO - put it at the bottom. When loading tasks it will always be the bottom task container.
       // addTask(i+1)
       setTaskNumber(task_number+2)
     }
   }, [tasks])
+
+  useEffect(() => {
+    if (props.tasksID.length === 0) return
+    updatePastDueTasks()
+  }, [props.tasksID])
 
   useEffect(() => {
     // TODO - think of a way of an alternative if statement 4 lines below.
