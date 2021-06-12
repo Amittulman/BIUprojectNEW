@@ -391,6 +391,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   transition: visibility 0.2s ease-in, opacity 0.2s ease-in;
 }
 
+.rec_pin {
+  padding-right: 20px;
+}
+
 .pinned_choose_time {
   margin-top: 64px;
   margin-left: 11%;
@@ -673,18 +677,18 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   fill: red;
 }
 
-@media screen and (max-width: 800px) {
-  .task {
-    max-height: 5vh;
-  }
+/*@media screen and (max-width: 800px) {*/
+/*  .task {*/
+/*    max-height: 5vh;*/
+/*  }*/
 
-}
+/*}*/
 
-@media screen and (min-width: 800px) {
-  .task {
-    max-height: 6vh;
-  }
-}
+/*@media screen and (min-width: 800px) {*/
+/*  .task {*/
+/*    max-height: 6vh;*/
+/*  }*/
+/*}*/
 
 .loader {
   border: 3px solid #f3f3f3; /* Light grey */

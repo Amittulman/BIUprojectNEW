@@ -274,7 +274,7 @@ const Todo = (props) => {
     </select>
     <input onChange={(e) => handleChange(e, i)} name="pinned_choose_time" defaultValue={getTime(values['pinned_slot'])} key={'pinned_choose_time'+index} id={'pinned_choose_time'+index} className='pinned_choose_time' type="time"/>
     </span>;
-    let task_title = <span key={'task_title'+index} id={'task_title'+index} className='task_elm col-sm-8' onChange={(e) => handleChange(e, i)}>Title:&nbsp;<input id={'title_textbox'+index} className='title_input' name='task_title' type='text' defaultValue={values['task_title']}/></span>
+    let task_title = <span key={'task_title'+index} id={'task_title'+index} className='task_elm col-sm-3' onChange={(e) => handleChange(e, i)}>Title:&nbsp;<input id={'title_textbox'+index} className='title_input' name='task_title' type='text' defaultValue={values['task_title']}/></span>
     let recurrence = <input key={'recurrence'+index} name='recurrings' onClick={(e)=> {
       if (document.getElementById('thumbtack'+index).className !== 'thumbtack_done') {
         handleChange(e, i);
@@ -282,7 +282,8 @@ const Todo = (props) => {
       }
     }} onChange={(e) => handleChange(e, i)} className={'recurrence recurrence'+values['recurrings']} id={'recurrings'+index}/>;
     let recurrings = <div key={'recurrings'+index} id={'recurrings'+index} className='task_elm recurrence' onChange={(e) => handleChange(e, i)}>Recurrences:&nbsp;<input name='recurrings' type='text' defaultValue={values['recurrings']}/></div>;
-    let title_and_thumbtack = <span key={'title_and_thumbtack'+index} className='row d-flex justify-content-between'>{task_title}{recurrence}{thumbtack}</span>;
+    let rec_pin = <div className={'row rec_pin'}>{recurrence}{thumbtack}</div>
+    let title_and_thumbtack = <span key={'title_and_thumbtack'+index} className='row justify-content-between'>{task_title}{rec_pin}</span>;
     let duration = <div key={'duration'+index} className='task_elm'> Duration:
       <div id='options_arrow'/>&nbsp;
       <select size='1' id={'duration_options'+index} className={getDuration(values['duration']) === 'null'?'duration_options_hidden':'duration_options'} name='duration' defaultValue={getDuration(values['duration'])} onChange={(e) => handleChange(e, i)}>
