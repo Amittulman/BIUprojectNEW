@@ -194,7 +194,11 @@ const SiteTop = (props) => {
                 event.target.className = 'empty_slot'
                 break;
         }
-        event.target.style.backgroundColor = props.categories[props.optionRef.current]['color']
+
+        if (props.categories[props.optionRef.current] !== undefined)
+            event.target.style.backgroundColor = props.categories[props.optionRef.current]['color']
+        else
+            event.target.style.backgroundColor = 'transparent'
         let event_slot = event.target.id.split('_')[1]
         props.categoryTypes[event_slot] = ref
         props.setCategoryTypes(props.categoryTypes)
