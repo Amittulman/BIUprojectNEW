@@ -236,7 +236,15 @@ const Todo = (props) => {
     }
   }
 
+  const getDuration = (value) => {
+    if (value/60 > 3 || value/60 < 0.5){
+      return 'null'
+    }
+    return value/60
+  }
+
   const addTask = (index, values) => {
+    console.log(values)
     if (values == null) {
       values = {'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'-1','constraints':'000000000000000000000', 'pinned_slot':null}
     }
@@ -272,7 +280,7 @@ const Todo = (props) => {
     let title_and_thumbtack = <span key={'title_and_thumbtack'+index} className='row d-flex justify-content-between'>{task_title}{recurrence}{thumbtack}</span>;
     let duration = <div key={'duration'+index} className='task_elm'> Duration:
       <div id='options_arrow'/>&nbsp;
-      <select size='1' id='duration_options' name='duration' defaultValue={values['duration']} onChange={(e) => handleChange(e, i)}>
+      <select size='1' id={'duration_options'+index} className={getDuration(values['duration']) === 'null'?'duration_options_hidden':'duration_options'} name='duration' defaultValue={getDuration(values['duration'])} onChange={(e) => handleChange(e, i)}>
         <option value="0.5">0.5</option>
         <option value="1">1</option>
         <option value="1.5">1.5</option>
@@ -281,7 +289,7 @@ const Todo = (props) => {
         <option value="3">3</option>
         <option value="null">More</option>
       </select>
-      <input placeholder='____' maxLength={3} id={'input_duration'+i} className='input_duration_hidden' name='duration' type='text' defaultValue='' onChange={(e) => handleChange(e, i)}/>
+      <input placeholder='____' maxLength={3} id={'input_duration'+i} className={getDuration(values['duration']) === 'null'?'input_duration':'input_duration_hidden'} name='duration' type='text' defaultValue={getDuration(values['duration']) === 'null'?values['duration']/60:''} onChange={(e) => handleChange(e, i)}/>
     </div>;
     let priority = <div key={'priority'+index} className='task_elm'>Priority:
       <div className='wrapper_options'><div id='options_arrow'/>&nbsp;</div>
@@ -688,13 +696,13 @@ const Todo = (props) => {
       let input_text = event.target.parentNode.childNodes[event.target.parentNode.childNodes.length-1]
       // If pressed manual input option.
       if (val === 'null') {
-        event.target.id = 'duration_options_hidden'
+        event.target.className = 'duration_options_hidden'
         input_text.className = 'input_duration'
         return
         // If not editing duration manual input
       } else if (event.target.className !== 'input_duration') {
         input_text.value = ''
-        event.target.id = 'duration_options'
+        event.target.className = 'duration_options'
         input_text.className = 'input_duration_hidden'
       }
       val *= 60;

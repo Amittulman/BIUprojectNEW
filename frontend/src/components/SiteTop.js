@@ -1,16 +1,122 @@
 import './SiteTop.css'
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 
 const slots_per_day = 24*2;
 
 const SiteTop = (props) => {
     const [test, setTest] = useState(true);
+    const [currentCat, setCurrentCat] = useState();
+    const currentCatRef = useRef();
+    currentCatRef.current = currentCat;
     const [categoryColor, setCategoryColor] = useState(0);
+    const catColorRef = useRef();
+    catColorRef.current = categoryColor;
     const [totalNewCat, setTotalNewCat] = useState(0);
+
+    useEffect(() => {
+        if (props.userID !== undefined)
+            getCategories();
+    }, [props.userID])
+
+    useEffect(() => {
+        console.log('TRIGGERED! ', props.categories)
+        //Send changes to DB.
+
+        // Add categories, received from DB.
+        addLoadedCategories();
+    }, [props.categories])
 
     useEffect(()=> {
         console.log('OPTIONS REF')
     }, [props.optionRef])
+
+    const getCategories = () => {
+        fetch("http://localhost:5000/tasks/GetCategories/"+props.userID)
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    console.log('Get categories result: ', result);
+                    props.setCategories(result);
+                })
+            .catch((error) => {
+                console.log(error)
+            });
+    }
+
+    const postCategories = () => {
+        fetch('http://localhost:5000/tasks/PostCategories/', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(props.categories)
+        })
+            .then((response) => {
+                // setCategoryTable(response)
+                if (response.status === 201) {
+                    console.log("User's tasks hes been sent successfully.");
+                } else {
+                    //console.log("User's tasks hes been sent. HTTP request status code: " + response.status);
+                }
+                console.log(response.text())
+            })
+            .catch((error) => {
+                console.error("Error while submitting task: " + error.message);
+            });
+    }
+
+    const addLoadedCategories = () => {
+        if (document.getElementsByClassName('category').length > 0) return;
+        //Loading categories.
+        for (let i=0; i<props.categories.length; i++) {
+            let container = document.getElementById('site_top')
+            // Adding a category
+            let new_category = document.createElement('div');
+            new_category.id='added_button_' + i
+            new_category.className = 'category_option category';
+            new_category.innerText = props.categories[i]['category_name']
+            new_category.style.backgroundColor = props.categories[i]['color']
+            // Adding category's edit button.
+            let edit_cat = document.getElementById('edit_cat'+i)
+            edit_cat = document.createElement('div');
+            edit_cat.id = 'edit_cat' + i;
+            edit_cat.className = 'edit_cat';
+            new_category.appendChild(edit_cat)
+            let new_cat_container= document.getElementById('adding_category_container');
+            let category_accept_changes = document.getElementById('category_accept_changes');
+            // edit_cat.appendChild(new_cat_container)
+            category_accept_changes.onclick = (e)=> {
+                // Do not save changes if title is empty.
+                if (document.getElementById('category_dialog').value === '') return;
+                new_cat_container.style.visibility = 'hidden';
+                // Update category changes in both frontend and DB.
+                setCategories();
+            }
+            edit_cat.onclick = () => {
+                edit_cat.style.visibility = 'hidden'
+                //Reset title value, when editing title and color of category.
+                document.getElementById('category_dialog').value = ''
+                new_cat_container.style.marginLeft = -430+(58*i)+'px'
+                new_cat_container.style.visibility = 'visible'
+            }
+            // Showing editing option and marking option.
+            new_category.onclick =  (e) => {
+                setCurrentCat(i);
+                if (!e.target.id || (!e.target.id.startsWith('added_button') && !e.target.id.startsWith('remove_cat'))) return;
+                props.setOption(i);
+                if (edit_cat.style.visibility === 'visible')
+                    edit_cat.style.visibility = 'hidden';
+                else {
+                    edit_cat.style.visibility = 'visible';
+                    new_cat_container.style.visibility = 'hidden';
+                }
+            }
+            container.insertBefore(new_category, container.childNodes[container.childNodes.length-5]);
+        }
+        setTotalNewCat(props.categories.length)
+    }
+
     const changeCategoryButton = () => {
         let category_button = document.getElementById('category_button')
         if (category_button.className === 'category_button') {
@@ -55,6 +161,7 @@ const SiteTop = (props) => {
                 event.target.className = 'empty_slot'
                 break;
         }
+        event.target.style.backgroundColor = props.categories[props.optionRef.current]['color']
         let event_slot = event.target.id.split('_')[1]
         props.categoryTypes[event_slot] = ref
         props.setCategoryTypes(props.categoryTypes)
@@ -98,6 +205,8 @@ const SiteTop = (props) => {
         changeCategoryButton()
         let category_options = document.getElementsByClassName('category_option')
         let category_button = document.getElementById('category_button')
+        // Hide creating a new category pane when closing categories list.
+        document.getElementById('adding_category_container').style.visibility = 'hidden'
         let sched = document.getElementById('schedule_component')
         let cat = document.getElementById('category_component')
         let display_type;
@@ -146,6 +255,8 @@ const SiteTop = (props) => {
     }
 
     const createNewCategory = () => {
+        // Hide creating a new category pane.
+        document.getElementById('adding_category_container').style.visibility = 'hidden'
         console.log('category color ', categoryColor)
         if (totalNewCat >= 3) return
         let title = document.getElementById('category_dialog').value
@@ -158,10 +269,27 @@ const SiteTop = (props) => {
         new_category.innerText = title
         new_category.style.opacity = '1'
         new_category.style.marginLeft = '2px'
-        new_category.style.backgroundColor = '2px'
+        // new_category.style.backgroundColor = '2px'
         new_category.onclick =  () => props.setOption(2+categoryColor)
         container.insertBefore(new_category, container.childNodes[container.childNodes.length-5]);
         setTotalNewCat(totalNewCat+1)
+    }
+
+    const setCategories = () => {
+        let edit_cat = document.getElementById('edit_cat'+currentCatRef.current)
+        let colors = {1:'#E2FFFF', 2:'#FFF0D7', 3:'#E2E6FF', 4:'#FFCFCF', 5:'#FEE2FF', 6:'#E8FFE2'};
+        let temp_cat = [...props.categories]
+        // Updating new value.
+        temp_cat[currentCatRef.current]['category_name'] = document.getElementById('category_dialog').value
+        temp_cat[currentCatRef.current]['color'] = colors[catColorRef.current]
+        props.setCategories(temp_cat)
+        // Sending changed to DB.
+        postCategories()
+        // Changing category value in frontend.
+        let new_category = document.getElementById('added_button_' + currentCatRef.current)
+        new_category.innerText = props.categories[currentCatRef.current]['category_name']
+        new_category.style.backgroundColor = props.categories[currentCatRef.current]['color']
+        new_category.appendChild(edit_cat)
     }
 
     let login_input = <input onKeyPress={findTask} id='input' name='user_id_input' type='text' placeholder='Enter ID number'/>;
@@ -179,11 +307,10 @@ const SiteTop = (props) => {
             <div id='login_title'>BeeZee</div>
             <div className='col-2'/>
             <div data-toggle="tooltip" title="Modify Categories" onClick={showCategories} id='category_button' className='category_button'/>
-            <div data-toggle="tooltip" title="Type A" id='type_a_button' onClick={()=>props.setOption(0)} className='category_option'>Work</div>
-            <div data-toggle="tooltip" title="Type B" id='type_b_button' onClick={()=>props.setOption(1)} className='category_option'>Leisure</div>
-            <div id='type_c_button' data-toggle="tooltip" title="Type B"  onClick={()=>props.setOption(2)} className='category_option'>Sleep</div>
-            {/*TODO - implement "add category button    "*/}
-            <div data-toggle="tooltip" title="Type C" id='add_category_button' onClick={(e)=>{
+            {/*<div data-toggle="tooltip" title="Work" id='type_a_button' onClick={()=>props.setOption(0)} className='category_option'>Work</div>*/}
+            {/*<div data-toggle="tooltip" title="Leisure" id='type_b_button' onClick={()=>props.setOption(1)} className='category_option'>Leisure</div>*/}
+            {/*<div id='type_c_button' data-toggle="tooltip" title="Sleep"  onClick={()=>props.setOption(2)} className='category_option'>Sleep</div>*/}
+            <div data-toggle="tooltip" title="Add category" id='add_category_button' onClick={(e)=>{
                 let new_cat_container = document.getElementById('adding_category_container')
                 if (new_cat_container.style.visibility === 'visible') {
                     if (e.target.id === 'add_category_button')
@@ -200,9 +327,12 @@ const SiteTop = (props) => {
                 <input id='category_dialog'/>
                 Color:
                 <span id='new_category_option_1' className='category_colors' onClick={()=>setCategoryColor(1)}/>
-                <span id='new_category_option_2' className='category_colors' onClick={()=>setCategoryColor(2)}/><
-                span id='new_category_option_3' className='category_colors' onClick={()=>setCategoryColor(3)}/>
-                <span onClick={createNewCategory} id='category_accept_changes'/>
+                <span id='new_category_option_2' className='category_colors' onClick={()=>setCategoryColor(2)}/>
+                <span id='new_category_option_3' className='category_colors' onClick={()=>setCategoryColor(3)}/>
+                <span id='new_category_option_4' className='category_colors' onClick={()=>setCategoryColor(4)}/>
+                <span id='new_category_option_5' className='category_colors' onClick={()=>setCategoryColor(5)}/>
+                <span id='new_category_option_6' className='category_colors' onClick={()=>setCategoryColor(6)}/>
+                <span id='category_accept_changes'/>
             </div>
             {/*<div className='col-4'>{login}</div>*/}
             <div id='logout' onClick={LogoutWrapper}>Log out</div>

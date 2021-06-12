@@ -20,6 +20,7 @@ const Categories = (props) => {
     }, [props.categoryTypes,props.scheduleTrigger])
 
     const getClass = (number) => {
+        console.log('DEF')
         switch(number) {
             case 0:
                 return 'type_a'

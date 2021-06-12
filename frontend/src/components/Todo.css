@@ -189,7 +189,7 @@ option:hover {
   background: red !important;
 }
 
-#priority_options, #duration_options {
+#priority_options, .duration_options {
   color: rgb(12, 13, 13);
   background:  rgba(230,230,230, 0);
   border: none;
@@ -198,12 +198,12 @@ option:hover {
   padding-left: 20px;
 }
 
-#duration_options {
+.duration_options {
   width: 50px;
   direction: rtl;
 }
 
-#duration_options_hidden {
+.duration_options_hidden {
   opacity: 0;
   width: 20px;
 }
@@ -240,7 +240,7 @@ select option {
   display: inline-block;
 }
 
-#duration_options {
+.duration_options {
   height: 30px;
   width: auto;
   scroll-snap-type: y proximity;

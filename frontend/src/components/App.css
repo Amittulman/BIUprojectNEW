@@ -226,7 +226,7 @@
     }
 }
 
-#type_a_button, #added_button_1, #added_button_2, #added_button_3 {
+#type_a_button, #added_button_1, #added_button_2, #added_button_3, #added_button_4, #added_button_5, #added_button_0 {
     background-color: #EBFFE2;
     border-radius: 20%;
     transition: background-color 0.2s ease-out, margin-left 0.5s ease-out, opacity 0.5s ease-out;

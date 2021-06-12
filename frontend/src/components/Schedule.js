@@ -44,6 +44,8 @@ const Table = (props) => {
     }, [props.tasksID, tasksID])
 
     useEffect(() => {
+        if (props.categories === undefined) return;
+        let dct = {'a':0, 'b':1,'c':2,'d':3,'e':4,'f':5};
         let date = new Date();
         let today_slot = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
         let passed_day = ''
@@ -65,7 +67,9 @@ const Table = (props) => {
                     if (today_slot > (j + (i - 1) * slots_per_day))
                         passed_day = ' passed'
                     let class_name = getClass(props.categoryTypes[slots_per_day * (i - 1) + j])
-                    content.push(<td key={'cell_' + (slots_per_day * (i - 1) + j)} className={class_name}
+                    let color = props.categories[dct[class_name.split('_')[1]]]
+                    if (color !== undefined) { color = color['color']}
+                    content.push(<td key={'cell_' + (slots_per_day * (i - 1) + j)} className={class_name} style={{backgroundColor:color}}
                                           id={'cell_' + (slots_per_day * (i - 1) + j) + '_taskID_' + tasksID[j + (i - 1) * slots_per_day]}
                                           draggable='true' onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop}
                                           onDragLeave={leaveDropArea}><div className={passed_day + ' test123'}>{data}</div></td>);//{data}
@@ -76,7 +80,7 @@ const Table = (props) => {
             props.setScheduleTable(table)
             props.setTable(table)
         }
-    }, [tasks, tasksID, props.categoryTrigger])
+    }, [tasks, tasksID, props.categoryTrigger, props.categories])
 
     let content = [];
     let jsx = [];
@@ -92,6 +96,7 @@ const Table = (props) => {
     }
 
     const getClass = (number) => {
+        console.log('ABC')
         switch(number) {
             case 0:
                 return 'type_a'

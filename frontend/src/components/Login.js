@@ -267,6 +267,7 @@ const Login = (props) => {
                     } else {
                         setSignUpAnswer(undefined)
                         setSignUpAnswer(response)
+                        // TODO - add default categories to new user.
                         if (response > 0)
                         {history.push('/')}
                     }

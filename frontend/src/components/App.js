@@ -18,6 +18,7 @@ const App = () => {
     const [toOptimize, setToOptimize] = useState(false)
     const [categoryTrigger, setCategoryTrigger] = useState(false)
     const [categoryTable, setCategoryTable] = useState([])
+    const [categories, setCategories] = useState([]);
     const [rememberMe, setRememberMe] = useState();
     const [option, setOption] = useState(0)
     const [todoMinimized, setTodoMinimized] = useState(false);
@@ -60,13 +61,12 @@ const App = () => {
         if (current_pinnedd !== null && time!== null && e.target.id !== 'pinned_choose_day'+i && e.target.id !== 'pinned_choose_time'+i && e.target.id !== 'thumbtack'+i ) {
             current_pinnedd.style.visibility = 'hidden'
             current_pinnedd.style.opacity = '0'
-            console.log(current_pinnedd, time.value)
+            // console.log(current_pinnedd, time.value)
         }
     }
 
     const detectOutsideClicking = (e) => {
         let i;
-        console.log('ALL ', updatedRef.current)
         for (i of Object.keys(taskRef.current)) {
             checkClick(e,i)
         }
@@ -271,7 +271,7 @@ const App = () => {
         console.log('main page, userid ', userID)
        return (
            <div onClick={foo} className="App d-flex flex-column">
-               <SiteTop optionRef={optionRef} setCategoryTypes={setCategoryTypes}  categoryTypes={categoryTypes} setUserID={setUserID} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setOption={setOption}/>
+               <SiteTop categories={categories} setCategories={setCategories} optionRef={optionRef} setCategoryTypes={setCategoryTypes}  categoryTypes={categoryTypes} userID={userID} setUserID={setUserID} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setOption={setOption}/>
                <div id='site_body' className='row flex-grow-1'>
                    <div id='show_hide_todo' className='show_hide_todo' onClick={closeTaskPane}/>
                    <div id='todo_parent' className='col-4'>
@@ -283,7 +283,7 @@ const App = () => {
                    </div>
                    <div id='schedule_parent' className='col-8 col-8_start'>
                        <div id='schedule_component'>
-                           <Schedule timeToSlot={timeToSlot} userID={userID} categoryTrigger={categoryTrigger} setCategoryTypes={setCategoryTypes}  categoryTypes={categoryTypes} schedRef={schedRef} scheduleTable={scheduleTable} setScheduleTable={setScheduleTable} setScheduleJsx={setScheduleJsx} scheduleJsx={scheduleJsx} initialSchedule={initialSchedule} table1={table1} setTable={setTable} getCategoryTable={categoryTable} setCategoryTable={setCategoryTable} setToOptimize={setToOptimize} toOptimize={toOptimize} tasksID={tasksID} getTasksID={taskIDGetter} trigTasksID={taskIDTrig} updating_tasks={tasks} getTasks={taskGetter} setTasks={setTasks}/>
+                           <Schedule categories={categories} setCategories={setCategories} timeToSlot={timeToSlot} userID={userID} categoryTrigger={categoryTrigger} setCategoryTypes={setCategoryTypes}  categoryTypes={categoryTypes} schedRef={schedRef} scheduleTable={scheduleTable} setScheduleTable={setScheduleTable} setScheduleJsx={setScheduleJsx} scheduleJsx={scheduleJsx} initialSchedule={initialSchedule} table1={table1} setTable={setTable} getCategoryTable={categoryTable} setCategoryTable={setCategoryTable} setToOptimize={setToOptimize} toOptimize={toOptimize} tasksID={tasksID} getTasksID={taskIDGetter} trigTasksID={taskIDTrig} updating_tasks={tasks} getTasks={taskGetter} setTasks={setTasks}/>
                            {/*<Categories userID={userID} setCategoryTrigger={setCategoryTrigger} categoryTrigger={categoryTrigger} setScheduleTrigger={setScheduleTrigger} scheduleTrigger={scheduleTrigger} table1={table1} categoryTable={categoryTable} setTable={setTable} optionRef={optionRef} setCategoryTable={setCategoryTable} setCategoryTypes={setCategoryTypes}  categoryTypes={ categoryTypes} initialScedule={initialSchedule} scheduleJsx={scheduleJsx} setScheduleJsx={setScheduleJsx} />*/}
                        </div>
                        <div id='category_component'>
