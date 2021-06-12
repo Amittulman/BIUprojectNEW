@@ -254,7 +254,7 @@ const Login = (props) => {
             .then((response) => {
                 if (response.status !== 201) {
                     console.log("User's tasks hes been sent successfully.");
-                    // If logging in
+                    // If successful logging in
                     console.log('RESPONSE CONTENT: ', response)
                     if (requestName === 'checkusercredentials') {
                         setLoginAnswer(undefined)
@@ -263,7 +263,7 @@ const Login = (props) => {
                             setLoggedIn(true)
                             history.push('/mainPage')
                         }
-                    // If signing up.
+                    // If successful signing up.
                     } else {
                         setSignUpAnswer(undefined)
                         setSignUpAnswer(response)

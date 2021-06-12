@@ -1,5 +1,6 @@
 import './SiteTop.css'
 import React, {useEffect, useRef, useState} from 'react';
+import {classNamesShape} from "react-transition-group/cjs/utils/PropTypes";
 
 const slots_per_day = 24*2;
 
@@ -21,7 +22,8 @@ const SiteTop = (props) => {
     useEffect(() => {
         console.log('TRIGGERED! ', props.categories)
         //Send changes to DB.
-
+        if (props.categories.length !== 0)
+            postCategories();
         // Add categories, received from DB.
         addLoadedCategories();
     }, [props.categories])
@@ -36,6 +38,8 @@ const SiteTop = (props) => {
             .then(
                 (result) => {
                     console.log('Get categories result: ', result);
+                    if (result.length === 0)
+                        result = getDefaultCategories();
                     props.setCategories(result);
                 })
             .catch((error) => {
@@ -66,6 +70,24 @@ const SiteTop = (props) => {
             });
     }
 
+    const getDefaultCategories = () => {
+        return [{"user_id":props.userID,"category_id":0,"category_name":"Work","color":"#FFE9E9"},
+            {"user_id":props.userID,"category_id":1,"category_name":"Liesure","color":"#FFFFE2"},
+            {"user_id":props.userID,"category_id":2,"category_name":"Sleep","color":"#E9EDFF"},
+            {"user_id":props.userID,"category_id":3,"category_name":"","color":""},
+            {"user_id":props.userID,"category_id":4,"category_name":"","color":""},
+            {"user_id":props.userID,"category_id":5,"category_name":"","color":""}]
+    }
+
+    const hideRest = () => {
+        let cats = document.getElementsByClassName('user_category')
+        for (let i=0; i<cats.length; i++) {
+            if (cats[i].innerText === '') continue
+            // debugger
+            cats[i].childNodes[1].style.visibility = 'hidden';
+        }
+    }
+
     const addLoadedCategories = () => {
         if (document.getElementsByClassName('category').length > 0) return;
         //Loading categories.
@@ -74,7 +96,7 @@ const SiteTop = (props) => {
             // Adding a category
             let new_category = document.createElement('div');
             new_category.id='added_button_' + i
-            new_category.className = 'category_option category';
+            new_category.className = 'category_option category user_category';
             new_category.innerText = props.categories[i]['category_name']
             new_category.style.backgroundColor = props.categories[i]['color']
             // Adding category's edit button.
@@ -88,16 +110,26 @@ const SiteTop = (props) => {
             // edit_cat.appendChild(new_cat_container)
             category_accept_changes.onclick = (e)=> {
                 // Do not save changes if title is empty.
-                if (document.getElementById('category_dialog').value === '') return;
+                if (document.getElementById('category_dialog').value === '' || catColorRef.current === 0) return;
+                if (props.categories[currentCatRef.current]['category_name'] === '') {
+                    let new_cat = document.getElementById('added_button_' + currentCatRef.current)
+                    new_cat.style.opacity = '1';
+                    new_cat.style.visibility = 'visible';
+                    new_cat.style.display = 'block';
+                    new_cat.style.marginLeft = '2px';
+                }
+                debugger
                 new_cat_container.style.visibility = 'hidden';
                 // Update category changes in both frontend and DB.
                 setCategories();
             }
+            let category_decline_changes = document.getElementById('category_decline_changes');
+            category_decline_changes.onclick = () => {new_cat_container.style.visibility = 'hidden';}
             edit_cat.onclick = () => {
                 edit_cat.style.visibility = 'hidden'
                 //Reset title value, when editing title and color of category.
                 document.getElementById('category_dialog').value = ''
-                new_cat_container.style.marginLeft = -430+(58*i)+'px'
+                // new_cat_container.style.marginLeft = '-200px'
                 new_cat_container.style.visibility = 'visible'
             }
             // Showing editing option and marking option.
@@ -108,6 +140,7 @@ const SiteTop = (props) => {
                 if (edit_cat.style.visibility === 'visible')
                     edit_cat.style.visibility = 'hidden';
                 else {
+                    hideRest()
                     edit_cat.style.visibility = 'visible';
                     new_cat_container.style.visibility = 'hidden';
                 }
@@ -217,12 +250,25 @@ const SiteTop = (props) => {
             display_type = 'none'
         }
         for (let i=0; i < category_options.length; i++) {
+            console.log('ZZZZZ ', category_options[i])
+            if (category_options[i].id.startsWith('added_button') && category_options[i].textContent === ''){
+                category_options[i].style.display = 'none'
+                console.log('ABBA ', i, category_options[i], category_options[i].className.includes('user_category') && category_options[i].textContent === '')
+                continue
+            }
             // category_options[i].style.display = display_type;
+
+            // Collapsing categories.
             if (category_button.className === 'category_button') {
+
                 category_options[i].style.opacity = '0';
+                category_options[i].style.visibility = 'hidden';
                 category_options[i].style.marginLeft = '-30px';
+            // Expanding categories.
             } else {
                 category_options[i].style.opacity = '1';
+                category_options[i].style.visibility = 'visible';
+                category_options[i].style.display = 'block';
                 category_options[i].style.marginLeft = '2px';
             }
         }
@@ -292,6 +338,14 @@ const SiteTop = (props) => {
         new_category.appendChild(edit_cat)
     }
 
+    const getFirstEmptyCat = () => {
+        for (let i=0; i<props.categories.length; i++) {
+            if (props.categories[i].category_name === '')
+                return i;
+        }
+        return null
+    }
+
     let login_input = <input onKeyPress={findTask} id='input' name='user_id_input' type='text' placeholder='Enter ID number'/>;
     let time_of_day = new Date().getHours()
     let greeting;
@@ -305,21 +359,27 @@ const SiteTop = (props) => {
             {/*    <div className='greeting'>{greeting}, Moshe! 👋</div>*/}
             {/*</div>*/}
             <div id='login_title'>BeeZee</div>
-            <div className='col-2'/>
+            <div className='col-2' id='blank_col'/>
             <div data-toggle="tooltip" title="Modify Categories" onClick={showCategories} id='category_button' className='category_button'/>
             {/*<div data-toggle="tooltip" title="Work" id='type_a_button' onClick={()=>props.setOption(0)} className='category_option'>Work</div>*/}
             {/*<div data-toggle="tooltip" title="Leisure" id='type_b_button' onClick={()=>props.setOption(1)} className='category_option'>Leisure</div>*/}
             {/*<div id='type_c_button' data-toggle="tooltip" title="Sleep"  onClick={()=>props.setOption(2)} className='category_option'>Sleep</div>*/}
             <div data-toggle="tooltip" title="Add category" id='add_category_button' onClick={(e)=>{
+                document.getElementById('category_dialog').value = ''
+                setCurrentCat(()=>getFirstEmptyCat());
+                props.setOption(()=>getFirstEmptyCat());
                 let new_cat_container = document.getElementById('adding_category_container')
                 if (new_cat_container.style.visibility === 'visible') {
                     if (e.target.id === 'add_category_button')
                         new_cat_container.style.visibility = 'hidden'
                 }
-                else new_cat_container.style.visibility = 'visible'
+                else {
+                    hideRest()
+                    new_cat_container.style.visibility = 'visible'
+                }
             }} className='category_option'>
             </div>
-            <div data-toggle="tooltip" title="Clear" id='clear_category_button' onClick={()=>props.setOption(-1)} className='category_option'/>
+            <div data-toggle="tooltip" title="Clear" id='clear_category_button' onClick={()=>{hideRest(); props.setOption(-1)}} className='category_option'/>
             {/*TODO:show indicator of sending category.*/}
             <div data-toggle="tooltip" title="Send" id='category_send_button' onClick={()=>{props.handleCategoriesSubmission(); showCategories(); props.setCategoryTrigger(!props.categoryTrigger)}} className='category_option'/>
             <div id='adding_category_container'>
@@ -333,6 +393,7 @@ const SiteTop = (props) => {
                 <span id='new_category_option_5' className='category_colors' onClick={()=>setCategoryColor(5)}/>
                 <span id='new_category_option_6' className='category_colors' onClick={()=>setCategoryColor(6)}/>
                 <span id='category_accept_changes'/>
+                <span id='category_decline_changes'/>
             </div>
             {/*<div className='col-4'>{login}</div>*/}
             <div id='logout' onClick={LogoutWrapper}>Log out</div>

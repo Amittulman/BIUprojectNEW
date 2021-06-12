@@ -67,10 +67,17 @@
 .category_option {
     margin-top: 25px;
     display: block;
-    transition: background-color 2s ease-out;
-    /*transition: opacity 2s ease-out;*/
+    transition: background-color 2s ease-out, visibility 2s ease-out , opacity 2s ease-out;
     opacity: 0;
+    visibility: hidden;
     margin-left: -30px;
+}
+
+.user_category_empty {
+    display: none;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 2s ease-out;
 }
 
 #left {
