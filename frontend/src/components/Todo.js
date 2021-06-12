@@ -195,12 +195,6 @@ const Todo = (props) => {
     if (pin.classList.contains('thumbtack_done')) {
       pin.classList.remove('thumbtack_done');
       pin.classList.add('thumbtack');
-    } else if (pin.classList.contains('thumbtack')) {
-      pin.classList.remove('thumbtack');
-      pin.classList.add('thumbtack_clicked');
-    } else {
-      pin.classList.remove('thumbtack_clicked');
-      pin.classList.add('thumbtack');
     }
     pin.classList.add('col-1');
   }
@@ -657,8 +651,8 @@ const Todo = (props) => {
     let pin = document.getElementById('thumbtack'+index);
     let calendar = document.getElementById('pinned_calendar'+index);
     if (day === '') {
-      if (pin.classList.contains('thumbtack_clicked') === false)
-        pin.className = 'thumbtack_clicked';
+      // if (pin.classList.contains('thumbtack_clicked') === false)
+      //   pin.className = 'thumbtack_clicked';
       return null;
     }
     else if (time !== '') {
@@ -667,7 +661,6 @@ const Todo = (props) => {
       document.getElementById('recurrings'+index).className = 'recurrence recurrence1'
       // handleChange(e, i);
       let nam = 'pinned_slot';
-      console.log('DAY DAY!!!! ', day, time)
       let val = props.timeToSlot(day, time);
       return [nam, val];
     } else return null;
