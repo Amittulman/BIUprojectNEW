@@ -5,7 +5,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   font-size: calc(22px);
   color: rgb(12, 13, 13);
   user-select: none;
@@ -17,16 +17,25 @@
 }
 
 #add_a_new_task {
-  position: absolute;
-  top: 75vh;
-  width: 80px;
-  height: 80px;
+  /*position: absolute;*/
+  /*top: 75vh;*/
+  /*bottom: 90px;*/
+  width: 50px;
+  height: 50px;
+  margin-top: -3px;
+  /*margin-left: 20%;*/
+  margin-left: 40%;
   background: url("../images/plus_sign.svg") no-repeat;
+  transition: background 0.1s ease-in;
   cursor: pointer;
 }
 
-#add_new_task:hover {
+#add_a_new_task:hover {
+  background: url("../images/plus_sign_hover.svg") no-repeat;
+}
 
+#add_a_new_task:active {
+  background: url("../images/plus_sign_clicked.svg") no-repeat;
 }
 
 .closed_task, .closed_task_error {
@@ -68,6 +77,7 @@
   border-radius: 20px 20px;
   opacity: 0;
   visibility: hidden;
+  z-index: 9900101;
 }
 
 #due_date_popup {
@@ -75,7 +85,7 @@
 }
 
 .expanded_task, .expanded_task_error, .expanded_task_daytime, .expanded_task_daytime_error{
-  height: 210px;
+  height: 200px;
   /*height: 500px;*/
   background-color: rgba(250,250,250, .3);
   box-shadow: 1px 0px 3px 3px #ccc;
@@ -93,7 +103,7 @@
 }
 
 .expanded_task_daytime, .expanded_task_daytime_error {
-  height: 310px;
+  height: 320px;
 }
 
 .expanded_task_error, .closed_task_error, .expanded_task_daytime_error {
@@ -189,7 +199,7 @@ option:hover {
   background: red !important;
 }
 
-#priority_options, .duration_options {
+#priority_options, .duration_options, .category_options {
   color: rgb(12, 13, 13);
   background:  rgba(230,230,230, 0);
   border: none;
@@ -199,7 +209,6 @@ option:hover {
 }
 
 .duration_options {
-  width: 50px;
   direction: rtl;
 }
 
@@ -419,6 +428,21 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   visibility: visible;
 }
 
+#hours_txt {
+  position: relative;
+  margin-left: -15px;
+}
+
+.dur_row {
+margin-left: 20px;
+}
+
+.ttt {
+  margin-left: 0 !important;
+}
+.first_row {
+  margin-left: -15px !important;
+}
 .task_container {
   padding-top: 15px;
   padding-bottom: 4px;
@@ -429,6 +453,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   background-color: white;
   position: relative;
   background-clip: content-box;
+  min-height: 100px;
 }
 
 .task_container_error {
@@ -502,7 +527,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 }
 
 .task_elm {
-  text-align: left;
+  text-align: left !important;
   user-select: none;
 }
 
@@ -529,12 +554,16 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 }
 
 .constraints_element {
-  margin-left: 20px;
+  /*flex-direction: row;*/
+  padding-left: 2%;
+  /*justify-content: space-around;*/
+  /*min-width: 350px;*/
+  ;
 }
 
 .spacing_days {
-  margin-left: 1vw;
-  margin-right: 1vw;
+  padding-left: 9.5%;
+  /*margin-right: 4%;*/
 }
 
 .task_error {
@@ -552,10 +581,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 #container {
   position: absolute;
-  overflow-y: auto;
+  overflow-y: scroll;
   width: 100%;
   top: 50px;
-  height: 65vh;
+  height: 63vh;
   /*height: 900px;*/
 
 }
@@ -593,13 +622,34 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 }
 
 #submit_button {
-  position: absolute;
-  top: 75vh;
-  left: 75%;
+  /*position: absolute;*/
+  /*top: 75vh;*/
+  /*bottom: 125px;*/
+  /*left: 75%;*/
+  /*margin-left: 40px;*/
+  height: 40px;
 }
 
 #todo_parent_component {
   background-color: transparent;
+}
+
+.bottom_content {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  /*margin-top: 300px;*/
+  width: 100%;
+  /*height: 0px;*/
+  min-height: 150px;
+  padding-bottom: 10px;
+  padding-top: 10px;
+  margin-bottom: 20px;
+  /*margin-left: 25%;*/
+  z-index: 100000;
+  background-color: white;
+  /*background-color: red;*/
+  /*float: bottom;*/
 }
 
 .past_due, .past_due_hidden {
@@ -674,12 +724,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   fill: red;
 }
 
-/*@media screen and (max-width: 800px) {*/
-/*  .task {*/
-/*    max-height: 5vh;*/
-/*  }*/
-
-/*}*/
 
 /*@media screen and (min-width: 800px) {*/
 /*  .task {*/

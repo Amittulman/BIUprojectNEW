@@ -58,6 +58,7 @@ const Categories = (props) => {
     }
 
     const dragStart = (event) => {
+        console.log('start1')
         event.dataTransfer.setData('text/plain', event.target.id);
     }
 

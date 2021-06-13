@@ -275,21 +275,23 @@ const Todo = (props) => {
         recurrenceIconChange(e, i);
       }
     }} onChange={(e) => handleChange(e, i)} className={'recurrence recurrence'+values['recurrings']} id={'recurrings'+index}/>;
-    let recurrings = <div key={'recurrings'+index} id={'recurrings'+index} className='task_elm recurrence' onChange={(e) => handleChange(e, i)}>Recurrences:&nbsp;<input name='recurrings' type='text' defaultValue={values['recurrings']}/></div>;
     let rec_pin = <div className={'row rec_pin'}>{recurrence}{thumbtack}</div>
     let title_and_thumbtack = <span key={'title_and_thumbtack'+index} className='row justify-content-between'>{task_title}{rec_pin}</span>;
-    let duration = <div key={'duration'+index} className='task_elm'> Duration:
-      <div id='options_arrow'/>&nbsp;
-      <select size='1' id={'duration_options'+index} className={getDuration(values['duration']) === 'null'?'duration_options_hidden':'duration_options'} name='duration' defaultValue={getDuration(values['duration'])} onChange={(e) => handleChange(e, i)}>
-        <option value="0.5">0.5</option>
-        <option value="1">1</option>
-        <option value="1.5">1.5</option>
-        <option value="2">2</option>
-        <option value="2.5">2.5</option>
-        <option value="3">3</option>
-        <option value="null">More</option>
-      </select>
-      <input placeholder='____' maxLength={3} id={'input_duration'+i} className={getDuration(values['duration']) === 'null'?'input_duration':'input_duration_hidden'} name='duration' type='text' defaultValue={getDuration(values['duration']) === 'null'?values['duration']/60:''} onChange={(e) => handleChange(e, i)}/>
+    let duration = <div key={'duration'+index} id={'duration'+index} className='row ttt '><div className={'task_elm'}>Duration:</div>
+      <div className={'col-4 first_row'}>
+        <div id='options_arrow'/>&nbsp;
+        <select size='1' id={'duration_options'+index} className={getDuration(values['duration']) === 'null'?'duration_options_hidden':'duration_options'} name='duration' defaultValue={getDuration(values['duration'])} onChange={(e) => handleChange(e, i)}>
+          <option value="0.5">0.5</option>
+          <option value="1">1</option>
+          <option value="1.5">1.5</option>
+          <option value="2">2</option>
+          <option value="2.5">2.5</option>
+          <option value="3">3</option>
+          <option value="null">More</option>
+        </select>
+        <input placeholder='____' maxLength={3} id={'input_duration'+i} className={getDuration(values['duration']) === 'null'?'input_duration':'input_duration_hidden'} name='duration' type='text' defaultValue={getDuration(values['duration']) === 'null'?values['duration']/60:''} onChange={(e) => handleChange(e, i)}/>
+      </div>
+      <div id={'hours_txt'} className={'col-2'}>hours</div>
     </div>;
     let priority = <div key={'priority'+index} className='task_elm'>Priority:
       <div className='wrapper_options'><div id='options_arrow'/>&nbsp;</div>
@@ -299,7 +301,17 @@ const Todo = (props) => {
         <option value="2">Medium</option>
         <option value="3">High</option>
       </select></div>;
-    let category_id = <div key={'category_id'+index} className='task_elm' onChange={(e) => handleChange(e, i)}>Category:&nbsp;<input name='category_id' type='text' defaultValue={values['category_id']}/></div>;
+    // let category_id = <div key={'category_id'+index} className='task_elm' onChange={(e) => handleChange(e, i)}>Category:&nbsp;<input name='category_id' type='text' defaultValue={values['category_id']}/></div>;
+    let options = [];
+    for (let i=0; i<props.categories.length; i++) {
+      options.push(<option value={i}>{props.categories[i]['category_name']}</option>)
+    }
+    let category_id = <div key={'category_id'+index} className='task_elm' onChange={(e) => handleChange(e, i)}>Category:&nbsp;
+      <div className='wrapper_options'><div id='options_arrow'/>&nbsp;</div>
+      <select className='category_options' name='category_id' defaultValue={values['category_id']} onChange={(e) => handleChange(e, i)}>
+        {options}
+      </select>
+    </div>;
     let constraints = <div key={'constraints'+index} id={'constraints'+index} onChange={(e) => handleChange(e, i)}><div className='task_elm'>Day of Week:&nbsp;</div><div className={'constraints_element'} >{constraints_params}</div></div>;
     let task = <div key={'task'+index} id={'task'+index} className='closed_task'>{[pinned_calendar, title_and_thumbtack, duration, priority, category_id, constraints]}</div>
     let sign = <div id={'expand_icon'+index} className={'expand_icon'} onClick={(e) =>  expandTask(e, task, index)} key='plus_sign'/>
@@ -308,8 +320,6 @@ const Todo = (props) => {
       Reschedule?
     <span className={'reschedule'} onClick={(e) => {
       removeFromPastDue(e, i);
-      // onSubmitHandler(e, i);
-      // setPastDueTrig(true);
       handleChange(e, i)
       handlePastDue(e, i);
     }}/>
@@ -468,12 +478,12 @@ const Todo = (props) => {
   }
 
   const dueDateAnimation = [[
-    { 'opacity': 0, transform: 'translateY(50px)'},
-    { 'opacity': 1, transform: 'translateY(-50px)', visibility:'visible'}
+    { 'opacity': 0, transform: 'translateY(50px)', zIndex:'0'},
+    { 'opacity': 1, transform: 'translateY(-70px)', visibility:'visible', zIndex:'1000100'}
   ], {duration: 500, fill: 'forwards', easing: 'ease-out'}];
   const endDueDateAnimation = [[
-    { 'opacity': 1, transform: 'translateY(-50px))'},
-    { 'opacity': 0, transform: 'translateY(50px)', visibility:'hidden'}
+    { 'opacity': 1, transform: 'translateY(-70px))', zIndex:'1000100'},
+    { 'opacity': 0, transform: 'translateY(50px)', visibility:'hidden', zIndex:'0'}
   ], { duration: 500, fill: 'forwards', easing: 'ease-in'}];
 
   const checkInputs = () => {
@@ -497,20 +507,22 @@ const Todo = (props) => {
       let temp_task = document.getElementById('title_textbox' + task_index)
       // If title is too long
       if (props.updated_tasks[task_index]['task_title'].length > 20) {
-        temp_task.className = 'task_error'
+        // debugger;
+        temp_task.classList.add('task_error')
         task_err = true
         total_err = true
       } else {
-        temp_task.className = 'task_elm'
+        temp_task.classList.remove('task_error')
       }
-      // Check recurrences length.
-      let recurrences = document.getElementById('recurrings' + task_index)
-      if (props.updated_tasks[task_index]['recurrings'] > 7) {
-        recurrences.className = 'task_error'
+      // Check duration length.
+      let duration = document.getElementById('duration' + task_index)
+      if (props.updated_tasks[task_index]['duration'] > 7*60) {
+        console.log('YABADOO ', props.updated_tasks[task_index]['duration'])
+        duration.classList.add('task_error')
         task_err = true
         total_err = true
       } else {
-        recurrences.className = 'task_elm'
+        duration.classList.remove('task_error')
       }
       // Present error.
       let container = document.getElementById('task' + task_index)
@@ -565,7 +577,7 @@ const Todo = (props) => {
     props.setUpdatedTasks({})
     setRemovedTasks([])
     setTodoIDs({})
-    setTasksJsx(new Set())
+    setTasksJsx(new Set()) //TODO - remove
     props.setToOptimize(true)
     props.handleCategoriesSubmission()
     props.setCategoryTrigger(true)
@@ -629,11 +641,11 @@ const Todo = (props) => {
         .then((response) => {
           setTrigger(!trigger)
           if (response.status === 201) {
-            //console.log("User's tasks hes been sent successfully.");
+            console.log("User's tasks hes been sent successfully.");
           } else {
-            //console.log("User's tasks hes been sent. HTTP request status code: " + response.status);
+            console.log("User's tasks hes been sent. HTTP request status code: " + response.status);
           }
-          //console.log(response.text())
+          console.log(response.text())
         })
         .catch((error) => {
           console.error("Error while submitting task: " + error.message);
@@ -710,6 +722,8 @@ const Todo = (props) => {
       let current_value = parseInt(event.target.className.slice(-1)[0])
       if (current_value === 7) current_value = 0;
       val = current_value + 1;
+    } else if (nam === 'category_id') {
+      // debugger
     }
     let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'-1','constraints':'000000000000000000000', 'pinned_slot':null};
     let updated = updatedRef.current
@@ -805,8 +819,10 @@ const Todo = (props) => {
             <div id='empty_todo'/>
             <div id='loading_todo'/>
           </form><br/>
-          <input id='submit_button' className="btn btn-primary btn-md" type='submit' form='container'/>
-          <div id='add_a_new_task' onClick={() => addTask(task_number)}/>
+          <div className={'bottom_content'}>
+            <div id='add_a_new_task' onClick={() => addTask(task_number)}/>
+            <input id='submit_button' className="btn btn-primary btn-md" type='submit' form='container'/>
+          </div>
           <div id='due_date_popup'>Please handle past due tasks.</div>
           <div id='error_popup'>Could not generate schedule.</div>
         </header>

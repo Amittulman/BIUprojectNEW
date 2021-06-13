@@ -42,12 +42,15 @@ const App = () => {
     const [userID, setUserID] = useState()
 
     useEffect(() => {
-        window.addEventListener('click', detectOutsideClicking)
         console.log(localStorage.getItem('userID'))
         console.log(localStorage.getItem('rememberMe'))
         setUserID(localStorage.getItem('userID'))
         setRememberMe(localStorage.getItem('rememberMe'))
     }, [])
+
+    useEffect(() => {
+        console.log('TASKS !!! ', tasks)
+    },[tasks])
 
     useEffect(() => {
         if (userID !== undefined && userID !== null) {
@@ -163,11 +166,11 @@ const App = () => {
 
     const errorAnimation = [[
         { 'opacity': 0, transform: 'translateY(50px)', zIndex:'0'},
-        { 'opacity': 1, transform: 'translateY(0px)', visibility:'visible', zIndex:'999'}
+        { 'opacity': 1, transform: 'translateY(-20px)', visibility:'visible', zIndex:'1000100'}
     ], {duration: 500, fill: 'forwards', easing: 'ease-out'}];
 
     const endErrorAnimation = [[
-        { 'opacity': 1, transform: 'translateY(0px))', zIndex:'999'},
+        { 'opacity': 1, transform: 'translateY(-20px))', zIndex:'1000100'},
         { 'opacity': 0, transform: 'translateY(50px)', visibility:'hidden', zIndex:'0'}
     ], { duration: 500, fill: 'forwards', easing: 'ease-in'}];
 
@@ -261,27 +264,40 @@ const App = () => {
         return jsx
     }
 
-    const foo = (event) => {
-        // TODO - if thumbtack is activated, clicking outside of day/time should close it.
-        let elements = document.getElementsByClassName('thumbtack_clicked');
-        // console.log(elements)
+    const fixPresentation = (mobile) => {
+        let sched = document.getElementById('schedule_parent')
+        let todo = document.getElementById('todo_parent')
+        if (mobile.matches){
+            sched.className = 'col-12 col-8_start'
+            todo.className = 'gone'
+        } else {
+            sched.className = 'col-8 col-8_start'
+            todo.className = 'col-4'
+        }
+        //TODO - move cat brush to the left, change arrow direction, when expanding it open todo, make sure todo looks
+        // good when opening it (above sched).
     }
 
     const mainPage = () => {
         console.log('main page, userid ', userID)
+        // window.onresize = () => {
+        //     let mobile = window.matchMedia('(max-width: 900px)')
+        //     fixPresentation(mobile)
+        //     mobile.addEventListener('load',fixPresentation)
+        // }
        return (
-           <div onClick={foo} className="App d-flex flex-column">
+           <div className="App d-flex flex-column">
                <SiteTop categories={categories} setCategories={setCategories} optionRef={optionRef} setCategoryTypes={setCategoryTypes}  categoryTypes={categoryTypes} userID={userID} setUserID={setUserID} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setOption={setOption}/>
                <div id='site_body' className='row flex-grow-1'>
-                   <div id='show_hide_todo' className='show_hide_todo' onClick={closeTaskPane}/>
+                   {/*<div id='show_hide_todo' className='show_hide_todo' onClick={closeTaskPane}/>*/}
                    <div id='todo_parent' className='col-4'>
                        <div id='todo_component' className='sticky-top row'>
                        <div className='col-12'>
-                           <Todo setUpdatedTasks={setUpdatedTasks} updated_tasks={updated_tasks} tasksID={tasksID} timeToSlot={timeToSlot} userID={userID} isLoaded={todoIsLoaded} setIsLoaded={setTodoIsLoaded} errorAnimation={errorAnimation} endErrorAnimation={endErrorAnimation} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setToOptimize={setToOptimize} updating_tasks={tasks} trigTasks={taskIDTrig} getTasks={taskGetter} setTasks={setTasks}/>
+                           <Todo categories={categories} setUpdatedTasks={setUpdatedTasks} updated_tasks={updated_tasks} tasksID={tasksID} timeToSlot={timeToSlot} userID={userID} isLoaded={todoIsLoaded} setIsLoaded={setTodoIsLoaded} errorAnimation={errorAnimation} endErrorAnimation={endErrorAnimation} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setToOptimize={setToOptimize} updating_tasks={tasks} trigTasks={taskIDTrig} getTasks={taskGetter} setTasks={setTasks}/>
                        </div>
                        </div>
                    </div>
-                   <div id='schedule_parent' className='col-8 col-8_start'>
+                   <div id='schedule_parent' className='col col-8_start'>
                        <div id='schedule_component'>
                            <Schedule categories={categories} setCategories={setCategories} timeToSlot={timeToSlot} userID={userID} categoryTrigger={categoryTrigger} setCategoryTypes={setCategoryTypes}  categoryTypes={categoryTypes} schedRef={schedRef} scheduleTable={scheduleTable} setScheduleTable={setScheduleTable} setScheduleJsx={setScheduleJsx} scheduleJsx={scheduleJsx} initialSchedule={initialSchedule} table1={table1} setTable={setTable} getCategoryTable={categoryTable} setCategoryTable={setCategoryTable} setToOptimize={setToOptimize} toOptimize={toOptimize} tasksID={tasksID} getTasksID={taskIDGetter} trigTasksID={taskIDTrig} updating_tasks={tasks} getTasks={taskGetter} setTasks={setTasks}/>
                            {/*<Categories userID={userID} setCategoryTrigger={setCategoryTrigger} categoryTrigger={categoryTrigger} setScheduleTrigger={setScheduleTrigger} scheduleTrigger={scheduleTrigger} table1={table1} categoryTable={categoryTable} setTable={setTable} optionRef={optionRef} setCategoryTable={setCategoryTable} setCategoryTypes={setCategoryTypes}  categoryTypes={ categoryTypes} initialScedule={initialSchedule} scheduleJsx={scheduleJsx} setScheduleJsx={setScheduleJsx} />*/}

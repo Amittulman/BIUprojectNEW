@@ -76,7 +76,7 @@
     visibility: hidden;
 }
 
-@keyframes minimize {
+@keyframes minimize_site_top {
     0% {
         opacity: 0;
 

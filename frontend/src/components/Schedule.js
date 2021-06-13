@@ -13,6 +13,7 @@ const Table = (props) => {
     const [draggedGroup, setDraggedGroup] = useState([])
     const prevs = useRef({tasksID, tasksDict, tasks})
     let day = ['Time', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    // let day = ['Time', 'S', 'M', 'T', 'W', 'TH', 'F', 'SA'];
 
     useEffect(() => {
         setTimeout(() => {
@@ -138,6 +139,7 @@ const Table = (props) => {
     }
 
     const dragStart = (event) => {
+        console.log('start2')
         //create an array of all ids in an increasing slots order (starting from event.target.id backward and forward).
         let similarTasks = JSON.stringify(getSimilarTasks(event.target.id))
         //putting it as second parameter in setData.

@@ -4,15 +4,16 @@
     visibility: visible;
     left: 0;
     right: 0;
+    top: 0;
+    bottom: 0;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 4%;
+    margin: auto;
     width: 20vw;
     min-width: 300px;
-    height: 80%;
+    height: 90%;
+    min-height: 450px;
     text-align: center;
     border-radius: 15px 50px;
     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
@@ -257,6 +258,7 @@ input:focus {
 
 #username_input_error_signup {
     position: absolute;
+    margin-top: -5px;
     margin-left: 65px;
 }
 
@@ -289,5 +291,5 @@ input:focus {
 }
 
 #email_input_error_signup:after {
-    content: 'Email is incorrect.';
+    content: 'Illegal Email address.';
 }

@@ -165,6 +165,7 @@ const SiteTop = (props) => {
 
 
     const dragStartCat = (event) => {
+        console.log('start3')
         event.dataTransfer.setData('text/plain', event.target.id);
     }
 
@@ -214,7 +215,7 @@ const SiteTop = (props) => {
                 node.ondragstart = dragStartCat
                 node.ondragover = allowDropCat
                 node.onclick = allowDropCat
-                // node.ondrop = null
+                // node.onDrop = null
                 // node.ondragleave = null
                 node.draggable = true
             }
@@ -228,10 +229,10 @@ const SiteTop = (props) => {
             for (j=1 ; j < slots_per_day+1 ; j++) {
                 let node = sched.childNodes.item(0).childNodes.item(0).childNodes.item(0).childNodes.item(i).childNodes.item(j)
                 // node.className = 'empty_slot';
-                node.ondragstart = null
-                node.ondragover = null
+                node.onDragStart = null
+                node.onDragOver = null
                 node.onclick = null
-                node.ondrop = null
+                node.onDrop = null
                 node.ondragleave = null
                 node.draggable = true
             }
@@ -257,22 +258,20 @@ const SiteTop = (props) => {
             console.log('ZZZZZ ', category_options[i])
             if (category_options[i].id.startsWith('added_button') && category_options[i].textContent === ''){
                 category_options[i].style.display = 'none'
-                console.log('ABBA ', i, category_options[i], category_options[i].className.includes('user_category') && category_options[i].textContent === '')
+                  console.log('ABBA ', i, category_options[i], category_options[i].className.includes('user_category') && category_options[i].textContent === '')
                 continue
             }
-            // category_options[i].style.display = display_type;
-
             // Collapsing categories.
             if (category_button.className === 'category_button') {
-
+                hideRest()
                 category_options[i].style.opacity = '0';
                 category_options[i].style.visibility = 'hidden';
-                category_options[i].style.marginLeft = '-30px';
+                category_options[i].style.marginLeft = '-40px';
             // Expanding categories.
             } else {
                 category_options[i].style.opacity = '1';
                 category_options[i].style.visibility = 'visible';
-                category_options[i].style.display = 'block';
+                // category_options[i].style.display = 'block';
                 category_options[i].style.marginLeft = '2px';
             }
         }

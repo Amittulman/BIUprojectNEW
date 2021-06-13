@@ -67,10 +67,11 @@
 .category_option {
     margin-top: 25px;
     display: block;
-    transition: background-color 2s ease-out, visibility 2s ease-out , opacity 2s ease-out;
+    transition: background-color 1s ease-out, margin-left 1s ease-out, opacity 1s ease, visibility 1s ease;
     opacity: 0;
     visibility: hidden;
     margin-left: -30px;
+    user-select: none;
 }
 
 .user_category_empty {
@@ -98,8 +99,9 @@
 }
 
 #site_body {
-    height: auto;
-    justify-content: center;
+    /*height: auto;*/
+    display: flex !important;
+    /*justify-content: center;*/
 }
 
 
@@ -107,10 +109,6 @@
     position: absolute;
     height: 100%;
     width: 100%;
-}
-
-#todo_component {
-    /*overflow: scroll;*/
 }
 
 #category_component {
@@ -124,6 +122,12 @@
 .schedule_parent_expanded {
     margin-left: 30px;
 }
+
+#schedule_parent {
+    /*flex-grow: 100;*/
+    width: 100%;
+}
+
 .td1 {
     user-select: none;
 }
@@ -236,7 +240,7 @@
 #type_a_button, #added_button_1, #added_button_2, #added_button_3, #added_button_4, #added_button_5, #added_button_0 {
     background-color: #EBFFE2;
     border-radius: 20%;
-    transition: background-color 0.2s ease-out, margin-left 0.5s ease-out, opacity 0.5s ease-out;
+    /*transition: background-color 0.2s ease-out, margin-left 0.5s ease-out, opacity 0.5s ease-out;*/
     height: 30px;
     width: 55px;
     cursor: pointer;
@@ -245,17 +249,17 @@
 
 #added_button_1 {
     background-color: #FFFD88;
-    transition: background-color 0.5s ease-out;
+    /*transition: background-color 0.5s ease-out;*/
 }
 
 #added_button_2 {
     background-color: #dab17f;
-    transition: background-color 0.5s ease-out;
+    /*transition: background-color 0.5s ease-out;*/
 }
 
 #added_button_3 {
     background-color: #D8F3FF;
-    transition: background-color 0.5s ease-out;
+    /*transition: background-color 0.5s ease-out;*/
 }
 
 #added_button_1:hover {
@@ -393,7 +397,7 @@
 #clear_category_button, #add_category_button, #category_send_button {
     /*background-color: #BED2FE;*/
     border-radius: 50%;
-    transition: background-color 0.2s ease-out, margin-left 0.5s ease-out, opacity 0.5s ease-out;
+    /*transition: background-color 0.2s ease-out, margin-left 0.5s ease-out, opacity 0.5s ease-out, visibility 0.5s ease-in;*/
     height: 30px;
     width: 30px;
     cursor: pointer;
@@ -490,6 +494,11 @@
     transition: color 0.2s linear;
 }
 
+#todo_parent {
+    max-width: 450px;
+    min-width: 350px;
+}
+
 
 .switch {
 
@@ -542,4 +551,16 @@ input:checked + .slider:before {
     -webkit-transform: translateX(40px);
     -ms-transform: translateX(40px);
     transform: translateX(40px);
+}
+
+
+@media screen and (max-width: 500px) {
+    #todo_parent {
+        display: none;
+    }
+
+    #schedule_component {
+
+    }
+
 }

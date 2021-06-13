@@ -56,20 +56,24 @@ const Login = (props) => {
 
     // When login value changes (after pressing 'log in' with credentials).
     useEffect(() => {
+        let username = document.getElementById('username')
+        let password = document.getElementById('password')
         if (loginAnswer === undefined) return
         let text_to_client;
         switch(loginAnswer) {
             case -1:
                 text_to_client = 'Wrong username.';
-                removeInputError(document.getElementById('password'))
-                showInputError(document.getElementById('username'))
+                removeInputError(password)
+                showInputError(username)
                 break;
             case -2:
                 text_to_client = 'Wrong password';
-                removeInputError(document.getElementById('username'))
-                showInputError(document.getElementById('password'))
+                removeInputError(username)
+                showInputError(password)
                 break;
             default:
+                removeInputError(username)
+                removeInputError(password)
                 text_to_client = 'Success!';
                 props.setUserID(loginAnswer);
                 props.setRememberMe(document.getElementById('remember_me_input').checked);
@@ -85,16 +89,19 @@ const Login = (props) => {
     useEffect(() => {
         if (signUpAnswer === undefined) return
         let text_to_client;
+        let username = document.getElementById('username')
         switch(signUpAnswer) {
             case -1:
                 text_to_client = 'Username already taken.';
-                showInputError(document.getElementById('username'))
+                markAsError(true, username)
+                showInputError(username)
                 break;
             case -2:
                 text_to_client = 'An error occurred. Please try again late.';
-                removeInputError(document.getElementById('username'))
+                removeInputError(username)
                 break;
             default:
+                removeInputError(username)
                 text_to_client = 'Signed up successfully.';
                 props.setUserID(signUpAnswer);
                 break;
@@ -187,7 +194,14 @@ const Login = (props) => {
 
     //Update red astrix next to erroneous input.
     const markAsError = (error, element) => {
-        let name = 'err_' + element.id.split('_').slice(0,-1).join('_').toString()
+        let name;
+        // Building the appropriate div name, to find the required element (for the pop-up message).
+        if (element.id.split('_').slice(0,-1).join('_').toString() !== '') {
+            name = 'err_' + element.id.split('_').slice(0, -1).join('_').toString()
+        }
+        else {
+            name = 'err_' + element.id
+        }
         if (error) {
             document.getElementById(name).className = 'error_sign'
         } else {
@@ -201,18 +215,25 @@ const Login = (props) => {
         let password = document.getElementById('password_text')
         let confirmPassword = document.getElementById('confirm_password_text')
         let email = document.getElementById('email_text')
+        // Removing all previous error tooltips.
+        removeInputError(document.getElementById('username'))
+        removeInputError(document.getElementById('password'))
+        removeInputError(document.getElementById('confirm_password'))
+        removeInputError(document.getElementById('email'))
         if (password.value.length === 0) {
             // mark as error
             markAsError(true, password)
+            showInputError(document.getElementById('password'))
             input_indicator = false
         } else {
             // unmark as error
             markAsError(false, password)
         }
         // matching passwords
-        if (password.value !== confirmPassword.value || confirmPassword.value.length === 0) {
+        if (password.value !== confirmPassword.value) {
             // mark as error
             markAsError(true, confirmPassword)
+            showInputError(document.getElementById('confirm_password'))
             input_indicator = false
         } else {
             // unmark as error
@@ -220,7 +241,10 @@ const Login = (props) => {
         }
         //validating username
         if (username.value.length > 12 || username.value.length < 3) {
+            // debugger
             markAsError(true, username)
+            let user = document.getElementById('username')
+            showInputError(user)
             input_indicator = false
         } else {
             markAsError(false, username)
@@ -228,6 +252,7 @@ const Login = (props) => {
         // valid email
         if (!email.value.includes('@')) {
             markAsError(true, email)
+            showInputError(document.getElementById('email'))
             input_indicator = false
         } else {
             markAsError(false, email)
