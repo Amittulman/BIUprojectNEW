@@ -54,8 +54,7 @@ const Todo = (props) => {
   }, [props.updating_tasks])
 
   useEffect(() => {
-    if (firstUpdate2.current) {
-      firstUpdate2.current = false
+    if (tasks.length === 0 || props.categories.length === 0) {
       return
     }
     if (!props.isLoaded) {
@@ -72,7 +71,7 @@ const Todo = (props) => {
       // addTask(i+1)
       setTaskNumber(task_number+2)
     }
-  }, [tasks])
+  }, [tasks, props.categories])
 
   useEffect(() => {
     if (props.tasksID.length === 0) return
@@ -244,7 +243,7 @@ const Todo = (props) => {
   }
 
   const addTask = (index, values) => {
-    console.log(values)
+    console.log('VALUES ',values)
     if (values == null) {
       values = {'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'0','constraints':'000000000000000000000', 'pinned_slot':null}
     }
