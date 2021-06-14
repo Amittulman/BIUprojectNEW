@@ -149,12 +149,23 @@
 
 
 .userContainer {
-    display: flex;
-    flex-direction: column;
-    vertical-align: center;
-    margin-left: 25px;
-    padding-top: 25px;
+    position: absolute;
+    top: 100%;
+    left: 2%;
+    width: 300px;
+    animation: username_appear 1.2s forwards;
+    /*font-family: Bookman, URW Bookman L, serif	;*/
 }
+@keyframes username_appear {
+    0% {
+        opacity: 0;
+
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
 
 #site_top {
 }

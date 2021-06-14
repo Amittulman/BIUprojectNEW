@@ -360,9 +360,9 @@ const SiteTop = (props) => {
     return (
         <div id='site_top' className='row flex-grow-0'>
 
-            {/*<div className='userContainer'>*/}
-            {/*    <div className='greeting'>{greeting}, Moshe! 👋</div>*/}
-            {/*</div>*/}
+            <div className='userContainer'>
+                <div className='greeting'>{greeting}, Moshe! 👋</div>
+            </div>
             <div id='login_title'>BeeZee</div>
             <div className='col-2' id='blank_col'/>
             <div data-toggle="tooltip" title="Modify Categories" onClick={showCategories} id='category_button' className='category_button'/>
