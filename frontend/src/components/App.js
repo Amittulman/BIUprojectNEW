@@ -49,7 +49,7 @@ const App = () => {
         console.log(localStorage.getItem('rememberMe'))
         setUserID(localStorage.getItem('userID'))
         setRememberMe(localStorage.getItem('rememberMe'))
-        resizeResponse()
+        // resizeResponse()
 
     }, [])
 
@@ -272,7 +272,8 @@ const App = () => {
     const fixPresentation = (mobile) => {
         let sched = document.getElementById('schedule_parent')
         let todo = document.getElementById('todo_component')
-        let parent = document.getElementById('site_body')
+        // let todo_parent = document.getElementById('todo_parent')
+        if (!sched || !todo) return
         if (mobile.matches){
             if (collapsed) {
                 sched.className = 'row2'
