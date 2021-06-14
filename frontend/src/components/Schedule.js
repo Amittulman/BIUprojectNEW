@@ -16,7 +16,7 @@ const Table = (props) => {
     useEffect(() => {
         setTimeout(() => {
             scrollToThisMoment();
-        }, 0)
+        }, 300)
     }, [])
 
     useEffect(() => {
