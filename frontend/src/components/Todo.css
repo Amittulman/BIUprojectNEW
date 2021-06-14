@@ -85,7 +85,7 @@
 }
 
 .expanded_task, .expanded_task_error, .expanded_task_daytime, .expanded_task_daytime_error{
-  height: 200px;
+  height: 202px;
   /*height: 500px;*/
   background-color: rgba(250,250,250, .3);
   box-shadow: 1px 0px 3px 3px #ccc;
