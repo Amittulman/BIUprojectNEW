@@ -16,7 +16,7 @@ const Table = (props) => {
     useEffect(() => {
         setTimeout(() => {
             scrollToThisMoment();
-        }, 300)
+        }, 500)
     }, [])
 
     useEffect(() => {
@@ -91,7 +91,8 @@ const Table = (props) => {
         let today_slot = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
         today_slot -= (Math.ceil(today_slot/slots_per_day)-1) * slots_per_day
         console.log('BOOM! ', today_slot)
-        document.getElementById('schedule_component1').scrollTop += (window.innerHeight * 0.06) * today_slot;
+        // document.getElementById('schedule_component1').scrollTop += (window.innerHeight * 0.06) * today_slot;
+        document.getElementById('schedule_component1').scrollTo({top:(window.innerHeight * 0.06) * today_slot, behavior:'smooth' })
     }
 
     const getClass = (number) => {
