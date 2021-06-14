@@ -277,6 +277,8 @@ select option {
   background-image: url("../images/thumbtack.svg");
   background-repeat: no-repeat;
   margin-right: 10px;
+  z-index: 999999;
+
 }
 
 .thumbtack_done {
@@ -557,6 +559,9 @@ margin-left: 20px;
 
 .title_input {
   width: 11vw !important;
+  /*min-width: 350px !important;*/
+  /*max-width: 450px !important;*/
+  /*background-color: red !important;*/
 }
 
 .day_of_week{
