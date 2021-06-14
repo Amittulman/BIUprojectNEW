@@ -20,7 +20,7 @@ const Categories = (props) => {
     }, [props.categoryTypes,props.scheduleTrigger])
 
     const getClass = (number) => {
-        console.log('DEF')
+        // console.log('DEF')
         switch(number) {
             case 0:
                 return 'type_a'
@@ -58,12 +58,12 @@ const Categories = (props) => {
     }
 
     const dragStart = (event) => {
-        console.log('start1')
+        // console.log('start1')
         event.dataTransfer.setData('text/plain', event.target.id);
     }
 
     const allowDropCategory = (event) => {
-        console.log('ALLOW DROP CATEGORY')
+        // console.log('ALLOW DROP CATEGORY')
         let ref = props.optionRef.current
         event.preventDefault();
         switch (props.optionRef.current){

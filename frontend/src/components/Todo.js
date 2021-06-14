@@ -278,8 +278,8 @@ const Todo = (props) => {
     }} onChange={(e) => handleChange(e, i)} className={'recurrence recurrence'+values['recurrings']} id={'recurrings'+index}/>;
     let rec_pin = <div className={'row rec_pin'}>{recurrence}{thumbtack}</div>
     let title_and_thumbtack = <span key={'title_and_thumbtack'+index} className='row justify-content-between'>{task_title}{rec_pin}</span>;
-    let duration = <div key={'duration'+index} id={'duration'+index} className='row ttt '><div className={'task_elm'}>Duration:</div>
-      <div className={'col-4 first_row'}>
+    let duration = <div key={'duration'+index} id={'duration'+index} className='row ttt'><div className={'task_elm'}>Duration:</div>
+      <div className={'first_row'}>
         <div id='options_arrow'/>&nbsp;
         <select size='1' id={'duration_options'+index} className={getDuration(values['duration']) === 'null'?'duration_options_hidden':'duration_options'} name='duration' defaultValue={getDuration(values['duration'])} onChange={(e) => handleChange(e, i)}>
           <option value="0.5">0.5</option>
@@ -290,9 +290,9 @@ const Todo = (props) => {
           <option value="3">3</option>
           <option value="null">More</option>
         </select>
-        <input placeholder='____' maxLength={3} id={'input_duration'+i} className={getDuration(values['duration']) === 'null'?'input_duration':'input_duration_hidden'} name='duration' type='text' defaultValue={getDuration(values['duration']) === 'null'?values['duration']/60:''} onChange={(e) => handleChange(e, i)}/>
+        <input placeholder='___' maxLength={3} id={'input_duration'+i} className={getDuration(values['duration']) === 'null'?'input_duration':'input_duration_hidden'} name='duration' type='text' defaultValue={getDuration(values['duration']) === 'null'?values['duration']/60:''} onChange={(e) => handleChange(e, i)}/>
       </div>
-      <div id={'hours_txt'} className={'col-2'}>hours</div>
+      <div>hours</div>
     </div>;
     let priority = <div key={'priority'+index} className='task_elm'>Priority:
       <div className='wrapper_options'><div id='options_arrow'/>&nbsp;</div>
@@ -305,6 +305,7 @@ const Todo = (props) => {
     // let category_id = <div key={'category_id'+index} className='task_elm' onChange={(e) => handleChange(e, i)}>Category:&nbsp;<input name='category_id' type='text' defaultValue={values['category_id']}/></div>;
     let options = [];
     for (let i=0; i<props.categories.length; i++) {
+      // debugger
       options.push(<option value={i}>{props.categories[i]['category_name']}</option>)
     }
     let category_id = <div key={'category_id'+index} className='task_elm' onChange={(e) => handleChange(e, i)}>Category:&nbsp;
@@ -529,13 +530,13 @@ const Todo = (props) => {
       // Check if pinned to a future date.
       let pinned_task = document.getElementById('thumbtack' + task_index)
       let pinned_slot = props.updated_tasks[task_index]['pinned_slot']
-      console.log('HELLO, ', props.updated_tasks[task_index]['pinned_slot'], todays_slot)
+      console.log('HELLO, ', props.updated_tasks[task_index]['pinned_slot'], todays_slot, pinned_slot !== null)
       if (pinned_slot !== null && pinned_slot < todays_slot) {
         pinned_task.classList.add('thumbtack_error')
         task_err = true
         total_err = true
       } else {
-        pinned_task.classList.add('thumbtack_error')
+        pinned_task.classList.remove('thumbtack_error')
       }
       // Present error.
       let container = document.getElementById('task' + task_index)

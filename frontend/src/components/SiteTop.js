@@ -118,7 +118,7 @@ const SiteTop = (props) => {
                     new_cat.style.display = 'block';
                     new_cat.style.marginLeft = '2px';
                 }
-                debugger
+                // debugger
                 new_cat_container.style.visibility = 'hidden';
                 // Update category changes in both frontend and DB.
                 setCategories();

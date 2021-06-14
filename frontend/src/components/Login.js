@@ -27,16 +27,16 @@ const Login = (props) => {
     useEffect(() => {
         // let login = document.getElementById('login_container');
         // let signup = document.getElementById('signup_container');
-        console.log('check login ', localStorage.getItem('rememberMe') === 'true', localStorage.getItem('userID') > 0)
-        console.log('it worths ', localStorage.getItem('rememberMe'))
+        // console.log('check login ', localStorage.getItem('rememberMe') === 'true', localStorage.getItem('userID') > 0)
+        // console.log('it worths ', localStorage.getItem('rememberMe'))
         if (localStorage.getItem('rememberMe') === 'true' && localStorage.getItem('userID') > 0) {
-            console.log('YUPS')
+            // console.log('YUPS')
             history.push('/mainPage')
         }
     }, [])
 
     useEffect(() => {
-        console.log('login user cliced: ', loginUserClicked)
+        // console.log('login user cliced: ', loginUserClicked)
     }, [loginUserClicked])
 
 
@@ -78,11 +78,11 @@ const Login = (props) => {
                 props.setUserID(loginAnswer);
                 props.setRememberMe(document.getElementById('remember_me_input').checked);
                 localStorage.setItem('userID', loginAnswer)
-                console.log('this will be added: ', document.getElementById('remember_me_input').checked)
+                // console.log('this will be added: ', document.getElementById('remember_me_input').checked)
                 localStorage.setItem('rememberMe', document.getElementById('remember_me_input').checked === true)
                 break;
         }
-        console.log(text_to_client)
+        // console.log(text_to_client)
     },[loginAnswer])
 
     //When sign up value changes
@@ -106,7 +106,7 @@ const Login = (props) => {
                 props.setUserID(signUpAnswer);
                 break;
         }
-        console.log(text_to_client)
+        // console.log(text_to_client)
     }, [signUpAnswer])
 
     const unmarkLoginFields = () => {
@@ -274,9 +274,9 @@ const Login = (props) => {
             .then(res=>res.json())
             .then((response) => {
                 if (response.status !== 201) {
-                    console.log("User's tasks hes been sent successfully.");
+                    // console.log("User's tasks hes been sent successfully.");
                     // If successful logging in
-                    console.log('RESPONSE CONTENT: ', response)
+                    // console.log('RESPONSE CONTENT: ', response)
                     if (requestName === 'checkusercredentials') {
                         setLoginAnswer(undefined)
                         setLoginAnswer(response)

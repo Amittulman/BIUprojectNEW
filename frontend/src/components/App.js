@@ -54,12 +54,12 @@ const App = () => {
     }, [])
 
     useEffect(() => {
-        console.log('TASKS !!! ', tasks)
+        // console.log('TASKS !!! ', tasks)
     },[tasks])
 
     useEffect(() => {
         if (userID !== undefined && userID !== null) {
-            console.log('ID IS ', userID)
+            // console.log('ID IS ', userID)
         }
     },[userID])
 
@@ -90,7 +90,7 @@ const App = () => {
     const taskIDTrig = () => {
         let day = new Date()
         trigTasks(timeToSlot(day.getDay(), null, day.getHours(), day.getMinutes()))
-        console.log('TASKS ID FROM trig ', tasksID)
+        // console.log('TASKS ID FROM trig ', tasksID)
         return tasksID
     }
 
@@ -98,12 +98,12 @@ const App = () => {
         if (tasksID.length === 0) {
             fetchTaskID('GetSchedule', userID)
         }
-        console.log('TASKS ID FROM GETSCHEDULE ', tasksID)
+        // console.log('TASKS ID FROM GETSCHEDULE ', tasksID)
         return tasksID
     }
 
     const timeToSlot = (day, time, hours=null, minutes=null) => {
-        console.log('timeToSlot data: day, time. hours, minutes:', day, time, hours, minutes)
+        // console.log('timeToSlot data: day, time. hours, minutes:', day, time, hours, minutes)
         if (hours == null) {
             hours = parseInt(time.substr(0, 2));
             minutes = parseInt(time.substr(3, 2));
@@ -151,8 +151,8 @@ const App = () => {
     }
 
     const trigTasks = (slot) => {
-        console.log('TRIG ', slot)
-        console.log('TRIG ', tasks)
+        // console.log('TRIG ', slot)
+        // console.log('TRIG ', tasks)
         fetch("http://localhost:5000/tasks/trig/"+userID+"/"+slot)
             .then(res => res.json())
             .then(
@@ -299,7 +299,7 @@ const App = () => {
     }
 
     const mainPage = () => {
-        console.log('main page, userid ', userID)
+        // console.log('main page, userid ', userID)
         window.onresize = resizeResponse;
        return (
            <div className="App d-flex flex-column">

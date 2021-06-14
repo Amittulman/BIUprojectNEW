@@ -495,7 +495,7 @@
 }
 
 #todo_parent {
-    /*max-width: 450px;*/
+    max-width: 450px;
     min-width: 350px;
 }
 
