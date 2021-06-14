@@ -4,7 +4,7 @@
     height: 100%;
     /*width: 100%;*/
     padding-right: 25px;
-    margin-left: -15px;
+    /*margin-left: -15px;*/
 }
 
 table {
@@ -118,11 +118,4 @@ table tr td {
 
 #upperPane {
     background-color: red;
-}
-
-@media screen and (max-width: 500px) {
-    /*#schedule_component1 {*/
-    /*    display: none;*/
-    /*}*/
-
 }

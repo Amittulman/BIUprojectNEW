@@ -134,6 +134,8 @@ const SiteTop = (props) => {
             }
             // Showing editing option and marking option.
             new_category.onclick =  (e) => {
+                document.getElementById('cap_msg').style.visibility = 'hidden';
+                document.getElementById('cap_msg').style.opacity = '0';
                 setCurrentCat(i);
                 if (!e.target.id || (!e.target.id.startsWith('added_button') && !e.target.id.startsWith('remove_cat'))) return;
                 props.setOption(i);
@@ -145,7 +147,7 @@ const SiteTop = (props) => {
                     new_cat_container.style.visibility = 'hidden';
                 }
             }
-            container.insertBefore(new_category, container.childNodes[container.childNodes.length-5]);
+            container.insertBefore(new_category, container.childNodes[container.childNodes.length-6]);
         }
         setTotalNewCat(props.categories.length)
     }
@@ -320,7 +322,7 @@ const SiteTop = (props) => {
         new_category.style.marginLeft = '2px'
         // new_category.style.backgroundColor = '2px'
         new_category.onclick =  () => props.setOption(2+categoryColor)
-        container.insertBefore(new_category, container.childNodes[container.childNodes.length-5]);
+        container.insertBefore(new_category, container.childNodes[container.childNodes.length-6]);
         setTotalNewCat(totalNewCat+1)
     }
 
@@ -364,10 +366,18 @@ const SiteTop = (props) => {
             <div id='login_title'>BeeZee</div>
             <div className='col-2' id='blank_col'/>
             <div data-toggle="tooltip" title="Modify Categories" onClick={showCategories} id='category_button' className='category_button'/>
-            {/*<div data-toggle="tooltip" title="Work" id='type_a_button' onClick={()=>props.setOption(0)} className='category_option'>Work</div>*/}
-            {/*<div data-toggle="tooltip" title="Leisure" id='type_b_button' onClick={()=>props.setOption(1)} className='category_option'>Leisure</div>*/}
-            {/*<div id='type_c_button' data-toggle="tooltip" title="Sleep"  onClick={()=>props.setOption(2)} className='category_option'>Sleep</div>*/}
             <div data-toggle="tooltip" title="Add category" id='add_category_button' onClick={(e)=>{
+                if (props.categories[5]['category_name'] !== '') {
+                    document.getElementById('adding_category_container').style.visibility = 'hidden'
+                    hideRest()
+                    document.getElementById('cap_msg').style.visibility = 'visible';
+                    document.getElementById('cap_msg').style.opacity = '1';
+                    setTimeout(() => {
+                        document.getElementById('cap_msg').style.visibility = 'hidden';
+                        document.getElementById('cap_msg').style.opacity = '0';
+                    }, 4000)
+                    return
+                }
                 document.getElementById('category_dialog').value = ''
                 setCurrentCat(()=>getFirstEmptyCat());
                 props.setOption(()=>getFirstEmptyCat());
@@ -398,6 +408,7 @@ const SiteTop = (props) => {
                 <span id='category_accept_changes'/>
                 <span id='category_decline_changes'/>
             </div>
+            <div id='cap_msg'>Cannot add more than 5 categories.</div>
             {/*<div className='col-4'>{login}</div>*/}
             <div id='logout' onClick={LogoutWrapper}>Log out</div>
         </div>

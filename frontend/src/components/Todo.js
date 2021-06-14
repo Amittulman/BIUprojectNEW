@@ -80,7 +80,6 @@ const Todo = (props) => {
   }, [props.tasksID])
 
   useEffect(() => {
-    // TODO - think of a way of an alternative if statement 4 lines below.
     let empty_element = document.getElementById('empty_todo')
     let loading_element = document.getElementById('loading_todo')
     if (Object.keys(tasks_jsx).length === 0) {
@@ -165,6 +164,7 @@ const Todo = (props) => {
     let day = document.getElementById('pinned_choose_day'+index);
     let time = document.getElementById('pinned_choose_time'+index);
     let thumbtack = document.getElementById('thumbtack'+index);
+    // Cancelling pin.
     if (thumbtack.className.includes('thumbtack_done')) {
       day.value = '';
       time.value = null;
@@ -172,8 +172,8 @@ const Todo = (props) => {
       if (temp_arr[index] !== undefined) {
         temp_arr[index].pinned_slot = null
         props.setUpdatedTasks(temp_arr)
+        // Updating pin to task.
       } else {
-        //TODO check if ok
         update_task(index)
         let task_copy = Object.assign({}, tasks[index])
         delete task_copy['task_id']
@@ -192,6 +192,7 @@ const Todo = (props) => {
       calendar.style.opacity = '1';
     }
     let pin = document.getElementById('thumbtack'+index);
+    // Pin design.
     if (pin.classList.contains('thumbtack_done')) {
       pin.classList.remove('thumbtack_done');
       pin.classList.add('thumbtack');
@@ -245,7 +246,7 @@ const Todo = (props) => {
   const addTask = (index, values) => {
     console.log(values)
     if (values == null) {
-      values = {'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'-1','constraints':'000000000000000000000', 'pinned_slot':null}
+      values = {'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'0','constraints':'000000000000000000000', 'pinned_slot':null}
     }
     if (values['constraints'] === '111111111111111111111')
       values['constraints'] = '000000000000000000000'
@@ -577,7 +578,6 @@ const Todo = (props) => {
   }
 
   // TODO - prevent changing order of edited existing tasks after submitting.
-  // TODO - try changing logic: if edited, send to 'update task' and do not remove and post.
   const onSubmitHandler = (event) => {
     event.preventDefault();
     if (checkInputs()) return
@@ -589,7 +589,7 @@ const Todo = (props) => {
     props.setUpdatedTasks({})
     setRemovedTasks([])
     setTodoIDs({})
-    setTasksJsx(new Set()) //TODO - remove
+    setTasksJsx(new Set())
     props.setToOptimize(true)
     props.handleCategoriesSubmission()
     props.setCategoryTrigger(true)
@@ -737,7 +737,7 @@ const Todo = (props) => {
     } else if (nam === 'category_id') {
       // debugger
     }
-    let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'-1','constraints':'000000000000000000000', 'pinned_slot':null};
+    let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'0','constraints':'000000000000000000000', 'pinned_slot':null};
     let updated = updatedRef.current
     // If task is new, create a new instance of it, else edit existing/
     //removes old task when submitting form.
@@ -782,7 +782,7 @@ const Todo = (props) => {
     //console.log('nam: ',nam)
     //console.log('val: ',val)
     // //console.log('print: ', '1'.repeat(val) + '0' + '1'.repeat(20-val))
-    let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'-1','constraints':'000000000000000000000', 'pinned_slot':null};
+    let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'0','constraints':'000000000000000000000', 'pinned_slot':null};
     let updated = updatedRef.current
     // If task is new, create a new instance of it, else edit existing/
     //removes old task when submitting form.
@@ -831,7 +831,7 @@ const Todo = (props) => {
             <div id='empty_todo'/>
             <div id='loading_todo'/>
           </form><br/>
-          <div className={'bottom_content'}>
+          <div id={'bottom_content'}>
             <div id='add_a_new_task' onClick={() => addTask(task_number)}/>
             <input id='submit_button' className="btn btn-primary btn-md" type='submit' form='container'/>
           </div>

@@ -12,8 +12,6 @@ const Table = (props) => {
     const [tasksDict, setTasksDict] = useState([])
     const [draggedGroup, setDraggedGroup] = useState([])
     const prevs = useRef({tasksID, tasksDict, tasks})
-    let day = ['Time', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    // let day = ['Time', 'S', 'M', 'T', 'W', 'TH', 'F', 'SA'];
 
     useEffect(() => {
         setTimeout(() => {
@@ -75,13 +73,13 @@ const Table = (props) => {
                                           draggable='true' onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop}
                                           onDragLeave={leaveDropArea}><div className={passed_day + ' test123'}>{data}</div></td>);//{data}
                 }
-                jsx.push(<tr key={'tr' + i}><th key={'th' + i}>{day[i]}</th>{content}</tr>);
+                jsx.push(<tr key={'tr' + i}><th key={'th' + i}>{props.days[i]}</th>{content}</tr>);
             }
             let table = [<table key='table_schedule'><tbody key='tbody_schedule'>{time_jsx}{jsx}</tbody></table>]
             props.setScheduleTable(table)
             props.setTable(table)
         }
-    }, [tasks, tasksID, props.categoryTrigger, props.categories])
+    }, [tasks, tasksID, props.categoryTrigger, props.categories, props.days])
 
     let content = [];
     let jsx = [];

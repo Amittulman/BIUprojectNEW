@@ -184,9 +184,7 @@ const Login = (props) => {
             markAsError(false, username)
         }
         // If indicator is true, some fields are not valid, so do not sign up with given data.
-        if (!input_indicator) {
-            // TODO - show indication on screen, do not send anything to DB.
-        } else {
+        if (input_indicator) {
             let apiParams = {"user_name":username.value, "user_pass": password.value}
             APICall('checkusercredentials', apiParams)
         }
@@ -258,9 +256,7 @@ const Login = (props) => {
             markAsError(false, email)
         }
         // If indicator is true, some fields are not valid, so do not sign up with given data.
-        if (!input_indicator) {
-            // TODO - show indication on screen, do not send anything to DB.
-        } else {
+        if (input_indicator) {
             let apiParams = {"user_name":username.value, "user_pass": password.value}
             APICall('postnewuser', apiParams)
         }
@@ -292,7 +288,6 @@ const Login = (props) => {
                     } else {
                         setSignUpAnswer(undefined)
                         setSignUpAnswer(response)
-                        // TODO - add default categories to new user.
                         if (response > 0)
                         {history.push('/')}
                     }
@@ -323,7 +318,7 @@ const Login = (props) => {
         else
             e.childNodes[2].classList.replace('input_error', 'hidden_input_error')
     }
-// TODO - add effect to error in sign up .
+
     const LoginPage = () =>
     {
         return(

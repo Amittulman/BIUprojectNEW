@@ -67,7 +67,7 @@
 .category_option {
     margin-top: 25px;
     display: block;
-    transition: background-color 1s ease-out, margin-left 1s ease-out, opacity 1s ease, visibility 1s ease;
+    transition: background-color 0.4s ease-out, margin-left 0.4s ease-out, opacity 0.4s ease-out, visibility 0.4s ease-out;
     opacity: 0;
     visibility: hidden;
     margin-left: -30px;
@@ -495,7 +495,7 @@
 }
 
 #todo_parent {
-    max-width: 450px;
+    /*max-width: 450px;*/
     min-width: 350px;
 }
 
@@ -553,14 +553,47 @@ input:checked + .slider:before {
     transform: translateX(40px);
 }
 
+.test_wrapper {
+}
 
-@media screen and (max-width: 500px) {
-    #todo_parent {
-        display: none;
-    }
-
-    #schedule_component {
-
-    }
+.row1 {
+    position: fixed;
+    /*background-color: red;*/
+    /*padding-top: 100px;*/
+    /*margin-top: 120vh;*/
+    /*margin-left: 200px;*/
+    /*padding-right: 200px;*/
 
 }
+
+.collapsed_row2 {
+    /*display: flex;*/
+    margin-top: 100vh;
+    /*width: 1201% !important;*/
+    margin-left: 20px;
+    /*width: 20px;*/
+    /*overflow-y: hidden;*/
+}
+
+.row2 {
+    /*display: flex;*/
+    /*width: 1201% !important;*/
+    margin-left: 20px;
+    /*width: 20px;*/
+    /*overflow-y: hidden;*/
+}
+
+.tst2 {
+    margin-left: 1vw !important;
+}
+
+/*@media screen and (max-width: 500px) {*/
+/*    #todo_parent {*/
+/*        display: none;*/
+/*    }*/
+
+/*    #schedule_component {*/
+
+/*    }*/
+
+/*}*/
