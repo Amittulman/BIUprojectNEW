@@ -42,6 +42,7 @@ const App = () => {
     const [userID, setUserID] = useState()
 
     useEffect(() => {
+        window.addEventListener('click', detectOutsideClicking)
         console.log(localStorage.getItem('userID'))
         console.log(localStorage.getItem('rememberMe'))
         setUserID(localStorage.getItem('userID'))

@@ -255,7 +255,7 @@ select option {
   scroll-snap-type: y proximity;
 }
 
-.thumbtack, .thumbtack_clicked, .recurrence {
+.thumbtack, .thumbtack_clicked,.thumbtack_error, .recurrence {
   width: 30px;
   height: 30px;
   border-radius: 50%;
@@ -264,6 +264,22 @@ select option {
   background-image: url("../images/thumbtack.svg");
   background-repeat: no-repeat;
   margin-right: 10px;
+}
+
+.thumbtack_done {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  transition: box-shadow 0.2s ease-out, margin-left 0.2s ease-out, opacity 0.2s ease-out;
+  cursor: pointer;
+  background-image: url("../images/thumbtack_hover.svg");
+  background-repeat: no-repeat;
+  margin-right: 10px;
+}
+
+
+.thumbtack_error {
+  animation: error 1.5s infinite !important;
 }
 
 .recurrence {
@@ -331,18 +347,6 @@ select option {
   /*background-color: yellow;*/
 }
 
-.thumbtack_done {
-  animation: inout 3.5 forwards;
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  transition: box-shadow 0.2s ease-out, margin-left 0.2s ease-out, opacity 0.2s ease-out;
-  cursor: pointer;
-  background-image: url("../images/thumbtack_hover.svg");
-  background-repeat: no-repeat;
-  margin-right: 5px;
-}
-
 .recurrence {
   width: 30px;
   height: 30px;
@@ -402,8 +406,11 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 }
 
 .pinned_choose_time {
-  margin-top: 64px;
-  margin-left: 11%;
+  margin-top: 55px;
+  margin-left: 8%;
+  background-color: white;
+  border: black 1px solid;
+  width: 115px;
 }
 
 

@@ -487,6 +487,8 @@ const Todo = (props) => {
   ], { duration: 500, fill: 'forwards', easing: 'ease-in'}];
 
   const checkInputs = () => {
+    let day = new Date()
+    let todays_slot = props.timeToSlot(day.getDay(), null, day.getHours(), day.getMinutes())
     let total_err = false
     let pastDueErr = false
     // Go through all jsx elements.
@@ -517,12 +519,22 @@ const Todo = (props) => {
       // Check duration length.
       let duration = document.getElementById('duration' + task_index)
       if (props.updated_tasks[task_index]['duration'] > 7*60) {
-        console.log('YABADOO ', props.updated_tasks[task_index]['duration'])
         duration.classList.add('task_error')
         task_err = true
         total_err = true
       } else {
         duration.classList.remove('task_error')
+      }
+      // Check if pinned to a future date.
+      let pinned_task = document.getElementById('thumbtack' + task_index)
+      let pinned_slot = props.updated_tasks[task_index]['pinned_slot']
+      console.log('HELLO, ', props.updated_tasks[task_index]['pinned_slot'], todays_slot)
+      if (pinned_slot !== null && pinned_slot < todays_slot) {
+        pinned_task.classList.add('thumbtack_error')
+        task_err = true
+        total_err = true
+      } else {
+        pinned_task.classList.add('thumbtack_error')
       }
       // Present error.
       let container = document.getElementById('task' + task_index)
