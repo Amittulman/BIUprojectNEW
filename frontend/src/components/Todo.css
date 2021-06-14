@@ -208,6 +208,10 @@ option:hover {
   padding-left: 20px;
 }
 
+.category_options {
+  padding-left: 0px;
+}
+
 .duration_options {
   direction: rtl;
 }
@@ -233,7 +237,7 @@ select option {
 }
 
 
-#options_arrow {
+#duration_options_arrow, #priority_options_arrow, #category_options_arrow {
   width: 25px;
   height: 25px;
   background: url("../images/expand_more.svg") no-repeat;
@@ -243,6 +247,14 @@ select option {
   position: absolute;
   margin-left: 10px;
   z-index: -1;
+}
+
+#priority_options_arrow {
+  margin-left: 0;
+}
+
+#category_options_arrow {
+  margin-left: -10px;
 }
 
 .wrapper_options {

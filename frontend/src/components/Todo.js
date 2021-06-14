@@ -279,7 +279,7 @@ const Todo = (props) => {
     let title_and_thumbtack = <span key={'title_and_thumbtack'+index} className='row justify-content-between'>{task_title}{rec_pin}</span>;
     let duration = <div key={'duration'+index} id={'duration'+index} className='row ttt'><div className={'task_elm'}>Duration:</div>
       <div className={'first_row'}>
-        <div id='options_arrow'/>&nbsp;
+        <div id='duration_options_arrow'/>&nbsp;
         <select size='1' id={'duration_options'+index} className={getDuration(values['duration']) === 'null'?'duration_options_hidden':'duration_options'} name='duration' defaultValue={getDuration(values['duration'])} onChange={(e) => handleChange(e, i)}>
           <option value="0.5">0.5</option>
           <option value="1">1</option>
@@ -294,7 +294,7 @@ const Todo = (props) => {
       <div>hours</div>
     </div>;
     let priority = <div key={'priority'+index} className='task_elm'>Priority:
-      <div className='wrapper_options'><div id='options_arrow'/>&nbsp;</div>
+      <div className='wrapper_options'><div id='priority_options_arrow'/>&nbsp;</div>
       <select id='priority_options' name='priority' defaultValue={values['priority']} onChange={(e) => handleChange(e, i)}>
         <option value="0">None</option>
         <option value="1">Low</option>
@@ -308,7 +308,7 @@ const Todo = (props) => {
       options.push(<option value={i}>{props.categories[i]['category_name']}</option>)
     }
     let category_id = <div key={'category_id'+index} className='task_elm' onChange={(e) => handleChange(e, i)}>Category:&nbsp;
-      <div className='wrapper_options'><div id='options_arrow'/>&nbsp;</div>
+      <div className='wrapper_options'><div id='category_options_arrow'/>&nbsp;</div>
       <select className='category_options' name='category_id' defaultValue={values['category_id']} onChange={(e) => handleChange(e, i)}>
         {options}
       </select>
