@@ -245,7 +245,7 @@ const Todo = (props) => {
   const addTask = (index, values) => {
     console.log('VALUES ',values)
     if (values == null) {
-      values = {'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'0','constraints':'000000000000000000000', 'pinned_slot':null}
+      values = {'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'-1','constraints':'000000000000000000000', 'pinned_slot':null}
     }
     if (values['constraints'] === '111111111111111111111')
       values['constraints'] = '000000000000000000000'
@@ -302,10 +302,10 @@ const Todo = (props) => {
         <option value="3">High</option>
       </select></div>;
     // let category_id = <div key={'category_id'+index} className='task_elm' onChange={(e) => handleChange(e, i)}>Category:&nbsp;<input name='category_id' type='text' defaultValue={values['category_id']}/></div>;
-    let options = [];
+    let options = [<option value={-1}>{'None'}</option>];
     for (let i=0; i<props.categories.length; i++) {
-      // debugger
-      options.push(<option value={i}>{props.categories[i]['category_name']}</option>)
+      if (props.categories[i]['category_name'] !== '')
+        options.push(<option value={i}>{props.categories[i]['category_name']}</option>)
     }
     let category_id = <div key={'category_id'+index} className='task_elm' onChange={(e) => handleChange(e, i)}>Category:&nbsp;
       <div className='wrapper_options'><div id='category_options_arrow'/>&nbsp;</div>
