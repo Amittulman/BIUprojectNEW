@@ -393,9 +393,9 @@ export class TasksDal {
 
     const res = await this.db.from(USERS_TABLE).select('user_name').where('user_id',parseInt(user_id));
     if(res[0] === undefined){
-      return null;
+      return "-1";
     }
-    return res[0]['user_name'];
+    return "{\"user_name\":\""+res[0]['user_name']+"\"}";
   }
 
 //Categories
