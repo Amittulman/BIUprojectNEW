@@ -275,32 +275,33 @@ input:focus {
 
 #username_input_error_signup {
     position: absolute;
-    margin-top: -5px;
+    /*margin-top: -5px;*/
     margin-left: 65px;
 }
 
-#username_input_error_signup:after {
-    content: 'Username is already taken.';
-}
+/*#username_input_error_signup:after {*/
+/*    content: 'Username is already taken.';*/
+/*}*/
 
 #password_input_error_signup {
     position: absolute;
     margin-left: 65px;
 }
 
-#password_input_error_signup:after {
-    content: 'Password is incorrect.';
-}
+/*#password_input_error_signup:after {*/
+/*    content: 'Password is incorrect.';*/
+/*}*/
 
 #confirm_password_input_error_signup {
     position: absolute;
     margin-left: 110px;
+    font-size: 11px;
 }
 
-#confirm_password_input_error_signup:after {
-    content: 'Passwords do not match.';
-    font-size: smaller;
-}
+/*#confirm_password_input_error_signup:after {*/
+/*    !*content: 'Passwords do not match.';*!*/
+/*    font-size: smaller;*/
+/*}*/
 
 #email_input_error_signup {
     position: absolute;

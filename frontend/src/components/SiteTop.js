@@ -105,7 +105,7 @@ const SiteTop = (props) => {
         let cats = document.getElementsByClassName('user_category')
         for (let i=0; i<cats.length; i++) {
             if (cats[i].innerText === '') continue
-            // debugger
+            // //debugger
             cats[i].childNodes[1].style.visibility = 'hidden';
         }
     }
@@ -140,7 +140,7 @@ const SiteTop = (props) => {
                     new_cat.style.display = 'block';
                     new_cat.style.marginLeft = '2px';
                 }
-                // debugger
+                // //debugger
                 new_cat_container.style.visibility = 'hidden';
                 // Update category changes in both frontend and DB.
                 setCategories();

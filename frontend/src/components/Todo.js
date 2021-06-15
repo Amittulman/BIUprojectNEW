@@ -120,7 +120,7 @@ const Todo = (props) => {
     setTimeout(()=> {
       setTasksJsx(jsxRef.current.filter(item => item.props.id !== 'task_container' + i))
     }, timer)
-    debugger
+    //debugger
     for (let [key, value] of Object.entries(props.updated_tasks)) {
       if (value['temp_task_id'] === i) {
         let clone = props.updated_tasks;
@@ -516,7 +516,7 @@ const Todo = (props) => {
       let temp_task = document.getElementById('title_textbox' + task_index)
       // If title is too long
       if (props.updated_tasks[task_index]['task_title'].length > 20) {
-        // debugger;
+        // //debugger;
         temp_task.classList.add('task_error')
         task_err = true
         total_err = true
@@ -741,7 +741,7 @@ const Todo = (props) => {
       if (current_value === 7) current_value = 0;
       val = current_value + 1;
     } else if (nam === 'category_id') {
-      // debugger
+      // //debugger
     }
     let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'0','constraints':'000000000000000000000', 'pinned_slot':null};
     let updated = updatedRef.current

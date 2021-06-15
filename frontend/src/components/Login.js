@@ -62,7 +62,7 @@ const Login = (props) => {
         let password = document.getElementById('password')
         if (loginAnswer === undefined) return
         let text_to_client;
-        debugger
+        //debugger
         switch(loginAnswer) {
             case -1:
                 text_to_client = 'Wrong username.';
@@ -173,14 +173,14 @@ const Login = (props) => {
         let password = document.getElementById('password_text')
         if (password.value.length === 0) {
             // mark as error
-            markAsError(true, password)
+            markAsError(true, password, 'No password was entered.')
             input_indicator = false
         } else {
             // unmark as error
             markAsError(false, password)
         }
         //validating username
-        if (username.value.length > 12 || username.value.length < 4) {
+        if (username.value.length > 8 || username.value.length < 4) {
             markAsError(true, username)
             input_indicator = false
         } else {
@@ -194,19 +194,30 @@ const Login = (props) => {
     }
 
     //Update red astrix next to erroneous input.
-    const markAsError = (error, element) => {
+    const markAsError = (error, element, msg='') => {
         let name;
+        let name2;
         // Building the appropriate div name, to find the required element (for the pop-up message).
         if (element.id.split('_').slice(0,-1).join('_').toString() !== '') {
             name = 'err_' + element.id.split('_').slice(0, -1).join('_').toString()
+            if (location.pathname === '/signup')
+                name2 = element.id.split('_').slice(0, -1).join('_').toString() + '_input_error_signup'
         }
         else {
             name = 'err_' + element.id
+            if (location.pathname === '/signup')
+                name2 = element.id + '_input_error_signup'
         }
         if (error) {
+            // debugger
             document.getElementById(name).className = 'error_sign'
+            if (location.pathname === '/signup')
+                document.getElementById(name2).textContent = msg
+            // document.getElementById(name).textContent = 'msgmsg'
         } else {
             document.getElementById(name).className = 'no_error_sign'
+            if (location.pathname === '/signup')
+                document.getElementById(name2).textContent = msg
         }
     }
 
@@ -215,7 +226,7 @@ const Login = (props) => {
         let username = document.getElementById('username_text')
         let password = document.getElementById('password_text')
         let confirmPassword = document.getElementById('confirm_password_text')
-        // debugger
+        // //debugger
         // let email = document.getElementById('email_text')
         // Removing all previous error tooltips.
         removeInputError(document.getElementById('username'))
@@ -224,7 +235,7 @@ const Login = (props) => {
         // removeInputError(document.getElementById('email'))
         if (password.value.length === 0) {
             // mark as error
-            markAsError(true, password)
+            markAsError(true, password, 'No password was entered.')
             showInputError(document.getElementById('password'))
             input_indicator = false
         } else {
@@ -234,7 +245,7 @@ const Login = (props) => {
         // matching passwords
         if (password.value !== confirmPassword.value) {
             // mark as error
-            markAsError(true, confirmPassword)
+            markAsError(true, confirmPassword, 'passwords do not match.')
             showInputError(document.getElementById('confirm_password'))
             input_indicator = false
         } else {
@@ -243,13 +254,13 @@ const Login = (props) => {
         }
         //validating username
         if (username.value.length > 12 || username.value.length < 3) {
-            // debugger
-            markAsError(true, username)
+            // //debugger
+            markAsError(true, username, 'Please use 4-8 characters.')
             let user = document.getElementById('username')
             showInputError(user)
             input_indicator = false
         } else {
-            markAsError(false, username)
+            markAsError(false, username, 'Username is already taken.')
         }
         // valid email
         // if (!email.value.includes('@')) {
@@ -284,12 +295,12 @@ const Login = (props) => {
             .then(res=>res.json())
             .then((response) => {
                 if (response.status !== 201) {
-                    debugger
+                    //debugger
                     // If successful logging in
                     if (requestName === 'checkusercredentials') {
                         bcryptjs.compare(apiParams['user_pass'], response['pass'], function(err, result) {
                             if (result) {
-                                debugger
+                                //debugger
                                     setLoggedIn(true)
                                     setLoginAnswer(undefined)
                                     setLoginAnswer(response['user_id'])
@@ -307,7 +318,7 @@ const Login = (props) => {
                         // setLoginAnswer(response)
                     // If successful signing up.
                     } else {
-                        debugger
+                        //debugger
                         setSignUpAnswer(undefined)
                         setSignUpAnswer(response['user_id'])
                         history.push('/')
