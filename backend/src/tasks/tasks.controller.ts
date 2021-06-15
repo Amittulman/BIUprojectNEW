@@ -253,6 +253,11 @@ updateScheduledTasks(@Body() tasksArray: Array<any>) {
     return this.tasksService.postNewUser(user);
   }
 
+  @Get('getUsernameByID/:user_id')
+  getUsernameByID(@Param('user_id')user_id:string){
+    return this.tasksService.getUsernameByID(user_id);
+  }
+
   /// Categories Lookup:
   @Post('PostCategories/')
   postCategories(@Body() categories: Array<CreateCategoryDto>) {

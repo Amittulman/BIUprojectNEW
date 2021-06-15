@@ -110,6 +110,10 @@ export class TasksService {
     }
 
   }
+  async getUsernameByID(user_id: string):Promise<string>{
+    return this.tasksDal.getUsernameByID(user_id);
+  }
+
 
   async postCategories(categories: Array<CreateCategoryDto>): Promise<any>{
     return this.tasksDal.postCategories(categories);

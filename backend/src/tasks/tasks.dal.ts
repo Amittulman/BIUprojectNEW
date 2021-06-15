@@ -389,6 +389,15 @@ export class TasksDal {
     return suc;
   }
 
+  async getUsernameByID(user_id: string){
+
+    const res = await this.db.from(USERS_TABLE).select('user_name').where('user_id',parseInt(user_id));
+    if(res[0] === undefined){
+      return null;
+    }
+    return res[0]['user_name'];
+  }
+
 //Categories
   async postCategories(categories: Array<CreateCategoryDto>){
 
