@@ -89,7 +89,7 @@ export class TasksService {
     }
     return ret_user['user_pass'];
     if(ret_user['user_pass'] === user['user_pass']){
-      return ret_user['user_id'];
+      return "{\"pass\":\""+ret_user['user_id']+"\"}";
     }
     else{
       return "-2"
