@@ -13,7 +13,7 @@
     width: 20vw;
     min-width: 300px;
     height: 90%;
-    min-height: 450px;
+    /*min-height: 450px;*/
     text-align: center;
     border-radius: 15px 50px;
     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
@@ -21,6 +21,7 @@
     box-sizing: border-box;
     opacity: 1;
     transition: visibility 0.4s ease-in, opacity 0.4s ease-in;
+    min-height: 550px;
 }
 
 .login_container_gone {
@@ -117,6 +118,10 @@ input:focus {
     user-select: none;
 }
 
+.signing_up {
+    /*margin-bottom: 100px;*/
+}
+
 
 .log_in, .signing_up {
     border-radius: 15px;
@@ -126,6 +131,10 @@ input:focus {
     width: 200px;
     box-sizing: border-box;
     transition: background-color 0.2s linear;
+}
+
+.log_in {
+    /*margin-bottom: 100px;*/
 }
 
 .sign_up:hover {
@@ -156,6 +165,7 @@ input:focus {
     font-size: smaller;
     cursor: pointer;
     user-select: none;
+
 }
 
 .remember_me:hover {
@@ -165,6 +175,11 @@ input:focus {
 .forgot_password {
     cursor: pointer;
     user-select: none;
+    /*margin-bottom: 100px;*/
+}
+
+.back_to_login {
+    margin-bottom: 100px;
 }
 
 .forgot_password:hover {
@@ -188,7 +203,9 @@ input:focus {
 }
 
 #remember_me_container {
-    margin-right: 45%;
+    position: absolute;
+    margin-right: 40%;
+    top: 60%;
 }
 
 #remember_me_label {

@@ -1,11 +1,11 @@
 import './SiteTop.css'
 import React, {useEffect, useRef, useState} from 'react';
-import {classNamesShape} from "react-transition-group/cjs/utils/PropTypes";
 
 const slots_per_day = 24*2;
 
 const SiteTop = (props) => {
     const [test, setTest] = useState(true);
+    const [username, setUsername] = useState();
     const [currentCat, setCurrentCat] = useState();
     const currentCatRef = useRef();
     currentCatRef.current = currentCat;
@@ -15,9 +15,18 @@ const SiteTop = (props) => {
     const [totalNewCat, setTotalNewCat] = useState(0);
 
     useEffect(() => {
-        if (props.userID !== undefined)
+        if (props.userID !== undefined){
             getCategories();
+            getUsername()
+        }
     }, [props.userID])
+
+    useEffect(() => {
+        if (!username) return
+        let greeting = document.getElementById('greeting')
+        greeting.style.visibility = 'visible';
+        greeting.style.opacity = '1'
+    }, [username])
 
     useEffect(() => {
         console.log('TRIGGERED! ', props.categories)
@@ -40,7 +49,20 @@ const SiteTop = (props) => {
                     console.log('Get categories result: ', result);
                     if (result.length === 0)
                         result = getDefaultCategories();
-                    props.setCategories(result);
+                    props.setCategories(result['username']);
+                })
+            .catch((error) => {
+                console.log(error)
+            });
+    }
+
+    const getUsername = () => {
+        fetch("http://localhost:5000/tasks/getUsernameByID/"+props.userID)
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    console.log('Username received: ', result);
+                    setUsername(result);
                 })
             .catch((error) => {
                 console.log(error)
@@ -359,9 +381,8 @@ const SiteTop = (props) => {
     else greeting = 'Good evening'
     return (
         <div id='site_top' className='row flex-grow-0'>
-
             <div className='userContainer'>
-                <div className='greeting'>{greeting}, Moshe! 👋</div>
+                <div id='greeting'>{greeting}, {username}! 👋</div>
             </div>
             <div id='login_title'>BeeZee</div>
             <div className='col-2' id='blank_col'/>

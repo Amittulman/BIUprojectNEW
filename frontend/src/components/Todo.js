@@ -54,6 +54,10 @@ const Todo = (props) => {
   }, [props.updating_tasks])
 
   useEffect(() => {
+    console.log('TASKS: ', tasks)
+  }, [tasks])
+
+  useEffect(() => {
     if (tasks.length === 0 || props.categories.length === 0) {
       return
     }
@@ -112,9 +116,11 @@ const Todo = (props) => {
       document.getElementById('task_container'+i).classList.add('removed_container_expanded')
       timer = 580
     }
+    // Removing presented task from screen.
     setTimeout(()=> {
       setTasksJsx(jsxRef.current.filter(item => item.props.id !== 'task_container' + i))
     }, timer)
+    debugger
     for (let [key, value] of Object.entries(props.updated_tasks)) {
       if (value['temp_task_id'] === i) {
         let clone = props.updated_tasks;
