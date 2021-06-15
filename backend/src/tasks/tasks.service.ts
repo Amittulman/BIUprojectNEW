@@ -104,7 +104,7 @@ export class TasksService {
       return "-1";
     }
     else{
-      return "-2";
+      return res['code'];
     }
 
   }
