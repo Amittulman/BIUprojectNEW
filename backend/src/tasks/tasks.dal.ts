@@ -104,17 +104,40 @@ export class TasksDal {
 
     console.log(tasks);
     const queries = [];
-    tasks.forEach(task=>{ const i = 0;
-      queries.push(
-          "update `tasks_table` set `duration` = " + task.duration +
+    tasks.forEach(task=>{
+    if(task.task_id===undefined){
+      task.task_id = null;
+    }
+
+      const q = "INSERT INTO "+TASK_TABLE+" VALUES(" +
+          task.task_id+", " +
+          task.user_id+", '" +
+          task.task_title+"', " +
+          task.duration+", " +
+          task.priority+", " +
+          task.category_id+", " +
+          task.constraints+", " +
+          task.recurrings+"," +
+          task.pinned_slot+")ON DUPLICATE KEY UPDATE " +
+          "`duration` = " + task.duration +
           ", `task_title` = '" + task.task_title +
           "', `priority` = " + task.priority +
           ", `category_id` = " + task.category_id+
           ", `constraints` = '" + task.constraints+
           "', `recurrings` = " + task.recurrings +
-          " where `task_id`=" + task.task_id
-      )
+          ", `pinned_slot` = " + task.pinned_slot
+      queries.push(q)
     })
+    //
+    // "INSERT INTO "+CATEGORY_LOOKUP_TABLE+" VALUES(" +
+    // category.user_id +
+    // ", " + category.category_i   d +
+    // ", '" + category.category_name +
+    // "', '" + category.color +
+    // "') ON DUPLICATE KEY UPDATE " +
+    // "category_name='" + category.category_name +
+    // "', color='" + category.color +
+    // "'"
 
   // console.log(queries);
   return this.db.transaction(trx => {
