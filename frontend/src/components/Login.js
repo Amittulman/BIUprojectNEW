@@ -3,14 +3,15 @@ import React, {useState, useEffect, useRef} from 'react'
 import { Switch, Route, Redirect, withRouter } from 'react-router';
 import { Link, useLocation, useHistory } from 'react-router-dom';
 import { TransitionGroup, CSSTransition} from "react-transition-group";
-
+// import 'bcrypt'
+const bcryptjs = require('bcryptjs');
 
 const Login = (props) => {
     const location = useLocation();
     const [loginUserClicked, setLoginUserClicked] = useState(false);
     const [loginPassClicked, setLoginPassClicked] = useState(false);
     const [rePassClicked, setRePassClicked] = useState(false);
-    const [emailClicked, setEmailClicked] = useState(false);
+    // const [emailClicked, setEmailClicked] = useState(false);
     const [signUpUserClicked, setSignUpUserClicked] = useState(false);
     const [signUpPassClicked, setSignUpPassClicked] = useState(false);
     const [loginAnswer, setLoginAnswer] = useState();
@@ -22,7 +23,8 @@ const Login = (props) => {
     const signup_userNode = useRef();
     const signup_passNode = useRef();
     const signup_rePassNode = useRef();
-    const signup_emailNode = useRef();
+    // const signup_emailNode = useRef();
+
 
     useEffect(() => {
         // let login = document.getElementById('login_container');
@@ -60,6 +62,7 @@ const Login = (props) => {
         let password = document.getElementById('password')
         if (loginAnswer === undefined) return
         let text_to_client;
+        //debugger
         switch(loginAnswer) {
             case -1:
                 text_to_client = 'Wrong username.';
@@ -117,13 +120,13 @@ const Login = (props) => {
     }
 
     const unmarkSignUpFields = () => {
-        signup_emailNode.current.childNodes[1].classList.remove('input_clicked')
+        // signup_emailNode.current.childNodes[1].classList.remove('input_clicked')
         signup_rePassNode.current.childNodes[1].classList.remove('input_clicked')
         signup_passNode.current.childNodes[1].classList.remove('input_clicked')
         signup_userNode.current.childNodes[1].classList.remove('input_clicked')
         setSignUpPassClicked(false)
         setSignUpUserClicked(false)
-        setEmailClicked(false)
+        // setEmailClicked(false)
         setRePassClicked(false)
     }
 
@@ -155,10 +158,10 @@ const Login = (props) => {
                 signup_rePassNode.current.childNodes[1].classList.add('input_clicked')
                 setRePassClicked(true);
                 break;
-            case signup_emailNode.current && signup_emailNode.current.childNodes[3]:
-                signup_emailNode.current.childNodes[1].classList.add('input_clicked')
-                setEmailClicked(true);
-                break;
+            // case signup_emailNode.current && signup_emailNode.current.childNodes[3]:
+            //     signup_emailNode.current.childNodes[1].classList.add('input_clicked')
+            //     setEmailClicked(true);
+            //     break;
             default:
                 break;
         }
@@ -170,14 +173,14 @@ const Login = (props) => {
         let password = document.getElementById('password_text')
         if (password.value.length === 0) {
             // mark as error
-            markAsError(true, password)
+            markAsError(true, password, 'No password was entered.')
             input_indicator = false
         } else {
             // unmark as error
             markAsError(false, password)
         }
         //validating username
-        if (username.value.length > 12 || username.value.length < 4) {
+        if (username.value.length > 8 || username.value.length < 4) {
             markAsError(true, username)
             input_indicator = false
         } else {
@@ -191,19 +194,30 @@ const Login = (props) => {
     }
 
     //Update red astrix next to erroneous input.
-    const markAsError = (error, element) => {
+    const markAsError = (error, element, msg='') => {
         let name;
+        let name2;
         // Building the appropriate div name, to find the required element (for the pop-up message).
         if (element.id.split('_').slice(0,-1).join('_').toString() !== '') {
             name = 'err_' + element.id.split('_').slice(0, -1).join('_').toString()
+            if (location.pathname === '/signup')
+                name2 = element.id.split('_').slice(0, -1).join('_').toString() + '_input_error_signup'
         }
         else {
             name = 'err_' + element.id
+            if (location.pathname === '/signup')
+                name2 = element.id + '_input_error_signup'
         }
         if (error) {
+            // debugger
             document.getElementById(name).className = 'error_sign'
+            if (location.pathname === '/signup')
+                document.getElementById(name2).textContent = msg
+            // document.getElementById(name).textContent = 'msgmsg'
         } else {
             document.getElementById(name).className = 'no_error_sign'
+            if (location.pathname === '/signup')
+                document.getElementById(name2).textContent = msg
         }
     }
 
@@ -212,15 +226,16 @@ const Login = (props) => {
         let username = document.getElementById('username_text')
         let password = document.getElementById('password_text')
         let confirmPassword = document.getElementById('confirm_password_text')
-        let email = document.getElementById('email_text')
+        // //debugger
+        // let email = document.getElementById('email_text')
         // Removing all previous error tooltips.
         removeInputError(document.getElementById('username'))
         removeInputError(document.getElementById('password'))
         removeInputError(document.getElementById('confirm_password'))
-        removeInputError(document.getElementById('email'))
+        // removeInputError(document.getElementById('email'))
         if (password.value.length === 0) {
             // mark as error
-            markAsError(true, password)
+            markAsError(true, password, 'No password was entered.')
             showInputError(document.getElementById('password'))
             input_indicator = false
         } else {
@@ -230,7 +245,7 @@ const Login = (props) => {
         // matching passwords
         if (password.value !== confirmPassword.value) {
             // mark as error
-            markAsError(true, confirmPassword)
+            markAsError(true, confirmPassword, 'passwords do not match.')
             showInputError(document.getElementById('confirm_password'))
             input_indicator = false
         } else {
@@ -239,26 +254,32 @@ const Login = (props) => {
         }
         //validating username
         if (username.value.length > 12 || username.value.length < 3) {
-            // debugger
-            markAsError(true, username)
+            // //debugger
+            markAsError(true, username, 'Please use 4-8 characters.')
             let user = document.getElementById('username')
             showInputError(user)
             input_indicator = false
         } else {
-            markAsError(false, username)
+            markAsError(false, username, 'Username is already taken.')
         }
         // valid email
-        if (!email.value.includes('@')) {
-            markAsError(true, email)
-            showInputError(document.getElementById('email'))
-            input_indicator = false
-        } else {
-            markAsError(false, email)
-        }
+        // if (!email.value.includes('@')) {
+        //     markAsError(true, email)
+        //     showInputError(document.getElementById('email'))
+        //     input_indicator = false
+        // } else {
+        //     markAsError(false, email)
+        // }
+
         // If indicator is true, some fields are not valid, so do not sign up with given data.
         if (input_indicator) {
-            let apiParams = {"user_name":username.value, "user_pass": password.value}
-            APICall('postnewuser', apiParams)
+            const saltRounds= 10
+            let pass = '123'
+            bcryptjs.hash(password.value, saltRounds, function (err, hash) {
+                let apiParams = {"user_name":username.value, "user_pass": hash}
+                APICall('postnewuser', apiParams)
+            });
+
         }
     }
 
@@ -274,22 +295,35 @@ const Login = (props) => {
             .then(res=>res.json())
             .then((response) => {
                 if (response.status !== 201) {
-                    // console.log("User's tasks hes been sent successfully.");
+                    //debugger
                     // If successful logging in
-                    // console.log('RESPONSE CONTENT: ', response)
                     if (requestName === 'checkusercredentials') {
-                        setLoginAnswer(undefined)
-                        setLoginAnswer(response)
-                        if (response > 0) {
-                            setLoggedIn(true)
-                            history.push('/mainPage')
-                        }
+                        bcryptjs.compare(apiParams['user_pass'], response['pass'], function(err, result) {
+                            if (result) {
+                                //debugger
+                                    setLoggedIn(true)
+                                    setLoginAnswer(undefined)
+                                    setLoginAnswer(response['user_id'])
+                                    history.push('/mainPage')
+                            } else {
+                                setLoginAnswer(undefined)
+                                setLoginAnswer(-2)
+                            }
+                        });
+                        // if (response['pass'] > 0) {
+                        //     setLoggedIn(true)
+                        //     history.push('/mainPage')
+                        // }
+                        // setLoginAnswer(undefined)
+                        // setLoginAnswer(response)
                     // If successful signing up.
                     } else {
+                        //debugger
                         setSignUpAnswer(undefined)
-                        setSignUpAnswer(response)
-                        if (response > 0)
-                        {history.push('/')}
+                        setSignUpAnswer(response['user_id'])
+                        history.push('/')
+                        // if (response['user_id'] > 0)
+                        //     {}
                     }
                     return response;
                 } else {
@@ -336,7 +370,7 @@ const Login = (props) => {
                     checkLoginInputAndSend()
                 }}>Log In</div>
                 <Link to='./signup' className='sign_up'>Sign Up</Link>
-                <div className='forgot_password'>Forgot password?</div>
+                <div className='forgot_password'/>
             </form>
         );
     }
@@ -350,12 +384,12 @@ const Login = (props) => {
                 <div ref={signup_userNode} id='username' className={signUpUserClicked?'textbox_title_clicked':'textbox_title'}>Username<span id='err_username' className='no_error_sign'>*</span><div className='hidden_input_error' id='username_input_error_signup'/><input id='username_text' maxLength='10' className={signUpUserClicked?'input_clicked':'input'} type='text'/></div>
                 <div ref={signup_passNode} id='password' className={signUpPassClicked?'textbox_title_clicked':'textbox_title'}>Password<span id='err_password' className='no_error_sign'>*</span><div className='hidden_input_error' id='password_input_error_signup'/><input id='password_text' maxLength='12' className={signUpPassClicked?'input_clicked':'input'} type='password'/></div>
                 <div ref={signup_rePassNode} id='confirm_password' className={rePassClicked?'textbox_title_clicked':'textbox_title'}>Confirm Password<span id='err_confirm_password' className='no_error_sign'>*</span><div className='hidden_input_error' id='confirm_password_input_error_signup'/><input id='confirm_password_text' maxLength='12' type='password'/></div>
-                <div ref={signup_emailNode} id='email' className={emailClicked?'textbox_title_clicked':'textbox_title'}>Email<span id='err_email' className='no_error_sign'>*</span><div className='hidden_input_error' id='email_input_error_signup'/><input id='email_text' className={emailClicked?'input_clicked':'input'} type='email'/></div>
+                {/*<div ref={signup_emailNode} id='email' className={emailClicked?'textbox_title_clicked':'textbox_title'}>Email<span id='err_email' className='no_error_sign'>*</span><div className='hidden_input_error' id='email_input_error_signup'/><input id='email_text' className={emailClicked?'input_clicked':'input'} type='email'/></div>*/}
                 <input className='signing_up' onClick={()=> {
                     unmarkSignUpFields()
                     checkSignUpInputAndSend();
                 }} type='submit' value='Sign Up' />
-                <Link to='/' className='forgot_password'>Log in</Link>
+                <Link to='/' className='back_to_login'>Log in</Link>
             </div>
         );
     }

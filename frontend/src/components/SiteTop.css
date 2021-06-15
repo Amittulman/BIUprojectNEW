@@ -1,7 +1,10 @@
-.greeting {
+#greeting {
     font-size: large;
     position: absolute;
     width: 100%;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0.4s ease-in, opacity 0.4s ease-in;
 }
 
 #logout {
@@ -153,7 +156,7 @@
     top: 100%;
     left: 2%;
     width: 300px;
-    animation: username_appear 1.2s forwards;
+    /*animation: username_appear 1.2s forwards;*/
     user-select: none;
     /*font-family: Bookman, URW Bookman L, serif	;*/
 }
