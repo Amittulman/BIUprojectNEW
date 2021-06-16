@@ -63,7 +63,7 @@ const Login = (props) => {
         let password = document.getElementById('password')
         if (loginAnswer === undefined) return
         let text_to_client;
-        //debugger
+        ////debugger
         switch(loginAnswer) {
             case -1:
                 text_to_client = 'Wrong username.';
@@ -210,7 +210,7 @@ const Login = (props) => {
                 name2 = element.id + '_input_error_signup'
         }
         if (error) {
-            // debugger
+            // //debugger
             document.getElementById(name).className = 'error_sign'
             if (location.pathname === '/signup')
                 document.getElementById(name2).textContent = msg
@@ -227,7 +227,7 @@ const Login = (props) => {
         let username = document.getElementById('username_text')
         let password = document.getElementById('password_text')
         let confirmPassword = document.getElementById('confirm_password_text')
-        // //debugger
+        // ////debugger
         // let email = document.getElementById('email_text')
         // Removing all previous error tooltips.
         removeInputError(document.getElementById('username'))
@@ -255,7 +255,7 @@ const Login = (props) => {
         }
         //validating username
         if (username.value.length > 12 || username.value.length < 3) {
-            // //debugger
+            // ////debugger
             markAsError(true, username, 'Please use 4-8 characters.')
             let user = document.getElementById('username')
             showInputError(user)
@@ -296,12 +296,12 @@ const Login = (props) => {
             .then(res=>res.json())
             .then((response) => {
                 if (response.status !== 201) {
-                    console.log('SUCCESSFULL LOGIN!')
-                    //debugger
+                    // console.log('SUCCESSFULL LOGIN!')
+                    ////debugger
                     // If successful logging in
                         if (requestName === 'checkusercredentials') {
-                            console.log('INSIDE CHECK USER CREDENTIALS ', response['user_id'])
-                            // debugger
+                            // console.log('INSIDE CHECK USER CREDENTIALS ', response['user_id'])
+                            // //debugger
                         bcryptjs.compare(apiParams['user_pass'], response['user_pass'], function(err, result) {
                             if (result) {
                                 console.log('response after success: ', response['user_id'])
@@ -322,7 +322,7 @@ const Login = (props) => {
                         // setLoginAnswer(response)
                     // If successful signing up.
                     } else {
-                        // debugger
+                        // //debugger
                         setSignUpAnswer(undefined)
                         setSignUpAnswer(response['user_id'])
                         history.push('/')

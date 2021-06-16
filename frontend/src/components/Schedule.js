@@ -39,7 +39,7 @@ const Table = (props) => {
     }, [tasks])
 
     useEffect(() => {
-        // debugger
+        // //debugger
         setTasksID(props.tasksID)
     }, [props.tasksID, tasksID])
 
@@ -49,9 +49,9 @@ const Table = (props) => {
         let date = new Date();
         let today_slot = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
         let passed_day = ''
-        // debugger
+        // //debugger
         if (tasksID[0] === undefined) return;
-        // debugger
+        // //debugger
         //console.log(props.categoryTrigger)
         if (!props.categoryTrigger) return
         let time_jsx = props.initialSchedule()
@@ -93,13 +93,13 @@ const Table = (props) => {
         let date = new Date()
         let today_slot = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
         today_slot -= (Math.ceil(today_slot/slots_per_day)-1) * slots_per_day
-        console.log('BOOM! ', today_slot)
+        // console.log('BOOM! ', today_slot)
         // document.getElementById('schedule_component1').scrollTop += (window.innerHeight * 0.06) * today_slot;
         document.getElementById('schedule_component1').scrollTo({top:(window.innerHeight * 0.06) * today_slot, behavior:'smooth' })
     }
 
     const getClass = (number) => {
-        console.log('ABC')
+        // console.log('ABC')
         switch(number) {
             case 0:
                 return 'type_a'
@@ -141,7 +141,7 @@ const Table = (props) => {
     }
 
     const dragStart = (event) => {
-        console.log('start2')
+        // console.log('start2')
         //create an array of all ids in an increasing slots order (starting from event.target.id backward and forward).
         let similarTasks = JSON.stringify(getSimilarTasks(event.target.id))
         //putting it as second parameter in setData.

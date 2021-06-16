@@ -45,7 +45,7 @@ const App = () => {
 
     useEffect(() => {
         console.log('storage ', localStorage.getItem('userID'))
-        debugger
+        //debugger
         window.addEventListener('click', detectOutsideClicking)
         console.log(localStorage.getItem('userID'))
         console.log(localStorage.getItem('rememberMe'))
@@ -97,7 +97,7 @@ const App = () => {
     }
 
     const taskIDGetter = () => {
-        debugger
+        //debugger
         if (tasksID.length === 0) {
             fetchTaskID('GetSchedule', userID)
         }
@@ -145,7 +145,7 @@ const App = () => {
             .then(res => res.json())
             .then(
                 (result) => {
-                    debugger
+                    //debugger
                     if (result['statusCode'] === 500) throw new Error('Internal server error.');
                     setTaskID(result)
                 })
@@ -303,7 +303,7 @@ const App = () => {
     }
 
     const mainPage = () => {
-        // debugger
+        // //debugger
 
         // console.log('main page, userid ', userID)
         window.onresize = resizeResponse;

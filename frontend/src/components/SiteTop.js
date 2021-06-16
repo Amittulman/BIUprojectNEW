@@ -43,7 +43,7 @@ const SiteTop = (props) => {
     }, [props.optionRef])
 
     const getCategories = () => {
-        console.log('USER ID IN CATTT ', props.userID)
+        // console.log('USER ID IN CATTT ', props.userID)
         fetch("http://localhost:5000/tasks/GetCategories/"+props.userID)
             .then(res => res.json())
             .then(
@@ -51,7 +51,7 @@ const SiteTop = (props) => {
                     console.log('Get categories result: ', result);
                     if (result.length === 0)
                         result = getDefaultCategories();
-                    console.log('ABABA ', result)
+                    // console.log('ABABA ', result)
                     props.setCategories(result);
                 })
             .catch((error) => {
@@ -60,7 +60,7 @@ const SiteTop = (props) => {
     }
 
     const getUsername = () => {
-        // debugger
+        // //debugger
         console.log('THE ID IS ', props.userID)
         fetch("http://localhost:5000/tasks/getUsernameByID/"+props.userID)
             .then(res => res.json())
@@ -110,7 +110,7 @@ const SiteTop = (props) => {
         let cats = document.getElementsByClassName('user_category')
         for (let i=0; i<cats.length; i++) {
             if (cats[i].innerText === '') continue
-            // //debugger
+            // ////debugger
             cats[i].childNodes[1].style.visibility = 'hidden';
         }
     }
@@ -145,7 +145,7 @@ const SiteTop = (props) => {
                     new_cat.style.display = 'block';
                     new_cat.style.marginLeft = '2px';
                 }
-                // //debugger
+                // ////debugger
                 new_cat_container.style.visibility = 'hidden';
                 // Update category changes in both frontend and DB.
                 setCategories();
@@ -194,7 +194,7 @@ const SiteTop = (props) => {
 
 
     const dragStartCat = (event) => {
-        console.log('start3')
+        // console.log('start3')
         event.dataTransfer.setData('text/plain', event.target.id);
     }
 
@@ -284,10 +284,10 @@ const SiteTop = (props) => {
             display_type = 'none'
         }
         for (let i=0; i < category_options.length; i++) {
-            console.log('ZZZZZ ', category_options[i])
+            // console.log('ZZZZZ ', category_options[i])
             if (category_options[i].id.startsWith('added_button') && category_options[i].textContent === ''){
                 category_options[i].style.display = 'none'
-                  console.log('ABBA ', i, category_options[i], category_options[i].className.includes('user_category') && category_options[i].textContent === '')
+                  // console.log('ABBA ', i, category_options[i], category_options[i].className.includes('user_category') && category_options[i].textContent === '')
                 continue
             }
             // Collapsing categories.

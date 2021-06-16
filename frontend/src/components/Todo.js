@@ -120,7 +120,7 @@ const Todo = (props) => {
     setTimeout(()=> {
       setTasksJsx(jsxRef.current.filter(item => item.props.id !== 'task_container' + i))
     }, timer)
-    //debugger
+    ////debugger
     for (let [key, value] of Object.entries(props.updated_tasks)) {
       if (value['temp_task_id'] === i) {
         let clone = props.updated_tasks;
@@ -262,7 +262,7 @@ const Todo = (props) => {
     // let pinned_calendar = <DatePicker shouldCloseOnSelect={false} selected={startDate} onChange={(e,date) => handleChange(['pinned_slot',date,e], i)} name='pinned_slot' dateFormat="dd/MM/yyyy h:mm aa" showTimeInput calendarContainer={calendarContainer} id={'pinned_calendar'+index} key={'pinned_calendar'+index} customInput={thumbtack}/>;
     // let pinned_calendar = <div onChange={console.log('changed1')} id={'pinned_calendar'+index} key={'pinned_calendar'+index} className='pinned_calendar' ><Datetime onChange={console.log('changed2')} closeOnClickOutside={true} input={false} isValidDate={checkValidity}/></div>;
     let pinned_calendar = <span key={'pinned_calendar'+index} className='pinned_calendar' id={'pinned_calendar'+index}>
-      <select onChange={(e) => handleChange(e, i)} defaultValue={getDay(values['pinned_slot'], i)} className='pinned_choose_day' name="pinned_choose_day" id={"pinned_choose_day"+index}>
+      <select key={'pinned_choose_day'+index} onChange={(e) => handleChange(e, i)} defaultValue={getDay(values['pinned_slot'], i)} className='pinned_choose_day' name="pinned_choose_day" id={"pinned_choose_day"+index}>
         <option value="">Day</option>
         <option value="0">Sunday</option>
         <option value="1">Monday</option>
@@ -286,7 +286,7 @@ const Todo = (props) => {
     let duration = <div key={'duration'+index} id={'duration'+index} className='row ttt'><div className={'task_elm'}>Duration:</div>
       <div className={'first_row'}>
         <div id='duration_options_arrow'/>&nbsp;
-        <select size='1' id={'duration_options'+index} className={getDuration(values['duration']) === 'null'?'duration_options_hidden':'duration_options'} name='duration' defaultValue={getDuration(values['duration'])} onChange={(e) => handleChange(e, i)}>
+        <select key={'duration_options'+index} size='1' id={'duration_options'+index} className={getDuration(values['duration']) === 'null'?'duration_options_hidden':'duration_options'} name='duration' defaultValue={getDuration(values['duration'])} onChange={(e) => handleChange(e, i)}>
           <option value="0.5">0.5</option>
           <option value="1">1</option>
           <option value="1.5">1.5</option>
@@ -301,21 +301,21 @@ const Todo = (props) => {
     </div>;
     let priority = <div key={'priority'+index} className='task_elm'>Priority:
       <div className='wrapper_options'><div id='priority_options_arrow'/>&nbsp;</div>
-      <select id='priority_options' name='priority' defaultValue={values['priority']} onChange={(e) => handleChange(e, i)}>
+      <select key={'priority_options'+index} id={'priority_options'+index} className={'priority_options'} name='priority' defaultValue={values['priority']} onChange={(e) => handleChange(e, i)}>
         <option value="0">None</option>
         <option value="1">Low</option>
         <option value="2">Medium</option>
         <option value="3">High</option>
       </select></div>;
     // let category_id = <div key={'category_id'+index} className='task_elm' onChange={(e) => handleChange(e, i)}>Category:&nbsp;<input name='category_id' type='text' defaultValue={values['category_id']}/></div>;
-    let options = [<option value={-1}>{'None'}</option>];
+    let options = [<option key={'opt'+-1} value={-1}>{'None'}</option>];
     for (let i=0; i<props.categories.length; i++) {
       if (props.categories[i]['category_name'] !== '')
-        options.push(<option value={i}>{props.categories[i]['category_name']}</option>)
+        options.push(<option key={'opt'+i} value={i}>{props.categories[i]['category_name']}</option>)
     }
     let category_id = <div key={'category_id'+index} className='task_elm' onChange={(e) => handleChange(e, i)}>Category:&nbsp;
       <div className='wrapper_options'><div id='category_options_arrow'/>&nbsp;</div>
-      <select className='category_options' name='category_id' defaultValue={values['category_id']} onChange={(e) => handleChange(e, i)}>
+      <select key={'category_options'+index}  className='category_options' name='category_id' defaultValue={values['category_id']} onChange={(e) => handleChange(e, i)}>
         {options}
       </select>
     </div>;
@@ -390,9 +390,9 @@ const Todo = (props) => {
       evening.className = 'row evening_icon'
     }
     setChosenDays(temp_arr)
-    console.log('kuskus ', morning.className)
-    console.log('kuskus ', noon.className)
-    console.log('kuskus ', evening.className)
+    // console.log('kuskus ', morning.className)
+    // console.log('kuskus ', noon.className)
+    // console.log('kuskus ', evening.className)
     if (morning.className.endsWith('morning_icon') || noon.className.endsWith('noon_icon') || evening.className.endsWith('evening_icon')){
       hidden = ''
       not_hidden = '_hidden'
@@ -411,7 +411,7 @@ const Todo = (props) => {
       } else {
         task_container.className = 'expanded_task_daytime'+error
       }
-    console.log('XXXXXXXXXXX ', daysRef.current[index] === 0)
+    // console.log('XXXXXXXXXXX ', daysRef.current[index] === 0)
   }
 
   const changeDayTimeIcon = (e, index) =>  {
@@ -480,7 +480,7 @@ const Todo = (props) => {
     let temp_arr = daysRef.current
     temp_arr[index] = temp_chosen_days
     setChosenDays(temp_arr)
-    console.log('CONSTRAINTS: ', temp_chosen_days)
+    // console.log('CONSTRAINTS: ', temp_chosen_days)
     return <div id='test1' className='row'>{constraints}</div>;
   }
 
@@ -516,7 +516,7 @@ const Todo = (props) => {
       let temp_task = document.getElementById('title_textbox' + task_index)
       // If title is too long
       if (props.updated_tasks[task_index]['task_title'].length > 20) {
-        // //debugger;
+        // ////debugger;
         temp_task.classList.add('task_error')
         task_err = true
         total_err = true
@@ -535,7 +535,7 @@ const Todo = (props) => {
       // Check if pinned to a future date.
       let pinned_task = document.getElementById('thumbtack' + task_index)
       let pinned_slot = props.updated_tasks[task_index]['pinned_slot']
-      console.log('HELLO, ', props.updated_tasks[task_index]['pinned_slot'], todays_slot, pinned_slot !== null)
+      // console.log('HELLO, ', props.updated_tasks[task_index]['pinned_slot'], todays_slot, pinned_slot !== null)
       if (pinned_slot !== null && pinned_slot < todays_slot) {
         pinned_task.classList.add('thumbtack_error')
         task_err = true
@@ -741,7 +741,7 @@ const Todo = (props) => {
       if (current_value === 7) current_value = 0;
       val = current_value + 1;
     } else if (nam === 'category_id') {
-      // //debugger
+      // ////debugger
     }
     let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'-1','constraints':'000000000000000000000', 'pinned_slot':null};
     let updated = updatedRef.current

@@ -199,7 +199,7 @@ option:hover {
   background: red !important;
 }
 
-#priority_options, .duration_options, .category_options {
+.priority_options, .duration_options, .category_options {
   color: rgb(12, 13, 13);
   background:  rgba(230,230,230, 0);
   border: none;
