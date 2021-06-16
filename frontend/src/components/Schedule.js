@@ -16,12 +16,12 @@ const Table = (props) => {
     useEffect(() => {
         setTimeout(() => {
             scrollToThisMoment();
-        }, 500)
+        }, 400)
     }, [])
 
     useEffect(() => {
         console.log('In sched, user id: ', props.userID)
-        if (props.userID === undefined || props.userID === null) return
+        if (props.userID === undefined || props.userID === null || props.userID === 'null') return
         props.getTasksID();
     }, [props.userID])
 
@@ -39,6 +39,7 @@ const Table = (props) => {
     }, [tasks])
 
     useEffect(() => {
+        // debugger
         setTasksID(props.tasksID)
     }, [props.tasksID, tasksID])
 
@@ -48,7 +49,9 @@ const Table = (props) => {
         let date = new Date();
         let today_slot = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
         let passed_day = ''
+        // debugger
         if (tasksID[0] === undefined) return;
+        // debugger
         //console.log(props.categoryTrigger)
         if (!props.categoryTrigger) return
         let time_jsx = props.initialSchedule()

@@ -58,6 +58,7 @@ const Login = (props) => {
 
     // When login value changes (after pressing 'log in' with credentials).
     useEffect(() => {
+        console.log('LOGIN ANSWER ', loginAnswer)
         let username = document.getElementById('username')
         let password = document.getElementById('password')
         if (loginAnswer === undefined) return
@@ -295,12 +296,15 @@ const Login = (props) => {
             .then(res=>res.json())
             .then((response) => {
                 if (response.status !== 201) {
+                    console.log('SUCCESSFULL LOGIN!')
                     //debugger
                     // If successful logging in
-                    if (requestName === 'checkusercredentials') {
-                        bcryptjs.compare(apiParams['user_pass'], response['pass'], function(err, result) {
+                        if (requestName === 'checkusercredentials') {
+                            console.log('INSIDE CHECK USER CREDENTIALS ', response['user_id'])
+                            // debugger
+                        bcryptjs.compare(apiParams['user_pass'], response['user_pass'], function(err, result) {
                             if (result) {
-                                //debugger
+                                console.log('response after success: ', response['user_id'])
                                     setLoggedIn(true)
                                     setLoginAnswer(undefined)
                                     setLoginAnswer(response['user_id'])
@@ -318,7 +322,7 @@ const Login = (props) => {
                         // setLoginAnswer(response)
                     // If successful signing up.
                     } else {
-                        //debugger
+                        // debugger
                         setSignUpAnswer(undefined)
                         setSignUpAnswer(response['user_id'])
                         history.push('/')

@@ -9,7 +9,8 @@ const Categories = (props) => {
 
 
     useEffect(() => {
-        if (!props.userID) return
+        if (props.userID === undefined || props.userID === 'null') return
+        console.log('FETCH CAT ',  props.userID, props.userID === null, props.userID === 'null')
         getCategories()
         props.setScheduleJsx(props.initialScedule())
     }, [props.userID]);

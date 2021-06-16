@@ -40,7 +40,7 @@ const Todo = (props) => {
 
   //Adding JSX
   useEffect(() => {
-    if (!props.userID) return
+    if (!props.userID || props.userID === 'null') return
     props.getTasks()
   }, [props.userID]);
 
@@ -743,7 +743,7 @@ const Todo = (props) => {
     } else if (nam === 'category_id') {
       // //debugger
     }
-    let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'0','constraints':'000000000000000000000', 'pinned_slot':null};
+    let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'-1','constraints':'000000000000000000000', 'pinned_slot':null};
     let updated = updatedRef.current
     // If task is new, create a new instance of it, else edit existing/
     //removes old task when submitting form.
@@ -788,7 +788,7 @@ const Todo = (props) => {
     //console.log('nam: ',nam)
     //console.log('val: ',val)
     // //console.log('print: ', '1'.repeat(val) + '0' + '1'.repeat(20-val))
-    let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'0','constraints':'000000000000000000000', 'pinned_slot':null};
+    let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'-1','constraints':'000000000000000000000', 'pinned_slot':null};
     let updated = updatedRef.current
     // If task is new, create a new instance of it, else edit existing/
     //removes old task when submitting form.

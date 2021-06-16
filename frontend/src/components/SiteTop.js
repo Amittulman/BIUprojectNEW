@@ -15,7 +15,7 @@ const SiteTop = (props) => {
     const [totalNewCat, setTotalNewCat] = useState(0);
 
     useEffect(() => {
-        if (props.userID !== undefined){
+        if (props.userID !== undefined && props.userID !== 'null'){
             getCategories();
             getUsername()
         }
@@ -30,6 +30,7 @@ const SiteTop = (props) => {
 
     useEffect(() => {
         console.log('TRIGGERED! ', props.categories)
+        if (props.categories === undefined) return
         //Send changes to DB.
         if (props.categories.length !== 0)
             postCategories();
@@ -42,6 +43,7 @@ const SiteTop = (props) => {
     }, [props.optionRef])
 
     const getCategories = () => {
+        console.log('USER ID IN CATTT ', props.userID)
         fetch("http://localhost:5000/tasks/GetCategories/"+props.userID)
             .then(res => res.json())
             .then(
@@ -49,7 +51,8 @@ const SiteTop = (props) => {
                     console.log('Get categories result: ', result);
                     if (result.length === 0)
                         result = getDefaultCategories();
-                    props.setCategories(result['username']);
+                    console.log('ABABA ', result)
+                    props.setCategories(result);
                 })
             .catch((error) => {
                 console.log(error)
@@ -57,12 +60,14 @@ const SiteTop = (props) => {
     }
 
     const getUsername = () => {
+        // debugger
+        console.log('THE ID IS ', props.userID)
         fetch("http://localhost:5000/tasks/getUsernameByID/"+props.userID)
             .then(res => res.json())
             .then(
                 (result) => {
                     console.log('Username received: ', result);
-                    setUsername(result);
+                    setUsername(result['user_name']);
                 })
             .catch((error) => {
                 console.log(error)
