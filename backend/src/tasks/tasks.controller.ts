@@ -9,6 +9,7 @@ import {CreateToDoListDto} from "../Dto's/createToDoList.dto";
 import {CreateCategorySlotDto} from "../Dto's/createCategorySlot.dto";
 import {CreateUserDto} from "../Dto's/createUser.dto";
 import {CreateCategoryDto} from "../Dto's/createCategoryDto";
+import {Task} from "../interfaces/task.interface";
 
 @Controller('tasks')
 export class TasksController {
@@ -37,11 +38,8 @@ export class TasksController {
     if(typeof tasks[0] === undefined){
       return null;
     }
-    // if recurring task - need to duplicate here.
     const categorySlots = await  this.getUserCategorySlots(user_id);
-    // for (let i = 0; i< categorySlots.length; i++){
-    //     categorySlots[i] = -999;
-    // }
+    const errorTasks = await  this.checkTasksErrors(tasks.tasks, current_time_slot, user_id, categorySlots);
     const result = await this.schedulerService.tryCalc(tasks,categorySlots, current_time_slot);
     let res;
     //change slots to scheduledTask
@@ -269,12 +267,77 @@ updateScheduledTasks(@Body() tasksArray: Array<any>) {
     return this.tasksService.getCategories(user_id);
   }
 
+  async checkTasksErrors(tasks: Array<any>, timeStamp: number, userID : string, categories : Array<number>): Promise<any> {
+    const day = Math.floor(timeStamp/48);
+    const leftDays = 7-day;
+    const problemTasks = [];
 
-  // TODO endpoints:
-  //2. UpdateUser
-  //3 deleteUser
-  //5 add Task
-  //7 delete task
-  //8 delete tasks?
-  //9 .
+    for (let taskIndex = 0; taskIndex < tasks.length; taskIndex++) {
+      const tempTask = tasks[taskIndex];
+      const tempTaskID = tempTask.task_id;
+      const tempReccuring = tempTask.recurrings;
+      const tempConstraint = tempTask.constraints;
+      let tempErrorTask = [[tempTaskID]];
+
+      if(tempReccuring > leftDays) {
+        //problem with this task - reccuring
+        tempErrorTask.push(['reccuring']);
+      }
+
+      // check constraints and if there is 1 from current day to the end.
+      let constraintEnough = false;
+      for(let constraintIndex = day; constraintIndex < tempTask.constraints.length ; constraintIndex++) {
+        if(tempConstraint[day][0] === 1  || tempConstraint[day][1] === 1 || tempConstraint[day][2] === 1) {
+          constraintEnough = true;
+          break;
+        }
+      }
+
+      if(!constraintEnough) {
+        //problem with this task - constraints
+        tempErrorTask.push(['constraints']);
+      }
+
+      const numOfSlots = Math.ceil(tempTask.duration/30);
+      let start = timeStamp;
+      let end = timeStamp;
+      let curCategory = tempTask.category_id;
+
+      let isCaregoriesEnough = false;
+      let currSlot = [];
+      const spots = []; // the result - all the options
+
+      while (end < categories.length){
+        if (curCategory === categories[end]) {
+          currSlot.push(end); // we can use this slot
+          if (currSlot.length === numOfSlots) {
+            const CopyForPushCurrSlot  = Object.assign([], currSlot);
+            spots.push(currSlot);
+            end = await this.jumpNextDay(end);
+            currSlot= [];
+          }
+        } else {
+          start = end+1;
+          currSlot = [];
+        }
+        end += 1;
+      }
+
+      if(spots.length < tempReccuring) {
+        //problem with this task - categories
+        tempErrorTask.push(['categories']);
+      }
+
+      if(tempErrorTask != [[tempTaskID]]) {
+        problemTasks.push(tempErrorTask)
+      }
+    }
+    return problemTasks;
+  }
+
+  async jumpNextDay(curSlot: number): Promise<any> {
+    const day = Math.floor(curSlot/48);
+    let newSlot = (day+1)*48;
+    return newSlot;
+  }
 }

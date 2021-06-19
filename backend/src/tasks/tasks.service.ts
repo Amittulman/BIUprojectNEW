@@ -9,6 +9,7 @@ import {CreateTaskDto} from "../Dto's/createTask.dto";
 import {CreateCategorySlotDto} from "../Dto's/createCategorySlot.dto";
 import {CreateUserDto} from "../Dto's/createUser.dto";
 import {CreateCategoryDto} from "../Dto's/createCategoryDto";
+import internal from "stream";
 
 @Injectable()
 export class TasksService {
@@ -118,4 +119,6 @@ export class TasksService {
   async getCategories(user_id):Promise<Array<CreateCategoryDto>>{
     return this.tasksDal.getCategories(user_id);
   }
+
+
 }
