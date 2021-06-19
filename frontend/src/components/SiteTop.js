@@ -258,10 +258,10 @@ const SiteTop = (props) => {
             for (j=1 ; j < slots_per_day+1 ; j++) {
                 let node = sched.childNodes.item(0).childNodes.item(0).childNodes.item(0).childNodes.item(i).childNodes.item(j)
                 // node.className = 'empty_slot';
-                node.onDragStart = null
-                node.onDragOver = null
+                node.ondragstart = null
+                node.ondragover = null
                 node.onclick = null
-                node.onDrop = null
+                node.ondrop = null
                 node.ondragleave = null
                 node.draggable = true
             }
