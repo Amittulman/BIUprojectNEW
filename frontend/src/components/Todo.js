@@ -228,8 +228,8 @@ const Todo = (props) => {
   }
 
   const updatePastDueTasks = () => {
-    let day = new Date()
-    let todays_slot = props.timeToSlot(day.getDay(), null, day.getHours(), day.getMinutes())
+    let date = new Date()
+    let todays_slot = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
     let i = 0;
     while (i < todays_slot) {
       if (props.tasksID[i] !== -1) {
@@ -494,8 +494,8 @@ const Todo = (props) => {
   ], { duration: 500, fill: 'forwards', easing: 'ease-in'}];
 
   const checkInputs = () => {
-    let day = new Date()
-    let todays_slot = props.timeToSlot(day.getDay(), null, day.getHours(), day.getMinutes())
+    let date = new Date()
+    let todays_slot = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
     let total_err = false
     let pastDueErr = false
     // Go through all jsx elements.
@@ -678,6 +678,7 @@ const Todo = (props) => {
     let day = document.getElementById('pinned_choose_day'+index).value;
     let time = document.getElementById('pinned_choose_time'+index).value;
     console.log('TIMEEEEEEEEEE ', time)
+    console.log('dayyyyyyyyyyy ', day)
     let pin = document.getElementById('thumbtack'+index);
     let calendar = document.getElementById('pinned_calendar'+index);
     if (day === '') {

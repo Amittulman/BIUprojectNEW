@@ -90,8 +90,8 @@ const App = () => {
     }
 
     const taskIDTrig = () => {
-        let day = new Date()
-        trigTasks(timeToSlot(day.getDay(), null, day.getHours(), day.getMinutes()))
+        let date = new Date()
+        trigTasks(timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes()))
         // console.log('TASKS ID FROM trig ', tasksID)
         return tasksID
     }
