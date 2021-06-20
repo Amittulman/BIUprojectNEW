@@ -256,7 +256,7 @@ const Login = (props) => {
         //validating username
         if (username.value.length > 12 || username.value.length < 3) {
             // ////debugger
-            markAsError(true, username, 'Please use 4-8 characters.')
+            markAsError(true, username, 'Please use 4-8 characters')
             let user = document.getElementById('username')
             showInputError(user)
             input_indicator = false

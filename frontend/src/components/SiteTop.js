@@ -110,8 +110,8 @@ const SiteTop = (props) => {
         let cats = document.getElementsByClassName('user_category')
         for (let i=0; i<cats.length; i++) {
             if (cats[i].innerText === '') continue
-            // ////debugger
             cats[i].childNodes[1].style.visibility = 'hidden';
+            cats[i].childNodes[2].style.visibility = 'hidden';
         }
     }
 
@@ -134,10 +134,20 @@ const SiteTop = (props) => {
             new_category.appendChild(edit_cat)
             let new_cat_container= document.getElementById('adding_category_container');
             let category_accept_changes = document.getElementById('category_accept_changes');
-            // edit_cat.appendChild(new_cat_container)
+            // Adding category's delete button.
+            let remove_cat = document.getElementById('remove_cat'+i)
+            remove_cat = document.createElement('div');
+            remove_cat.id = 'remove_cat' + i;
+            if (i >= 3)
+                remove_cat.className = 'remove_cat';
+            else
+                remove_cat.className = 'remove_cat_grayed';
+            new_category.appendChild(remove_cat)
+
             category_accept_changes.onclick = (e)=> {
                 // Do not save changes if title is empty.
-                if (document.getElementById('category_dialog').value === '' || catColorRef.current === 0) return;
+                let dialog_length = document.getElementById('category_dialog').value.length
+                if (dialog_length === 0 || dialog_length > 10 || catColorRef.current === 0) return;
                 if (props.categories[currentCatRef.current]['category_name'] === '') {
                     let new_cat = document.getElementById('added_button_' + currentCatRef.current)
                     new_cat.style.opacity = '1';
@@ -154,23 +164,46 @@ const SiteTop = (props) => {
             category_decline_changes.onclick = () => {new_cat_container.style.visibility = 'hidden';}
             edit_cat.onclick = () => {
                 edit_cat.style.visibility = 'hidden'
+                remove_cat.style.visibility = 'hidden'
                 //Reset title value, when editing title and color of category.
                 document.getElementById('category_dialog').value = ''
                 // new_cat_container.style.marginLeft = '-200px'
                 new_cat_container.style.visibility = 'visible'
             }
+            if (i >= 3) {
+                remove_cat.onclick = () => {
+                    let temp_cat = [...props.categories]
+                    // Updating new value.
+                    temp_cat[currentCatRef.current]['category_name'] = ''
+                    temp_cat[currentCatRef.current]['color'] = ''
+                    props.setCategories(temp_cat)
+                    // Sending changed to DB.
+                    postCategories()
+                    // Changing category value in frontend.
+                    let new_category = document.getElementById('added_button_' + currentCatRef.current)
+                    new_category.innerText = ''
+                    new_category.style.backgroundColor = 'transparent'
+                    new_category.appendChild(edit_cat)
+                    new_category.appendChild(remove_cat)
+                    document.getElementById('category_send_button').click();
+                }
+            }
             // Showing editing option and marking option.
             new_category.onclick =  (e) => {
+                if (e.target.className.includes('remove_cat_grayed')) return
                 document.getElementById('cap_msg').style.visibility = 'hidden';
                 document.getElementById('cap_msg').style.opacity = '0';
                 setCurrentCat(i);
                 if (!e.target.id || (!e.target.id.startsWith('added_button') && !e.target.id.startsWith('remove_cat'))) return;
                 props.setOption(i);
-                if (edit_cat.style.visibility === 'visible')
+                if (edit_cat.style.visibility === 'visible') {
                     edit_cat.style.visibility = 'hidden';
+                    remove_cat.style.visibility = 'hidden';
+                }
                 else {
                     hideRest()
                     edit_cat.style.visibility = 'visible';
+                    remove_cat.style.visibility = 'visible';
                     new_cat_container.style.visibility = 'hidden';
                 }
             }
@@ -355,6 +388,7 @@ const SiteTop = (props) => {
 
     const setCategories = () => {
         let edit_cat = document.getElementById('edit_cat'+currentCatRef.current)
+        let remove_cat = document.getElementById('remove_cat'+currentCatRef.current)
         let colors = {1:'#E2FFFF', 2:'#FFF0D7', 3:'#E2E6FF', 4:'#FFCFCF', 5:'#FEE2FF', 6:'#E8FFE2'};
         let temp_cat = [...props.categories]
         // Updating new value.
@@ -368,6 +402,7 @@ const SiteTop = (props) => {
         new_category.innerText = props.categories[currentCatRef.current]['category_name']
         new_category.style.backgroundColor = props.categories[currentCatRef.current]['color']
         new_category.appendChild(edit_cat)
+        new_category.appendChild(remove_cat)
     }
 
     const getFirstEmptyCat = () => {

@@ -243,8 +243,12 @@
     border-radius: 20%;
     /*transition: background-color 0.2s ease-out, margin-left 0.5s ease-out, opacity 0.5s ease-out;*/
     height: 30px;
-    width: 55px;
+    width: auto;
+    min-width: 55px;
+    padding-left: 5px;
+    padding-right: 5px;
     cursor: pointer;
+
     /*animation: slide-aside_a 0.4s ease;*/
 }
 

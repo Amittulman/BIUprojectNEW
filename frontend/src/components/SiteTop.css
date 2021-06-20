@@ -51,7 +51,7 @@
     display: flex;
     flex-direction: row;
     margin-top: 60px;
-    margin-left: -430px;
+    margin-left: -230px;
     /*margin-right: auto;*/
     text-align: left;
     user-select: none;
@@ -80,14 +80,34 @@
     /*margin-top: -610px;*/
     /*margin-left: -608px;*/
     margin-top: 10px;
-    margin-left: 15px;
+    /*display: inline-block;*/
     width: 30px;
     height: 30px;
+    margin-left: calc(50% - 25px);
     /*transform: scale(0.04);*/
     background: url("../images/edit.svg") no-repeat;
     animation: show 1.2s ease-in forwards;
     visibility: hidden;
 }
+
+.remove_cat, .remove_cat_grayed {
+    /*margin-top: -610px;*/
+    /*margin-left: -608px;*/
+    margin-top: -30px;
+    /*display: inline-block;*/
+    margin-left: 50%;
+    width: 30px;
+    height: 30px;
+    /*transform: scale(0.04);*/
+    background: url("../images/decline.svg") no-repeat;
+    animation: show 1.2s ease-in forwards;
+    visibility: hidden;
+}
+
+.remove_cat_grayed {
+    background: url("../images/decline_grayedout.svg") no-repeat;
+}
+
 
 @keyframes minimize_site_top {
     0% {

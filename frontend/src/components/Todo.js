@@ -494,6 +494,7 @@ const Todo = (props) => {
   ], { duration: 500, fill: 'forwards', easing: 'ease-in'}];
 
   const checkInputs = () => {
+    if (Object.keys(props.updated_tasks).length === 0 && removed_tasks.length === 0) return true
     let date = new Date()
     let todays_slot = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
     let total_err = false
