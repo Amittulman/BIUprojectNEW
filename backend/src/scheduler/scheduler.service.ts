@@ -60,16 +60,12 @@ export class SchedulerService {
     }
 
     async calcBackTracking(tasks: Array<Array<Task>>, slots: any): Promise<any> {
-        //var slots = Array(999).fill(0); //2 weeks (14X24X2) - slots of 30 min
-
         for(const currPriorityTasks of tasks) {
             if (await this.solveScedule(currPriorityTasks, slots) == false) {
                 console.log("Full Solution does not exist");
                 return null;
             }
         }
-
-        // TODO save solution to DB
         return slots;
     }
 
@@ -80,6 +76,10 @@ export class SchedulerService {
         for (let taskIndex = 0; taskIndex < tasks.length; taskIndex++) {
             const tempTask = tasks[taskIndex];
             const spotsForThisTask = await this.findSpotsForThisTask(tempTask, slots);
+            if (spotsForThisTask.length === 0) {
+                console.log("no spots to this task:" + tempTask.task_title);
+                return false;
+            }
             const isfull = await this.slotsIsFull(slots);
             if(isfull) {
                 return false;
