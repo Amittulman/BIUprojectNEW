@@ -69,6 +69,16 @@ td {
 .test123 {
     pointer-events: none;
     z-index: -100;
+    text-overflow: ellipsis;
+    overflow: hidden ;
+    white-space: nowrap;
+    max-width: 110px;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+.heb_class {
+    direction: rtl;
 }
 
 table th {
@@ -86,6 +96,10 @@ table tr td {
     border: 1px solid rgba(0,0,0,.25);
     border-radius: 5%;
     text-align: center;
+}
+
+tr {
+    max-width: 110px;
 }
 
 #search_task {

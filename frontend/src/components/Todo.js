@@ -120,7 +120,8 @@ const Todo = (props) => {
     setTimeout(()=> {
       setTasksJsx(jsxRef.current.filter(item => item.props.id !== 'task_container' + i))
     }, timer)
-    ////debugger
+
+    // Removing deleted task from task list, if exists (if was edited beforehand).
     for (let [key, value] of Object.entries(props.updated_tasks)) {
       if (value['temp_task_id'] === i) {
         let clone = props.updated_tasks;
@@ -494,6 +495,7 @@ const Todo = (props) => {
   ], { duration: 500, fill: 'forwards', easing: 'ease-in'}];
 
   const checkInputs = () => {
+    // Do not send anything if no change has occurred in to-do list.
     if (Object.keys(props.updated_tasks).length === 0 && removed_tasks.length === 0) return true
     let date = new Date()
     let todays_slot = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
@@ -516,7 +518,7 @@ const Todo = (props) => {
       // Check title length.
       let temp_task = document.getElementById('title_textbox' + task_index)
       // If title is too long
-      if (props.updated_tasks[task_index]['task_title'].length > 20) {
+      if (props.updated_tasks[task_index]['task_title'].length > 30) {
         // ////debugger;
         temp_task.classList.add('task_error')
         task_err = true
@@ -526,6 +528,7 @@ const Todo = (props) => {
       }
       // Check duration length.
       let duration = document.getElementById('duration' + task_index)
+      // If duration is more than 7 hours
       if (props.updated_tasks[task_index]['duration'] > 7*60) {
         duration.classList.add('task_error')
         task_err = true
@@ -643,6 +646,7 @@ const Todo = (props) => {
   const sendTasksToPost = () => {
     console.log('updated tasks: ', props.updated_tasks)
     let s = 'temp_task_id'
+    // Update recurrence counter to 1 if task is pinned, and remove temporary task ID.
     for (const key of Object.keys(props.updated_tasks)){
       if (props.updated_tasks[key]['pinned_slot'] !== null)
         props.updated_tasks[key]['recurrings'] = 1

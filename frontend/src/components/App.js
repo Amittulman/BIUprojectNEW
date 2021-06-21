@@ -165,6 +165,7 @@ const App = () => {
                     setTaskID(result)
                 })
             .catch((error) => {
+                if (Object.keys(updated_tasks).length === 0) return
                 let popup = document.getElementById('error_popup')
                 popup.animate(errorAnimation[0], errorAnimation[1])
                 setTimeout(function() {

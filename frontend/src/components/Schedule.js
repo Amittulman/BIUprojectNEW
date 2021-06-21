@@ -66,6 +66,10 @@ const Table = (props) => {
                 for (let j = 0; j < slots_per_day; j++) {
                     passed_day = ''
                     let data = tasks_id[j + (i - 1) * slots_per_day]
+                    let hebrew = (/[\u0590-\u05FF]/).test(data)
+                    let heb_class = ''
+                    if (hebrew)
+                        heb_class = 'heb_class'
                     if (today_slot > (j + (i - 1) * slots_per_day))
                         passed_day = ' passed'
                     let class_name = getClass(props.categoryTypes[slots_per_day * (i - 1) + j])
@@ -74,7 +78,7 @@ const Table = (props) => {
                     content.push(<td key={'cell_' + (slots_per_day * (i - 1) + j)} className={class_name} style={{backgroundColor:color}}
                                           id={'cell_' + (slots_per_day * (i - 1) + j) + '_taskID_' + tasksID[j + (i - 1) * slots_per_day]}
                                           draggable='true' onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop}
-                                          onDragLeave={leaveDropArea}><div className={passed_day + ' test123'}>{data}</div></td>);//{data}
+                                          onDragLeave={leaveDropArea}><div className={passed_day + ' test123 ' + heb_class}>{data}</div></td>);//{data}
                 }
                 jsx.push(<tr key={'tr' + i}><th key={'th' + i}>{props.days[i]}</th>{content}</tr>);
             }
@@ -162,6 +166,10 @@ const Table = (props) => {
         event.target.style.transition = 'box-shadow .2s linear';
     }
 
+    const droppedOnOneCat = () => {
+
+    }
+
     const drop = (event) => {
         event.preventDefault();
         // drop effect.
@@ -179,7 +187,7 @@ const Table = (props) => {
         });
         // Calculate the difference between src and dst.
         // //  If out of range for any slot in array, or dropped on an occupied slot, do not drop.
-        if (!availableSlots(ids, distance)) return
+        if (!availableSlots(ids, distance, event)) return
         // let diff = parseInt(dragged_element.id.split('_')[1]) - parseInt(target_element.id.split('_')[1])
         //Drop all slots with the same ID.
         let tasks_id = tasksID
@@ -250,13 +258,17 @@ const Table = (props) => {
             });
     }
 
-    const availableSlots = (ids, distance) => {
+    const availableSlots = (ids, distance, event) => {
+        let partial_target_id = 'cell_' + (parseInt(ids[0].split('_')[1]) + distance)
+        let dropped_cat = document.querySelector('[id^='+partial_target_id+']').className.split('_')[1]
         //console.log('IDS ', ids[0].split('_')[3].split('"')[0])
         let i;
         if (ids[0].split('_')[3].split('"')[0] === '-1' || ids[0]-distance < 0 || ids[ids.length-1] > slots_per_day*7) return false
         // Check all ids drop area
         for (i=0;i<ids.length;i++) {
-            let partial_target_id = 'cell_' + (parseInt(ids[i].split('_')[1]) + distance)
+            partial_target_id = 'cell_' + (parseInt(ids[i].split('_')[1]) + distance)
+            let curr_drop_cat = document.querySelector('[id^='+partial_target_id+']').className.split('_')[1]
+            if (dropped_cat !== curr_drop_cat) return false
             //console.log('partial target id: ', partial_target_id)
             let source_id = ids[i].split('_')[3].split('"')[0]
             let target_id = document.querySelector('[id^='+partial_target_id+']').id.split('_')[3]
