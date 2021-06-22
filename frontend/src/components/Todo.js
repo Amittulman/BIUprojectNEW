@@ -585,11 +585,10 @@ const Todo = (props) => {
     return total_err || pastDueErr
   }
 
-  // TODO - prevent changing order of edited existing tasks after submitting.
   const onSubmitHandler = (event) => {
-    let task_height = document.getElementsByClassName('task_container')[0].getBoundingClientRect().height
-    document.getElementById('container').scrollTo({top:(task_height) * 1, behavior:'smooth' })
-    document.getElementsByClassName('closed_task')[1].className = 'closed_task_hover'
+    // let task_height = document.getElementsByClassName('task_container')[0].getBoundingClientRect().height
+    // document.getElementById('container').scrollTo({top:(task_height) * 1, behavior:'smooth' })
+    // document.getElementsByClassName('closed_task')[1].className = 'closed_task_hover'
     event.preventDefault();
     if (checkInputs()) return
     props.setIsLoaded(false)
