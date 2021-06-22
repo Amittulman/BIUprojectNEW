@@ -12,7 +12,6 @@ const Todo = (props) => {
   const [tasks, setTasks] = useState([])
   const [removed_tasks, setRemovedTasks] = useState([])
   const [task_number, setTaskNumber] = useState(10000)
-  const [isLoaded, setIsLoaded] = useState(false)
   const [trigger, setTrigger] = useState(false)
   const [pastDue, setPastDue] = useState({})
   const [chosenDays, setChosenDays] = useState({});
@@ -25,7 +24,6 @@ const Todo = (props) => {
   const todoIDRef = useRef();
   todoIDRef.current = todoIDs;
   const firstUpdate = useRef(true)
-  const firstUpdate2 = useRef(true)
   const updatedRef = useRef();
   updatedRef.current = props.updated_tasks;
   const removedRef = useRef();
@@ -252,7 +250,7 @@ const Todo = (props) => {
   const addTask = (index, values) => {
     console.log('VALUES ',values)
     if (values == null) {
-      values = {'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'-1','constraints':'000000000000000000000', 'pinned_slot':null}
+      values = {'user_id':props.userID,'task_title':'', 'duration':'30','priority':'0', 'recurrings':'1', 'category_id':'-1','constraints':'000000000000000000000', 'pinned_slot':null}
     }
     if (values['constraints'] === '111111111111111111111')
       values['constraints'] = '000000000000000000000'
@@ -324,13 +322,13 @@ const Todo = (props) => {
     let task = <div key={'task'+index} id={'task'+index} className='closed_task'>{[pinned_calendar, title_and_thumbtack, duration, priority, category_id, constraints]}</div>
     let sign = <div id={'expand_icon'+index} className={'expand_icon'} onClick={(e) =>  expandTask(e, task, index)} key='plus_sign'/>
     let pastDue = <div key={'pastDue'+index} id={'pastDue_'+index} className={'past_due_hidden'}>
-    <span className={'dont_reschedule'} onClick={(e) => bin_task(e,index, true)}/>
+      <span className={'dont_reschedule'} onClick={(e) => bin_task(e,index, true)}/>
       Reschedule?
-    <span className={'reschedule'} onClick={(e) => {
-      removeFromPastDue(e, i);
-      handleChange(e, i)
-      handlePastDue(e, i);
-    }}/>
+      <span className={'reschedule'} onClick={(e) => {
+        removeFromPastDue(e, i);
+        handleChange(e, i)
+        handlePastDue(e, i);
+      }}/>
     </div>
     let task_container = <div style={{zIndex:100000-index}} key={'task_container'+index} id={'task_container'+index} className='task_container' >{[sign, pastDue, task,trash_bin]}</div>
     containerRef.current = task_container
@@ -369,7 +367,7 @@ const Todo = (props) => {
       morning_input.click()
       noon_input.click()
       document.getElementById('evening_'+e.target.innerText+index).click()
-    // If none are visible, show them and add by 3.
+      // If none are visible, show them and add by 3.
     } else {
       if (!morning.className.includes('clicked')) {
         morning_input.click()
@@ -405,13 +403,13 @@ const Todo = (props) => {
       noon.className = 'row noon_icon'
       evening.className = 'row evening_icon'
     }
-      let task_container = document.getElementById('task'+index)
-      let error = task_container.className.split('_').slice(-1)[0] === 'error'?'_error':''
-      if (daysRef.current[index] === 0) {
+    let task_container = document.getElementById('task'+index)
+    let error = task_container.className.split('_').slice(-1)[0] === 'error'?'_error':''
+    if (daysRef.current[index] === 0) {
       task_container.className = 'expanded_task' + error
-      } else {
-        task_container.className = 'expanded_task_daytime'+error
-      }
+    } else {
+      task_container.className = 'expanded_task_daytime'+error
+    }
     // console.log('XXXXXXXXXXX ', daysRef.current[index] === 0)
   }
 
@@ -464,19 +462,19 @@ const Todo = (props) => {
         if (int_values[3*i+2] === 1) clicked3 = '_clicked'
       }
       constraints.push(
-        <div className='spacing_days' key={days[i]+index}>
-          <div onClick={(e)=>showDaytimes(e, index)} className='row day_of_week'>
-            {days[i]}
-          </div>
-          <div id={'daytime_icons'+index} className='daytime_icons'>
-            <input type="checkbox" className='days_checkbox' key={'morning_'+days[i]+index} id={'morning_'+days[i]+index} name="constraints" value={3*i} defaultChecked={int_values[3*i]}/>
-            <label onClick={(e)=>changeDayTimeIcon(e, index)} className={'row morning_icon' + hidden + clicked1} id={'morning_label_'+days[i]+index} htmlFor={'morning_'+days[i]+index}/>
-            <input type="checkbox" className='days_checkbox' key={'noon_'+days[i]+index} id={'noon_'+days[i]+index} name="constraints" value={3*i+1} defaultChecked={int_values[3*i+1]}/>
-            <label onClick={(e)=>changeDayTimeIcon(e, index)} className={'row noon_icon'+hidden+clicked2} id={'noon_label_'+days[i]+index} htmlFor={'noon_'+days[i]+index}/>
-            <input className='days_checkbox' type="checkbox" key={'evening_'+days[i]+index} id={'evening_'+days[i]+index} name="constraints" value={3*i+2} defaultChecked={int_values[3*i+2]} />
-            <label onClick={(e)=>changeDayTimeIcon(e, index)} className={'row evening_icon'+hidden+clicked3} id={'evening_label_'+days[i]+index} htmlFor={'evening_'+days[i]+index}/>
-          </div>
-        </div>);
+          <div className='spacing_days' key={days[i]+index}>
+            <div onClick={(e)=>showDaytimes(e, index)} className='row day_of_week'>
+              {days[i]}
+            </div>
+            <div id={'daytime_icons'+index} className='daytime_icons'>
+              <input type="checkbox" className='days_checkbox' key={'morning_'+days[i]+index} id={'morning_'+days[i]+index} name="constraints" value={3*i} defaultChecked={int_values[3*i]}/>
+              <label onClick={(e)=>changeDayTimeIcon(e, index)} className={'row morning_icon' + hidden + clicked1} id={'morning_label_'+days[i]+index} htmlFor={'morning_'+days[i]+index}/>
+              <input type="checkbox" className='days_checkbox' key={'noon_'+days[i]+index} id={'noon_'+days[i]+index} name="constraints" value={3*i+1} defaultChecked={int_values[3*i+1]}/>
+              <label onClick={(e)=>changeDayTimeIcon(e, index)} className={'row noon_icon'+hidden+clicked2} id={'noon_label_'+days[i]+index} htmlFor={'noon_'+days[i]+index}/>
+              <input className='days_checkbox' type="checkbox" key={'evening_'+days[i]+index} id={'evening_'+days[i]+index} name="constraints" value={3*i+2} defaultChecked={int_values[3*i+2]} />
+              <label onClick={(e)=>changeDayTimeIcon(e, index)} className={'row evening_icon'+hidden+clicked3} id={'evening_label_'+days[i]+index} htmlFor={'evening_'+days[i]+index}/>
+            </div>
+          </div>);
     }
     let temp_arr = daysRef.current
     temp_arr[index] = temp_chosen_days
@@ -589,6 +587,9 @@ const Todo = (props) => {
 
   // TODO - prevent changing order of edited existing tasks after submitting.
   const onSubmitHandler = (event) => {
+    let task_height = document.getElementsByClassName('task_container')[0].getBoundingClientRect().height
+    document.getElementById('container').scrollTo({top:(task_height) * 1, behavior:'smooth' })
+    document.getElementsByClassName('closed_task')[1].className = 'closed_task_hover'
     event.preventDefault();
     if (checkInputs()) return
     props.setIsLoaded(false)
@@ -650,10 +651,24 @@ const Todo = (props) => {
     for (const key of Object.keys(props.updated_tasks)){
       if (props.updated_tasks[key]['pinned_slot'] !== null)
         props.updated_tasks[key]['recurrings'] = 1
-      delete props.updated_tasks[key][s]
+      if (!(props.updated_tasks[key][s] in tasks)) {
+        delete props.updated_tasks[key][s]
+      } else {
+        props.updated_tasks[key]['task_id'] = props.updated_tasks[key][s]
+        delete props.updated_tasks[key][s]
+      }
     }
+    let example = [{"category_id": "-1",
+      "constraints": "000000000000000000000",
+      "duration": "30",
+      "pinned_slot": null,
+      "priority": "0",
+      "recurrings": "1",
+      "task_title": "123",
+      "user_id": "193"}]
+    debugger
     //console.log('updated tasks(before post)2: ', Object.values(props.updated_tasks))
-    fetch('http://localhost:5000/tasks/PostTasks/{tasks}', {
+    fetch('http://localhost:5000/tasks/UpdateTasks/{tasks}', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -749,7 +764,7 @@ const Todo = (props) => {
     } else if (nam === 'category_id') {
       // ////debugger
     }
-    let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'-1','constraints':'000000000000000000000', 'pinned_slot':null};
+    let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'30','priority':'0', 'recurrings':'1', 'category_id':'-1','constraints':'000000000000000000000', 'pinned_slot':null};
     let updated = updatedRef.current
     // If task is new, create a new instance of it, else edit existing/
     //removes old task when submitting form.
@@ -766,8 +781,8 @@ const Todo = (props) => {
     } else {
       updated[index][nam] = val
     }
-      console.log('val: ',val)
-      console.log('updated: ', updated)
+    console.log('val: ',val)
+    console.log('updated: ', updated)
     props.setUpdatedTasks(updated)
   }
 
@@ -794,7 +809,7 @@ const Todo = (props) => {
     //console.log('nam: ',nam)
     //console.log('val: ',val)
     // //console.log('print: ', '1'.repeat(val) + '0' + '1'.repeat(20-val))
-    let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'30','priority':'', 'recurrings':'1', 'category_id':'-1','constraints':'000000000000000000000', 'pinned_slot':null};
+    let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'30','priority':'0', 'recurrings':'1', 'category_id':'-1','constraints':'000000000000000000000', 'pinned_slot':null};
     let updated = updatedRef.current
     // If task is new, create a new instance of it, else edit existing/
     //removes old task when submitting form.

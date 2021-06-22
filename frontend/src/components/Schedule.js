@@ -76,9 +76,9 @@ const Table = (props) => {
                     let color = props.categories[dct[class_name.split('_')[1]]]
                     if (color !== undefined) { color = color['color']}
                     content.push(<td key={'cell_' + (slots_per_day * (i - 1) + j)} className={class_name} style={{backgroundColor:color}}
-                                          id={'cell_' + (slots_per_day * (i - 1) + j) + '_taskID_' + tasksID[j + (i - 1) * slots_per_day]}
-                                          draggable='true' onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop}
-                                          onDragLeave={leaveDropArea}><div className={passed_day + ' test123 ' + heb_class}>{data}</div></td>);//{data}
+                                     id={'cell_' + (slots_per_day * (i - 1) + j) + '_taskID_' + tasksID[j + (i - 1) * slots_per_day]}
+                                     draggable='true' onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop}
+                                     onDragLeave={leaveDropArea}><div className={passed_day + ' test123 ' + heb_class}>{data}</div></td>);//{data}
                 }
                 jsx.push(<tr key={'tr' + i}><th key={'th' + i}>{props.days[i]}</th>{content}</tr>);
             }
@@ -303,6 +303,19 @@ const Table = (props) => {
             });
     }
 
+    const task_label = () => {
+        return (<div className={'task_label'}>
+            <div className={'task_label_title'}>Eat food and asdfadsfadsfds</div>
+            <div className={'row task_label_details'}>
+                <div className={'task_label_priority'}>• Urgent</div>
+                <div className={'task_label_duration'}>• 2.5 hours</div>
+            </div>
+            <div className={'task_label_arrow'}/>
+
+        </div>)
+    }
+
+    // return (<div id='schedule_component1'>{task_label()}{props.table1}</div>);
     return (<div id='schedule_component1'>{props.table1}</div>);
 }
 
