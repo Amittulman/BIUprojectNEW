@@ -248,7 +248,6 @@ const Todo = (props) => {
   }
 
   const addTask = (index, values) => {
-    console.log('VALUES ',values)
     if (values == null) {
       values = {'user_id':props.userID,'task_title':'', 'duration':'30','priority':'0', 'recurrings':'1', 'category_id':'-1','constraints':'000000000000000000000', 'pinned_slot':null}
     }
@@ -274,7 +273,7 @@ const Todo = (props) => {
     <input onChange={(e) => handleChange(e, i)} name="pinned_choose_time" defaultValue={getTime(values['pinned_slot'])} key={'pinned_choose_time'+index} id={'pinned_choose_time'+index} className='pinned_choose_time' type="time"/>
     </span>;
     let task_title = <span key={'task_title'+index} id={'task_title'+index} className='task_elm col-sm-3' onChange={(e) => handleChange(e, i)}>Title:&nbsp;<input id={'title_textbox'+index} className='title_input' name='task_title' type='text' defaultValue={values['task_title']}/></span>
-    let recurrence = <input key={'recurrence'+index} name='recurrings' onClick={(e)=> {
+    let recurrence = <input key={'recurrence'+index} id={'recurrings'+index} name='recurrings' onClick={(e)=> {
       if (document.getElementById('thumbtack'+index).className !== 'thumbtack_done') {
         handleChange(e, i);
         recurrenceIconChange(e, i);
@@ -312,7 +311,7 @@ const Todo = (props) => {
       if (props.categories[i]['category_name'] !== '')
         options.push(<option key={'opt'+i} value={i}>{props.categories[i]['category_name']}</option>)
     }
-    let category_id = <div key={'category_id'+index} className='task_elm' onChange={(e) => handleChange(e, i)}>Category:&nbsp;
+    let category_id = <div key={'category_id'+index} id={'category_id'+index} className='task_elm' onChange={(e) => handleChange(e, i)}>Category:&nbsp;
       <div className='wrapper_options'><div id='category_options_arrow'/>&nbsp;</div>
       <select key={'category_options'+index}  className='category_options' name='category_id' defaultValue={values['category_id']} onChange={(e) => handleChange(e, i)}>
         {options}
@@ -658,15 +657,15 @@ const Todo = (props) => {
       }
     }
     let example = [{"category_id": "-1",
-      "constraints": "000000000000000000000",
+      "constraints": "000000010000011000000",
       "duration": "30",
       "pinned_slot": null,
       "priority": "0",
       "recurrings": "1",
-      "task_title": "123",
+      "task_title": "trythis",
       "user_id": "193"}]
-    debugger
-    //console.log('updated tasks(before post)2: ', Object.values(props.updated_tasks))
+    //debugger
+    console.log('updated tasks(before post)2: ', Object.values(props.updated_tasks))
     fetch('http://localhost:5000/tasks/UpdateTasks/{tasks}', {
       method: 'POST',
       headers: {

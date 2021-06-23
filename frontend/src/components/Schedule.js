@@ -48,6 +48,7 @@ const Table = (props) => {
         let dct = {'a':0, 'b':1,'c':2,'d':3,'e':4,'f':5};
         let date = new Date();
         let today_slot = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
+        console.log('today is: ', today_slot)
         let passed_day = ''
         // //debugger
         if (tasksID[0] === undefined) return;

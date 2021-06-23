@@ -154,6 +154,32 @@ const App = () => {
             });
     }
 
+    const showErrorMessage = () => {
+        let popup = document.getElementById('error_popup')
+        popup.innerText = 'Could not generate schedule';
+        popup.animate(errorAnimation[0], errorAnimation[1])
+        setTimeout(function() {
+            popup.animate(endErrorAnimation[0], endErrorAnimation[1])
+        }, 3000)
+    }
+
+    const markTasksWithErrors = (err_tasks) => {
+        let i;
+        for (i=0; i<err_tasks.length; i++) {
+            let task = document.getElementById('task' + err_tasks[i][0]);
+            task.classList.replace('closed_task', 'closed_task_error');
+            let recurrences = document.getElementById('recurrings' + err_tasks[i][0]);
+            let constraints = document.getElementById('constraints' + err_tasks[i][0]);
+            let categories = document.getElementById('category_id' + err_tasks[i][0]);
+            if (err_tasks[i][1] === 1)
+                recurrences.classList.add('thumbtack_error');
+            if (err_tasks[i][2] === 1)
+                constraints.classList.add('task_error');
+            if (err_tasks[i][3] === 1)
+                categories.classList.add('task_error');
+        }
+    }
+
     const trigTasks = (slot) => {
         // console.log('TRIG ', slot)
         // console.log('TRIG ', tasks)
@@ -162,15 +188,16 @@ const App = () => {
             .then(
                 (result) => {
                     if (result['statusCode'] === 500) throw new Error('Internal server error.');
-                    setTaskID(result)
+                    debugger
+                    if (result[0] === null) {
+                        showErrorMessage();
+                        markTasksWithErrors(result[1]);
+                        return;
+                    }
+                    setTaskID(result[0])
                 })
             .catch((error) => {
-                if (Object.keys(updated_tasks).length === 0) return
-                let popup = document.getElementById('error_popup')
-                popup.animate(errorAnimation[0], errorAnimation[1])
-                setTimeout(function() {
-                    popup.animate(endErrorAnimation[0], endErrorAnimation[1])
-                }, 3000)
+                console.log('error in trig: ', error);
             });
     }
 

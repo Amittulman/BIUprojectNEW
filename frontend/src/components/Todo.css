@@ -124,6 +124,12 @@
   50% {box-shadow: 1px 0 3px 5px rgb(243, 124, 124)}
 }
 
+@keyframes error_pin {
+  0% {box-shadow: 1px 0 5px 3px rgb(243, 124, 124)}
+  50% {box-shadow: 1px 0 5px 5px rgb(243, 124, 124)}
+  100% {box-shadow: 1px 0 5px 3px rgb(243, 124, 124)}
+}
+
 #header {
   position: absolute;
   top: 0;
@@ -301,7 +307,7 @@ select option {
 
 
 .thumbtack_error {
-  animation: error 1.5s infinite !important;
+  animation: error_pin 1.5s infinite !important;
 }
 
 .recurrence {
