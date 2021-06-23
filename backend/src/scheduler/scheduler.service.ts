@@ -18,10 +18,13 @@ export class SchedulerService {
 
         const taskWithRec = await this.createTaskWithDup(tasksFromUser);
         //tasks from frontend
-        const prioritiesTasks =  await this.sortPriorities(taskWithRec);
+        const prioritiesTasks = await this.sortPriorities(taskWithRec);
         const slotsAfterPinned = await this.putPinnedTasks(prioritiesTasks[0], slots);
         const tasksWithPriorities = [prioritiesTasks[1],prioritiesTasks[2],prioritiesTasks[3]];
         const resultCalc = await this.calcBackTracking(tasksWithPriorities, slotsAfterPinned);
+        if(resultCalc == null) {
+            return null;
+        }
         const resultsOnlySlots = await this.createSlotsFromResult(resultCalc);
         console.log(resultsOnlySlots);
         const result = await this.removeTimeStampSlots(resultsOnlySlots, current_time_slot);
@@ -73,13 +76,9 @@ export class SchedulerService {
         if (tasks.length == 0) { // success
             return true;
         }
-        for (let taskIndex = 0; taskIndex < tasks.length; taskIndex++) {
+        for(let taskIndex = 0; taskIndex < tasks.length; taskIndex++) {
             const tempTask = tasks[taskIndex];
             const spotsForThisTask = await this.findSpotsForThisTask(tempTask, slots);
-            if (spotsForThisTask.length === 0) {
-                console.log("no spots to this task:" + tempTask.task_title);
-                return false;
-            }
             const isfull = await this.slotsIsFull(slots);
             if(isfull) {
                 return false;
@@ -94,6 +93,7 @@ export class SchedulerService {
                 slots = await this.removeFromThisSpot(spotsForThisTask[spotIndex], slots);
                 tasks.splice(taskIndex,0, tempTask)
             }
+            return false;
         }
         return false;
     }
@@ -313,10 +313,13 @@ export class SchedulerService {
 
     private async checkIfSameTaskThisDay(task:Task , day: number, slots: any) {
         const temp = day*48;
-        const down = 12 + temp;
+        let down = 12 + temp;
         let up = down + 48;
         if(up === 348) {
             up = 336;
+        }
+        if(down === 300) {
+            down = 288;
         }
         for(let i=down; i< up; i++) {
             if(slots[i][0] === task.task_id) {

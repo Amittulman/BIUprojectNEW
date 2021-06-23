@@ -38,8 +38,11 @@ export class TasksController {
     if(typeof tasks[0] === undefined){
       return null;
     }
-    const categorySlots = await  this.getUserCategorySlots(user_id);
-    const errorTasks = await  this.checkTasksErrors(tasks.tasks, current_time_slot, user_id, categorySlots);
+    const categorySlots = await this.getUserCategorySlots(user_id);
+    const errorTasks = await this.checkTasksErrors(tasks.tasks, current_time_slot, user_id, categorySlots);
+    if (errorTasks.length > 0) {
+      return [null, errorTasks];
+    }
     const result = await this.schedulerService.tryCalc(tasks,categorySlots, current_time_slot);
     let res;
     //change slots to scheduledTask
@@ -53,7 +56,7 @@ export class TasksController {
     else {
       res = null;
     }
-    return res;
+    return [res,null];
   }
 
   @Get('GetToDoList/:id')
@@ -277,11 +280,15 @@ updateScheduledTasks(@Body() tasksArray: Array<any>) {
       const tempTaskID = tempTask.task_id;
       const tempReccuring = tempTask.recurrings;
       const tempConstraint = tempTask.constraints;
-      let tempErrorTask = [[tempTaskID]];
+      const slotnum = Math.ceil(tempTask.duration/30); // calc how many slots the task needs
+      const slotsneed = slotnum*tempTask.recurrings
+
+      let tempErrorTask = Array(tempTaskID,0,0,0);
+
 
       if(tempReccuring > leftDays) {
         //problem with this task - reccuring
-        tempErrorTask.push(['reccuring']);
+        tempErrorTask[1] = 1;
       }
 
       // check constraints and if there is 1 from current day to the end.
@@ -295,7 +302,7 @@ updateScheduledTasks(@Body() tasksArray: Array<any>) {
 
       if(!constraintEnough) {
         //problem with this task - constraints
-        tempErrorTask.push(['constraints']);
+        tempErrorTask[2] = 1;
       }
 
       const numOfSlots = Math.ceil(tempTask.duration/30);
@@ -313,7 +320,11 @@ updateScheduledTasks(@Body() tasksArray: Array<any>) {
           if (currSlot.length === numOfSlots) {
             const CopyForPushCurrSlot  = Object.assign([], currSlot);
             spots.push(currSlot);
-            end = await this.jumpNextDay(end);
+            if(spots.length === slotsneed) {
+              isCaregoriesEnough = true;
+              break;
+            }
+            //end = await this.jumpNextDay(end)
             currSlot= [];
           }
         } else {
@@ -323,12 +334,12 @@ updateScheduledTasks(@Body() tasksArray: Array<any>) {
         end += 1;
       }
 
-      if(spots.length < tempReccuring) {
+      if(!isCaregoriesEnough) {
         //problem with this task - categories
-        tempErrorTask.push(['categories']);
+        tempErrorTask[3] = 1;
       }
 
-      if(tempErrorTask != [[tempTaskID]]) {
+      if(tempErrorTask[1] != 0 || tempErrorTask[2] != 0 || tempErrorTask[3] != 0) {
         problemTasks.push(tempErrorTask)
       }
     }
