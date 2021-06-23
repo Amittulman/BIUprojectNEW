@@ -98,7 +98,7 @@ export class SchedulerService {
         return false;
     }
 
-    // find all the options for put the task.
+    // find all the options for put the task..
     private async findSpotsForThisTask(task: Task, slots: any) {
         const numOfSlots = Math.ceil(task.duration/30); // calc how many slots the task needs
         let start = 0; // pointer to the end of the sliding window

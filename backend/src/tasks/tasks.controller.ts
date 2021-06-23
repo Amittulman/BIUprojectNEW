@@ -287,7 +287,7 @@ updateScheduledTasks(@Body() tasksArray: Array<any>) {
 
 
       if(tempReccuring > leftDays) {
-        //problem with this task - reccuring
+        //problem with this task - reccuringg
         tempErrorTask[1] = 1;
       }
 
