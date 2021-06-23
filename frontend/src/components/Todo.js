@@ -103,7 +103,7 @@ const Todo = (props) => {
   const bin_task = (event,i, reschedule=false) => {
     //console.log('bin task')
     let timer;
-    // Deletion animation, depending on closed/opened task.
+    // Animation deletion, depending on closed/opened task.
     if (reschedule || event.currentTarget.parentNode.childNodes[2].className.startsWith('closed')) {
       document.getElementById('task_container'+i).classList.add('removed_container')
       timer = 380
@@ -168,6 +168,7 @@ const Todo = (props) => {
     let day = document.getElementById('pinned_choose_day'+index);
     let time = document.getElementById('pinned_choose_time'+index);
     let thumbtack = document.getElementById('thumbtack'+index);
+    thumbtack.title = '';
     // Cancelling pin.
     if (thumbtack.className.includes('thumbtack_done')) {
       day.value = '';
@@ -278,7 +279,7 @@ const Todo = (props) => {
         handleChange(e, i);
         recurrenceIconChange(e, i);
       }
-    }} onChange={(e) => handleChange(e, i)} className={'recurrence recurrence'+values['recurrings']} id={'recurrings'+index}/>;
+    }} onChange={(e) => handleChange(e, i)} className={'recurrence recurrence'+values['recurrings']}/>;
     let rec_pin = <div className={'row rec_pin'}>{recurrence}{thumbtack}</div>
     let title_and_thumbtack = <span key={'title_and_thumbtack'+index} className='row justify-content-between'>{task_title}{rec_pin}</span>;
     let duration = <div key={'duration'+index} id={'duration'+index} className='row ttt'><div className={'task_elm'}>Duration:</div>
@@ -693,10 +694,9 @@ const Todo = (props) => {
   }, [props.updated_tasks])
 
   const handlePinned = (index) => {
+    let days_dct = {0:  'Sunday', 1:'Monday', 2:'Tuesday', 3:'Wednesday', 4:'Thursday', 5:'Friday', 6:'Saturday'}
     let day = document.getElementById('pinned_choose_day'+index).value;
     let time = document.getElementById('pinned_choose_time'+index).value;
-    console.log('TIMEEEEEEEEEE ', time)
-    console.log('dayyyyyyyyyyy ', day)
     let pin = document.getElementById('thumbtack'+index);
     let calendar = document.getElementById('pinned_calendar'+index);
     if (day === '') {
@@ -710,15 +710,13 @@ const Todo = (props) => {
       document.getElementById('recurrings'+index).className = 'recurrence recurrence1'
       // handleChange(e, i);
       let nam = 'pinned_slot';
+      pin.title = days_dct[day] + ', ' + time;
       let val = props.timeToSlot(day, time);
       return [nam, val];
     } else return null;
   }
 
   const handleChange = (event, index) => {
-    console.log('handlechange')
-    console.log(event.target)
-    console.log(event.currentTarget)
     // If handling pinned slot, we should get event, and not its target (due to its API's implementation).
     let nam;
     let val;
