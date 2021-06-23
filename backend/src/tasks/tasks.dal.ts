@@ -115,8 +115,8 @@ export class TasksDal {
           task.task_title+"', " +
           task.duration+", " +
           task.priority+", " +
-          task.category_id+", " +
-          task.constraints+", " +
+          task.category_id+", '" +
+          task.constraints+"', " +
           task.recurrings+"," +
           task.pinned_slot+")ON DUPLICATE KEY UPDATE " +
           "`duration` = " + task.duration +
