@@ -108,6 +108,9 @@ export class TasksDal {
     if(task.task_id===undefined){
       task.task_id = null;
     }
+    if (task.constraints === "000000000000000000000"){
+      task.constraints = "111111111111111111111";
+    }
 
       const q = "INSERT INTO "+TASK_TABLE+" VALUES(" +
           task.task_id+", " +
