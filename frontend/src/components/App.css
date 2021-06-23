@@ -604,3 +604,14 @@ input:checked + .slider:before {
 /*    }*/
 
 /*}*/
+
+@media screen and (max-width: 720px) {
+    #todo_component {
+        width: 102vw;
+        left: -0px;
+    }
+    #schedule_component {
+        left: 0;
+        width: 107vw;
+    }
+}
