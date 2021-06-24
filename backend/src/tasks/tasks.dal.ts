@@ -1,35 +1,34 @@
 import {Inject, Injectable} from '@nestjs/common';
 
-import knex, {Knex} from "knex";
+import {Knex} from "knex";
 import {OUR_DB} from "../constants";
 import {ToDoList} from "../interfaces/todo.interface";
 import {Task} from "../interfaces/task.interface";
 import {ScheduledTask} from "../interfaces/scheduledTask.interface";
 import {CreateScheduledTaskDto} from "../Dto's/createScheduledTask.dto";
-import {CreateTaskDto} from "../Dto's/createTask.dto";
-import {CreateToDoListDto} from "../Dto's/createToDoList.dto";
 import {CreateCategorySlotDto} from "../Dto's/createCategorySlot.dto";
 import {CreateUserDto} from "../Dto's/createUser.dto";
 import {CreateCategoryDto} from "../Dto's/createCategoryDto";
 
+//Constants
 const TASK_TABLE = 'tasks_table';
 const CATEGORY_SLOT_TABLE = 'category_slots';
 const CATEGORY_LOOKUP_TABLE = 'category_lookup';
 const SCHEDULE_TABLE = 'scheduled_tasks';
 const USERS_TABLE = 'user_table';
+const SUCCESS = 'Success';
+const NULL_CONSTRAINTS = "000000000000000000000";
+const FULL_CONSTRAINTS = "111111111111111111111";
+const USER_ID = 'user_id';
+const USER_NAME = 'user_name';
+const CATEGORY_ID = 'category_id';
+const TASK_ID = 'task_id';
+const SLOT_ID = 'slot_id';
+const ERROR = '-1';
 @Injectable()
 export class TasksDal {
 
   constructor(@Inject(OUR_DB) private db:Knex) {
-  }
-
-  // TODO: add access to DB late
-  //DAL - data access layer
-  async getHello(): Promise<string> {
-    const res = await this.db.from(TASK_TABLE).select();
-    console.log('!!!!!!!!! res: ', JSON.stringify(res));
-    //return res[0][0].result === '2';
-    return 'Hi!';
   }
 
   async postTask(task: Task): Promise<void> {
@@ -47,11 +46,8 @@ export class TasksDal {
 
   async GetToDoList(user_id: string): Promise<ToDoList> {
     const dataArr = [];
-    // console.log('param raw: ', user_id);
-    // console.log('param parsed: ', parseInt(user_id));
 
-    const res = await this.db.from(TASK_TABLE).select('*').where('user_id',parseInt(user_id));
-    // console.log(JSON.stringify(res))
+    const res = await this.db.from(TASK_TABLE).select('*').where(USER_ID,parseInt(user_id));
     res.forEach(function(value) {
       //Constraints data is saved as a string of 21 chars, where each 3 chars (morning,noon,evening)
       // represent user's preference to assign task to the corresponding time of day.
@@ -76,7 +72,7 @@ export class TasksDal {
   }
   async getTasks(user_id: string): Promise<ToDoList> {
     const dataArr = [];
-     const res = await this.db.from(TASK_TABLE).select('*').where('user_id',parseInt(user_id));
+     const res = await this.db.from(TASK_TABLE).select('*').where(USER_ID,parseInt(user_id));
     res.forEach(function(value) {
       dataArr.push(value)
     });
@@ -85,11 +81,10 @@ export class TasksDal {
 
   async postTasks(tasks: any): Promise<string> {
     console.log(tasks);
-    let suc = 'Success';
-
+    let suc = SUCCESS;
     for (const task in tasks){
-      if (tasks[task].constraints === "000000000000000000000"){
-        tasks[task].constraints = "111111111111111111111"
+      if (tasks[task].constraints === NULL_CONSTRAINTS){
+        tasks[task].constraints = FULL_CONSTRAINTS;
       }
     }
     try{
@@ -108,11 +103,11 @@ export class TasksDal {
     if(task.task_id===undefined){
       task.task_id = null;
     }
-    if (task.constraints === "000000000000000000000"){
-      task.constraints = "111111111111111111111";
+    if (task.constraints === NULL_CONSTRAINTS){
+      task.constraints = FULL_CONSTRAINTS;
     }
 
-      const q = "INSERT INTO "+TASK_TABLE+" VALUES(" +
+      const quer = "INSERT INTO "+TASK_TABLE+" VALUES(" +
           task.task_id+", " +
           task.user_id+", '" +
           task.task_title+"', " +
@@ -129,33 +124,16 @@ export class TasksDal {
           ", `constraints` = '" + task.constraints+
           "', `recurrings` = " + task.recurrings +
           ", `pinned_slot` = " + task.pinned_slot
-      queries.push(q)
+      queries.push(quer)
     })
-    //
-    // "INSERT INTO "+CATEGORY_LOOKUP_TABLE+" VALUES(" +
-    // category.user_id +
-    // ", " + category.category_i   d +
-    // ", '" + category.category_name +
-    // "', '" + category.color +
-    // "') ON DUPLICATE KEY UPDATE " +
-    // "category_name='" + category.category_name +
-    // "', color='" + category.color +
-    // "'"
-
-  // console.log(queries);
   return this.db.transaction(trx => {
-
     const whole_query = [];
     queries.forEach(quer =>{
       whole_query.push(this.db.raw(quer).transacting(trx),
       )
     } );
-
-
     return Promise.all(whole_query);
   });
-
-
   }
 
   async updateScheduledTasks(slots: any): Promise<any> {
@@ -175,95 +153,30 @@ export class TasksDal {
           "values ("+slot.user_id+","+slot.new_slot+","+slot.task_id+")"
       )
     })
-
-  // console.log(queries);
   return this.db.transaction(trx => {
-
     const whole_query = [];
     queries.forEach(quer =>{
       whole_query.push(this.db.raw(quer).transacting(trx),
       )
     } );
-
-
     return Promise.all(whole_query);
   });
-
-
   }
- // async updateScheduledTasks(slots: any): Promise<any> {
- //
- //    console.log(slots);
- //    const queries = [];
- //    slots.forEach(slot=>{
- //      queries.push(
- //          "update "+SCHEDULE_TABLE+
- //          " set `task_id` = " + slot.task_id +
- //          ", `user_id` = " + slot.user_id +
- //          ", `slot_id` = " + slot.new_slot +
- //          " where `user_id`=" + slot.user_id +
- //          " and `slot_id`=" + slot.slot_id
- //      )
- //    })
- //
- //  // console.log(queries);
- //  return this.db.transaction(trx => {
- //
- //    const whole_query = [];
- //    queries.forEach(quer =>{
- //      whole_query.push(this.db.raw(quer).transacting(trx),
- //      )
- //    } );
- //
- //
- //    return Promise.all(whole_query);
- //  });
- //
- //
- //  }
-
-
-  //
-  // async postTaskForToDoList(createTaskDto: CreateTaskDto): Promise<string> {
-  //   console.log(createTaskDto);
-  //   let suc = 'Success';
-  //   try{
-  //
-  //     const res = await  this.db(TASK_TABLE).insert(createTaskDto);
-  //   }
-  //   catch (e){
-  //     suc = e
-  //   }
-  //   return suc;
-  //Schedule
-  // async getSchedule(user_id: string): Promise<Array<number>> {
-  //   const dataArr = [];
-  //   // console.log('param raw: ', user_id);
-  //   // console.log('param parsed: ', parseInt(user_id));
-  //
-  //   const res = await this.db.from(SCHEDULE_TABLE).select('task_id').where('user_id',parseInt(user_id));
-  //   // console.log(JSON.stringify(res))
-  //   res.forEach(function(value) {
-  //     dataArr.push(value)
-  //   });
-  //   return  dataArr;
-  // }
 
   async getScheduleTask(user_id: string, slot_id:string): Promise<ScheduledTask> {
-    const dataArr = [];
-    let varia:ScheduledTask;
-    // console.log('param raw: ', user_id);
-    // console.log('param parsed: ', parseInt(user_id));
-
-    const res = this.db(SCHEDULE_TABLE).select('*').where({'user_id': parseInt(user_id), 'slot_id': parseInt(slot_id)});
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return res;
+    const res = await this.db(SCHEDULE_TABLE).select('*').where({USER_ID: parseInt(user_id), SLOT_ID: parseInt(slot_id)});
+    return res[0];
   }
-  async postSchedule(schedule: Array<CreateScheduledTaskDto>){
-    let suc = 'Success';
-    try{
 
+  async getAllScheduledTasks(user_id: string): Promise<Array<ScheduledTask>> {
+    const res = await this.db(SCHEDULE_TABLE).select('*').where({USER_ID: parseInt(user_id)});
+    const result:Array<ScheduledTask> = res[0];
+    return result;
+  }
+
+  async postSchedule(schedule: Array<CreateScheduledTaskDto>){
+    let suc = SUCCESS;
+    try{
     const res = await  this.db(SCHEDULE_TABLE).insert(schedule);
     }
     catch (e){
@@ -272,11 +185,10 @@ export class TasksDal {
     return suc;
   }
 
-  async PostCategorySlots(categories: Array<CreateCategorySlotDto>){
-    let suc = 'Success';
+  async postCategorySlots(categories: Array<CreateCategorySlotDto>){
+    let suc = SUCCESS;
     try{
-
-    const res = await  this.db(CATEGORY_SLOT_TABLE).insert(categories);
+    const res = await this.db(CATEGORY_SLOT_TABLE).insert(categories);
     }
     catch (e){
       suc = e
@@ -285,9 +197,9 @@ export class TasksDal {
   }
 
   async updateScheduleSlot(schedule: CreateScheduledTaskDto, slot: number){
-    let suc = 'Success';
+    let suc = SUCCESS;
     try{
-      const res = await  this.db(SCHEDULE_TABLE).where({'user_id': schedule.user_id, 'task_id': schedule.task_id, 'slot_id':schedule.slot_id}).update('slot_id',slot);
+      const res = await  this.db(SCHEDULE_TABLE).where({USER_ID: schedule.user_id, TASK_ID: schedule.task_id, SLOT_ID:schedule.slot_id}).update(SLOT_ID,slot);
     }
     catch (e){
       suc = e
@@ -297,8 +209,7 @@ export class TasksDal {
 
   async getUserCategories(user_id: string): Promise<Array<number>> {
     const dataArr = new Array<number>();
-
-    const res = await this.db.from(CATEGORY_SLOT_TABLE).distinct('category_id').where('user_id',parseInt(user_id));
+    const res = await this.db.from(CATEGORY_SLOT_TABLE).distinct(CATEGORY_ID).where(USER_ID,parseInt(user_id));
     res.forEach(function(value) {
       dataArr.push(parseInt(value.category_id))
     });
@@ -307,37 +218,27 @@ export class TasksDal {
 
   async getUserCategorySlots(user_id: string): Promise<Array<number>> {
     const dataArr = new Array<number>();
-
-    const res = await this.db.from(CATEGORY_SLOT_TABLE).select('*').where('user_id',parseInt(user_id));
+    const res = await this.db.from(CATEGORY_SLOT_TABLE).select('*').where(USER_ID,parseInt(user_id));
     res.forEach(function(value) {
       dataArr.push(value)
     });
-
-
     return dataArr;
-
-
   }
 
   async getSchedule(user_id: string): Promise<Array<number>> {
     const dataArr = new Array<number>();
-
-    const res = await this.db.from(SCHEDULE_TABLE).select('*').where('user_id',parseInt(user_id));
+    const res = await this.db.from(SCHEDULE_TABLE).select('*').where(USER_ID,parseInt(user_id));
     res.forEach(function(value) {
       dataArr.push(value)
     });
-
-
     return dataArr;
 
 
   }
   async deleteSchedule(user_id: string): Promise<string> {
-    let suc = 'Success';
+    let suc = SUCCESS;
     try{
-      // console.log(schedule);
-      // console.log("tryting to update user "+user_id+" slot "+slot_id+"with the next: "+schedule.taskID);
-      const res = await  this.db(SCHEDULE_TABLE).where('user_id',parseInt(user_id)).del();
+      const res = await  this.db(SCHEDULE_TABLE).where(USER_ID,parseInt(user_id)).del();
     }
     catch (e){
       suc = e
@@ -347,9 +248,9 @@ export class TasksDal {
   }
 
   async deleteUserCategories(user_id: string): Promise<string> {
-    let suc = 'Success';
+    let suc = SUCCESS;
     try{
-      const res = await  this.db(CATEGORY_SLOT_TABLE).where('user_id',parseInt(user_id)).del();
+      const res = await  this.db(CATEGORY_SLOT_TABLE).where(USER_ID,parseInt(user_id)).del();
     }
     catch (e){
       suc = e
@@ -359,11 +260,9 @@ export class TasksDal {
   }
 
   async deleteTasks(user_id: string, task_ids: Array<number>): Promise<string> {
-    let suc = 'Success';
+    let suc = SUCCESS;
     try{
-      // console.log(schedule);
-      // console.log("tryting to update user "+user_id+" slot "+slot_id+"with the next: "+schedule.taskID);
-      const res = await  this.db(TASK_TABLE).where('user_id',user_id).whereIn('task_id',task_ids).del();
+      const res = await  this.db(TASK_TABLE).where(USER_ID,user_id).whereIn(TASK_ID,task_ids).del();
     }
     catch (e){
       suc = e
@@ -372,16 +271,17 @@ export class TasksDal {
 
   }
 
+
   //  USERS:
 
 
   async checkUserCredentials(user: CreateUserDto){
-    const res = this.db(USERS_TABLE).select('*').where({'user_name': user['user_name']});
+    const res = this.db(USERS_TABLE).select('*').where({USER_NAME: user[USER_NAME]});
     return  res;
   }
 
   async postNewUser(user: CreateUserDto){
-    let suc = 'Success';
+    let suc = SUCCESS;
     try{
 
       const res = await  this.db(USERS_TABLE).insert(user);
@@ -394,11 +294,30 @@ export class TasksDal {
 
   async getUsernameByID(user_id: string){
 
-    const res = await this.db.from(USERS_TABLE).select('user_name').where('user_id',parseInt(user_id));
+    const res = await this.db.from(USERS_TABLE).select(USER_NAME).where(USER_ID,parseInt(user_id));
     if(res[0] === undefined){
-      return "-1";
+      return ERROR;
     }
-    return "{\"user_name\":\""+res[0]['user_name']+"\"}";
+    return "{\"user_name\":\""+res[0][USER_NAME]+"\"}";
+  }
+
+  async getUserIdByName(user_name: string){
+
+    const res = await this.db.from(USERS_TABLE).select(USER_ID).where(USER_NAME,user_name);
+    const id:string = res[0][USER_ID];
+    return id;
+  }
+
+  async deleteUsers(users: Array<number>): Promise<string> {
+    let suc = SUCCESS;
+    try{
+      const res = await  this.db(USERS_TABLE).whereIn(USER_ID,users).del();
+    }
+    catch (e){
+      suc = e
+    }
+    return suc;
+
   }
 
 //Categories
@@ -408,16 +327,6 @@ export class TasksDal {
     const queries = [];
     categories.forEach(category=>{
       queries.push(
-          // "INSERT INTO "+CATEGORY_LOOKUP_TABLE+" VALUES(" +
-          // " `user_id` = " + category.user_id +
-          // ", `category_id` = " + category.category_id +
-          // ", `category_name` = '" + category.category_name +
-          // "', `category` = '" + category.color +
-          // "') ON DUPLICATE KEY UPDATE " +
-          // "user_id="+ category.user_id +
-          // "category_name=" + category.category_name +
-          // "color=" + category.color
-
           "INSERT INTO "+CATEGORY_LOOKUP_TABLE+" VALUES(" +
           category.user_id +
           ", " + category.category_id +
@@ -430,16 +339,12 @@ export class TasksDal {
       )
     })
 
-    // console.log(queries);
     return this.db.transaction(trx => {
-
       const whole_query = [];
       queries.forEach(quer =>{
         whole_query.push(this.db.raw(quer).transacting(trx),
         )
       } );
-
-
       return Promise.all(whole_query);
     });
   }
@@ -447,8 +352,7 @@ export class TasksDal {
 
   async getCategories(user_id: string): Promise<Array<CreateCategoryDto>> {
     const dataArr = new Array<CreateCategoryDto>();
-
-    const res = await this.db.from(CATEGORY_LOOKUP_TABLE).select('*').where('user_id',parseInt(user_id));
+    const res = await this.db.from(CATEGORY_LOOKUP_TABLE).select('*').where(USER_ID,parseInt(user_id));
     res.forEach(function(value) {
       dataArr.push(value)
     });
