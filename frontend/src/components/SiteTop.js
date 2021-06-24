@@ -1,5 +1,6 @@
 import './SiteTop.css'
 import React, {useEffect, useRef, useState} from 'react';
+import siteLogo from '../images/BEEZEELOGO.png';
 
 const slots_per_day = 24*2;
 
@@ -421,10 +422,11 @@ const SiteTop = (props) => {
     else greeting = 'Good evening'
     return (
         <div id='site_top' className='row flex-grow-0'>
+            <img src={siteLogo} id='login_title'/>
+            <div className={'spacing'}/>
             <div className='userContainer'>
                 <div id='greeting'>{greeting}, {username}! 👋</div>
             </div>
-            <div id='login_title'>BeeZee</div>
             <div className='col-2' id='blank_col'/>
             <div data-toggle="tooltip" title="Modify Categories" onClick={showCategories} id='category_button' className='category_button'/>
             <div data-toggle="tooltip" title="Add category" id='add_category_button' onClick={(e)=>{

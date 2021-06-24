@@ -290,7 +290,7 @@ select option {
   background-image: url("../images/thumbtack.svg");
   background-repeat: no-repeat;
   margin-right: 10px;
-  z-index: 999999;
+  z-index: 99999999;
 
 }
 

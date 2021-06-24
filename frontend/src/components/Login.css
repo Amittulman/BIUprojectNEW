@@ -17,7 +17,7 @@
     text-align: center;
     border-radius: 15px 50px;
     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-    padding: 20px 20px 20px 20px;
+    padding: 50px 20px 20px 20px;
     box-sizing: border-box;
     opacity: 1;
     transition: visibility 0.4s ease-in, opacity 0.4s ease-in;
@@ -35,6 +35,15 @@
 .login_title, .signup_title {
     font: 70px "Brush Script MT";
     user-select: none;
+    background-color: red;
+}
+
+.spacing {
+    height: 50px;
+}
+
+.spacing_signup {
+    height: 100px;
 }
 
 .login_subtitle {
@@ -179,7 +188,7 @@ input:focus {
 }
 
 .back_to_login {
-    margin-bottom: 100px;
+    margin-bottom: 50px;
 }
 
 .forgot_password:hover {

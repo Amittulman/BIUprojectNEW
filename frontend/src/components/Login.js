@@ -3,6 +3,8 @@ import React, {useState, useEffect, useRef} from 'react'
 import { Switch, Route, Redirect, withRouter } from 'react-router';
 import { Link, useLocation, useHistory } from 'react-router-dom';
 import { TransitionGroup, CSSTransition} from "react-transition-group";
+import siteLogo from '../images/BEEZEELOGO.png';
+
 // import 'bcrypt'
 const bcryptjs = require('bcryptjs');
 
@@ -210,10 +212,11 @@ const Login = (props) => {
                 name2 = element.id + '_input_error_signup'
         }
         if (error) {
-            // //debugger
+            debugger
             document.getElementById(name).className = 'error_sign'
-            if (location.pathname === '/signup')
+            if (location.pathname === '/signup') {
                 document.getElementById(name2).textContent = msg
+            }
             // document.getElementById(name).textContent = 'msgmsg'
         } else {
             document.getElementById(name).className = 'no_error_sign'
@@ -296,6 +299,7 @@ const Login = (props) => {
             .then(res=>res.json())
             .then((response) => {
                 if (response.status !== 201) {
+                    console.log('response: ', response)
                     // console.log('SUCCESSFULL LOGIN!')
                     ////debugger
                     // If successful logging in
@@ -322,6 +326,13 @@ const Login = (props) => {
                         // setLoginAnswer(response)
                     // If successful signing up.
                     } else {
+                            if (response === -1) {
+                                let username = document.getElementById('username')
+                                markAsError(true, username, 'User already taken.')
+                                showInputError(username)
+
+                                return;
+                            }
                         // //debugger
                         setSignUpAnswer(undefined)
                         setSignUpAnswer(response['user_id'])
@@ -361,7 +372,8 @@ const Login = (props) => {
     {
         return(
             <form className='login_container' id='login_container' >
-                <div className='login_title'>BeeZee</div>
+                <img src={siteLogo} id='login_title'/>
+                <div className={'spacing'}/>
                 <div className='login_subtitle'>Hello, please log in.</div>
                 <div id='username' ref={login_userNode} className={loginUserClicked?'textbox_title_clicked':'textbox_title'}>Username<span id='err_username' className='no_error_sign'>*</span><div className='hidden_input_error' id='username_input_error_login'/><input id='username_text' maxLength='10' className={loginUserClicked?'input_clicked':'input'} type='text'/></div>
                 <div id='password' ref={login_passNode} className={loginPassClicked?'textbox_title_clicked':'textbox_title'}>Password<span  id='err_password' className='no_error_sign'>*</span><div className='hidden_input_error' id='password_input_error_login'/><input id='password_text' maxLength='12' className={loginPassClicked?'input_clicked':'input'} type='password'/></div>
@@ -383,7 +395,8 @@ const Login = (props) => {
     {
         return(
             <div className='signup_container' id='signup_container'>
-                <div className='login_title'>BeeZee</div>
+                <img src={siteLogo} id='login_title'/>
+                <div className={'spacing_signup'}/>
                 {/*<div className='login_subtitle'>Please sign up.</div>*/}
                 <div ref={signup_userNode} id='username' className={signUpUserClicked?'textbox_title_clicked':'textbox_title'}>Username<span id='err_username' className='no_error_sign'>*</span><div className='hidden_input_error' id='username_input_error_signup'/><input id='username_text' maxLength='10' className={signUpUserClicked?'input_clicked':'input'} type='text'/></div>
                 <div ref={signup_passNode} id='password' className={signUpPassClicked?'textbox_title_clicked':'textbox_title'}>Password<span id='err_password' className='no_error_sign'>*</span><div className='hidden_input_error' id='password_input_error_signup'/><input id='password_text' maxLength='12' className={signUpPassClicked?'input_clicked':'input'} type='password'/></div>

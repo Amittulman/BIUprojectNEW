@@ -21,7 +21,17 @@
 #login_title {
     font: 70px "Brush Script MT";
     user-select: none;
-    margin-left: 25px;
+    /*margin-left: 25px;*/
+    top: -20px;
+    left: 0;
+    padding-bottom: 300px;
+    position: absolute;
+    width: 300px;
+    height: auto;
+    z-index: -1;
+    /*height: 1110px;*/
+    /*width: auto;*/
+    /*background: url("../images/BEEZEELOGO.png") no-repeat;*/
 }
 
 #blank_col {
@@ -74,6 +84,11 @@
     margin-top: 60px;
     margin-left: -400px;
     transition: visibility 0.2s ease-in, opacity 0.2s ease-in;
+}
+.spacing {
+    /*margin-left: 500px;*/
+    width: calc(200px + 1%);
+    height: 1px;
 }
 
 .edit_cat {
@@ -170,13 +185,16 @@
     box-shadow: rgba(0, 0, 0, 1) 0 1px 4px;
 }
 
+.spacing {
+    margin-left: 0;
+}
 
 .userContainer {
     position: absolute;
-    top: 100%;
-    left: 2%;
+    top: 65%;
+    left: 45%;
     width: 300px;
-    /*animation: username_appear 1.2s forwards;*/
+    animation: username_appear 4s forwards;
     user-select: none;
     /*font-family: Bookman, URW Bookman L, serif	;*/
 }
@@ -185,8 +203,11 @@
         opacity: 0;
 
     }
-    100% {
+    50% {
         opacity: 1;
+    }
+    100% {
+        opacity: 0;
     }
 }
 
