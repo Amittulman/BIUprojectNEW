@@ -249,6 +249,7 @@ const Todo = (props) => {
   }
 
   const slotToTime = (slot, event) => {
+    if (event.target.title !== '') return;
     let days_dct = {0:  'Sunday', 1:'Monday', 2:'Tuesday', 3:'Wednesday', 4:'Thursday', 5:'Friday', 6:'Saturday'}
     if (slot === null) {
       event.target.title = '';
@@ -257,13 +258,18 @@ const Todo = (props) => {
     let day = Math.floor(slot / 48);
     let day_name = days_dct[Math.floor(slot / 48)]
     let hour = Math.floor((slot - (day * 48)) / 2);
-    debugger
     let minute;
     if ((slot - (day * 48) / 2 ) % 2 === 0)
       minute = '00';
     else
       minute = '30';
     event.target.title = day_name + ', ' + hour + ':' + minute;
+  }
+
+  const unpinTask = (event, i) => {
+    // let pin = document.getElementById('');
+    debugger
+    props.updated_tasks[i]['pinned_slot'] = null;
   }
 
   const addTask = (index, values) => {
@@ -295,6 +301,7 @@ const Todo = (props) => {
     let recurrence = <input key={'recurrence'+index} id={'recurrings'+index} name='recurrings' onClick={(e)=> {
       if (document.getElementById('thumbtack'+index).className !== 'thumbtack_done') {
         handleChange(e, i);
+        unpinTask(e, i);
         recurrenceIconChange(e, i);
       }
     }} onChange={(e) => handleChange(e, i)} className={'recurrence recurrence'+values['recurrings']}/>;

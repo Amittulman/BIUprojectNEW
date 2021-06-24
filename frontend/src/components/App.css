@@ -502,6 +502,7 @@
 #todo_parent {
     max-width: 450px;
     min-width: 350px;
+    margin-top: -20px;
 }
 
 
