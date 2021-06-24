@@ -196,6 +196,7 @@
     width: 300px;
     animation: username_appear 4s forwards;
     user-select: none;
+    z-index: -1;
     /*font-family: Bookman, URW Bookman L, serif	;*/
 }
 @keyframes username_appear {
