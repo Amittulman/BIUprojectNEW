@@ -125,13 +125,14 @@ const SiteTop = (props) => {
             let new_category = document.createElement('div');
             new_category.id='added_button_' + i
             new_category.className = 'category_option category user_category';
-            new_category.innerText = props.categories[i]['category_name']
-            new_category.style.backgroundColor = props.categories[i]['color']
+            new_category.innerText = props.categories[i]['category_name'];
+            new_category.style.backgroundColor = props.categories[i]['color'];
             // Adding category's edit button.
-            let edit_cat = document.getElementById('edit_cat'+i)
+            let edit_cat = document.getElementById('edit_cat'+i);
             edit_cat = document.createElement('div');
             edit_cat.id = 'edit_cat' + i;
             edit_cat.className = 'edit_cat';
+            edit_cat.title = 'Edit'
             new_category.appendChild(edit_cat)
             let new_cat_container= document.getElementById('adding_category_container');
             let category_accept_changes = document.getElementById('category_accept_changes');
@@ -139,6 +140,7 @@ const SiteTop = (props) => {
             let remove_cat = document.getElementById('remove_cat'+i)
             remove_cat = document.createElement('div');
             remove_cat.id = 'remove_cat' + i;
+            remove_cat.title = 'Remove';
             if (i >= 3)
                 remove_cat.className = 'remove_cat';
             else
@@ -162,12 +164,12 @@ const SiteTop = (props) => {
                 setCategories();
             }
             let category_decline_changes = document.getElementById('category_decline_changes');
-            category_decline_changes.onclick = () => {new_cat_container.style.visibility = 'hidden';}
+            category_decline_changes.onclick = () => {unmarkRest(); new_cat_container.style.visibility = 'hidden';}
             edit_cat.onclick = () => {
                 edit_cat.style.visibility = 'hidden'
                 remove_cat.style.visibility = 'hidden'
                 //Reset title value, when editing title and color of category.
-                document.getElementById('category_dialog').value = ''
+                document.getElementById('category_dialog').value = props.categories[i]['category_name']
                 // new_cat_container.style.marginLeft = '-200px'
                 new_cat_container.style.visibility = 'visible'
             }
@@ -414,6 +416,18 @@ const SiteTop = (props) => {
         return null
     }
 
+    const markSelf = (event) => {
+        event.target.style.boxShadow = 'rgba(0, 0, 0, 1) 0 1px 4px';
+    }
+
+    const unmarkRest = () => {
+        let colors = document.getElementsByClassName('category_colors');
+        let i;
+        for (i=0; i<colors.length; i++) {
+            colors[i].style.boxShadow = '';
+        }
+    }
+
     let login_input = <input onKeyPress={findTask} id='input' name='user_id_input' type='text' placeholder='Enter ID number'/>;
     let time_of_day = new Date().getHours()
     let greeting;
@@ -457,17 +471,41 @@ const SiteTop = (props) => {
             </div>
             <div data-toggle="tooltip" title="Clear" id='clear_category_button' onClick={()=>{hideRest(); props.setOption(-1)}} className='category_option'/>
             {/*TODO:show indicator of sending category.*/}
-            <div data-toggle="tooltip" title="Send" id='category_send_button' onClick={()=>{props.handleCategoriesSubmission(); showCategories(); props.setCategoryTrigger(!props.categoryTrigger)}} className='category_option'/>
+            <div data-toggle="tooltip" title="Save" id='category_send_button' onClick={()=>{props.handleCategoriesSubmission(); showCategories(); props.setCategoryTrigger(!props.categoryTrigger)}} className='category_option'/>
             <div id='adding_category_container'>
                 Title:
                 <input id='category_dialog'/>
                 Color:
-                <span id='new_category_option_1' className='category_colors' onClick={()=>setCategoryColor(1)}/>
-                <span id='new_category_option_2' className='category_colors' onClick={()=>setCategoryColor(2)}/>
-                <span id='new_category_option_3' className='category_colors' onClick={()=>setCategoryColor(3)}/>
-                <span id='new_category_option_4' className='category_colors' onClick={()=>setCategoryColor(4)}/>
-                <span id='new_category_option_5' className='category_colors' onClick={()=>setCategoryColor(5)}/>
-                <span id='new_category_option_6' className='category_colors' onClick={()=>setCategoryColor(6)}/>
+                <span id='new_category_option_1' className='category_colors' onClick={(e)=> {
+                    setCategoryColor(1)
+                    unmarkRest()
+                    markSelf(e)
+                }}/>
+                <span id='new_category_option_2' className='category_colors' onClick={(e)=> {
+                    setCategoryColor(2)
+                    unmarkRest()
+                    markSelf(e)
+                }}/>
+                <span id='new_category_option_3' className='category_colors' onClick={(e)=> {
+                    setCategoryColor(3)
+                    unmarkRest()
+                    markSelf(e)
+                }}/>
+                <span id='new_category_option_4' className='category_colors' onClick={(e)=> {
+                    setCategoryColor(4)
+                    unmarkRest()
+                    markSelf(e)
+                }}/>
+                <span id='new_category_option_5' className='category_colors' onClick={(e)=> {
+                    setCategoryColor(5)
+                    unmarkRest()
+                    markSelf(e)
+                }}/>
+                <span id='new_category_option_6' className='category_colors' onClick={(e)=> {
+                    setCategoryColor(6)
+                    unmarkRest()
+                    markSelf(e)
+                }}/>
                 <span id='category_accept_changes'/>
                 <span id='category_decline_changes'/>
             </div>

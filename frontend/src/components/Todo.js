@@ -880,7 +880,7 @@ const Todo = (props) => {
           </form><br/>
           <div id={'bottom_content'}>
             <div id='add_a_new_task' onClick={() => addTask(task_number)}/>
-            <input id='submit_button' className="btn btn-primary btn-md" type='submit' form='container'/>
+            <input id='submit_button' value='Send' className="btn btn-primary btn-md" type='submit' form='container'/>
           </div>
           <div id='due_date_popup'>Please handle past due tasks.</div>
           <div id='error_popup'>Could not generate schedule.</div>
