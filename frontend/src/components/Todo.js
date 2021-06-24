@@ -267,9 +267,9 @@ const Todo = (props) => {
   }
 
   const unpinTask = (event, i) => {
-    // let pin = document.getElementById('');
-    debugger
+    let pin = document.getElementById('thumbtack'+i);
     props.updated_tasks[i]['pinned_slot'] = null;
+    pin.className = 'thumbtack'
   }
 
   const addTask = (index, values) => {
@@ -542,7 +542,6 @@ const Todo = (props) => {
       let temp_task = document.getElementById('title_textbox' + task_index)
       // If title is too long
       if (props.updated_tasks[task_index]['task_title'].length > 30) {
-        // ////debugger;
         temp_task.classList.add('task_error')
         task_err = true
         total_err = true
