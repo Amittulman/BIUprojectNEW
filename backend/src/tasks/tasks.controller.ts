@@ -291,16 +291,44 @@ updateScheduledTasks(@Body() tasksArray: Array<any>) {
         tempErrorTask[1] = 1;
       }
 
+      let curSlot = timeStamp-12;
+      const day = Math.floor(curSlot/48);
+      const toMinus = day*48;
+      const temp = curSlot-toMinus;
+      let partOfTheDay = Math.floor(temp/12);
+      if (partOfTheDay === 3) {
+        partOfTheDay = 2;
+      }
+
       // check constraints and if there is 1 from current day to the end.
       let constraintEnough = false;
+      let CounterForDaysConstraints = 0;
       for(let constraintIndex = day; constraintIndex < tempTask.constraints.length ; constraintIndex++) {
-        if(tempConstraint[day][0] === 1  || tempConstraint[day][1] === 1 || tempConstraint[day][2] === 1) {
-          constraintEnough = true;
+        let isMorningConstraint = tempConstraint[constraintIndex][0] === 1;
+        let isNoonConstraint = tempConstraint[constraintIndex][1] === 1;
+        let isNightConstraint = tempConstraint[constraintIndex][2] === 1;
+
+        if (partOfTheDay === 2) { // night now
+          if (isNightConstraint) {
+            constraintEnough = true;
+            CounterForDaysConstraints += 1;
+          }
+        } else if (partOfTheDay === 1) { //noon now
+          if (isNoonConstraint || isNightConstraint) {
+            constraintEnough = true;
+            CounterForDaysConstraints += 1;
+          }
+        } else if (partOfTheDay === 0) { // morning now
+          if (isNoonConstraint || isNightConstraint || isMorningConstraint) {
+            constraintEnough = true;
+            CounterForDaysConstraints += 1;
+          }
+        } else {
           break;
         }
       }
 
-      if(!constraintEnough) {
+      if(!constraintEnough || CounterForDaysConstraints < tempReccuring) {
         //problem with this task - constraints
         tempErrorTask[2] = 1;
       }
@@ -313,19 +341,24 @@ updateScheduledTasks(@Body() tasksArray: Array<any>) {
       let isCaregoriesEnough = false;
       let currSlot = [];
       const spots = []; // the result - all the options
+      let counterTemp = 0;
+      let bigCounter = 0;
 
       while (end < categories.length){
         if (curCategory === categories[end]) {
           currSlot.push(end); // we can use this slot
-          if (currSlot.length === numOfSlots) {
+          counterTemp += 1;
+          if (counterTemp === numOfSlots) {
             const CopyForPushCurrSlot  = Object.assign([], currSlot);
             spots.push(currSlot);
-            if(spots.length === slotsneed) {
+            bigCounter += counterTemp;
+            if(bigCounter === slotsneed) {
               isCaregoriesEnough = true;
               break;
             }
             //end = await this.jumpNextDay(end)
-            currSlot= [];
+            //currSlot= [];
+            counterTemp = 0;
           }
         } else {
           start = end+1;
