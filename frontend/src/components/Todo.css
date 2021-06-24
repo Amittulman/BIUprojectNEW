@@ -24,7 +24,7 @@
   /*margin-left: 20%;*/
   margin-left: 40%;
   background: url("../images/plus_sign.svg") no-repeat;
-  transition: background 0.1s ease-in;
+  transition: background 0.2s ease-in;
   cursor: pointer;
 }
 
@@ -671,7 +671,19 @@ margin-left: 20px;
   /*left: 75%;*/
   /*margin-left: 40px;*/
   height: 40px;
+  background-color: #faffa2;
+  border-color: #555555;
+  color: #555555;
 }
+
+#submit_button:hover {
+  background-color: #F9FF64;
+}
+
+#submit_button:active, #submit_button:focus  {
+  box-shadow: 1px 0px 3px 3px #ccc;
+}
+
 
 #todo_parent_component {
   background-color: transparent;
