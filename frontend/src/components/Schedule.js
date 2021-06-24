@@ -79,7 +79,7 @@ const Table = (props) => {
                     content.push(<td key={'cell_' + (slots_per_day * (i - 1) + j)} className={class_name} style={{backgroundColor:color}}
                                      id={'cell_' + (slots_per_day * (i - 1) + j) + '_taskID_' + tasksID[j + (i - 1) * slots_per_day]}
                                      draggable='true' onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop}
-                                     onDragLeave={leaveDropArea}><div className={passed_day + ' test123 ' + heb_class}>{data}</div></td>);//{data}
+                                     onDragLeave={leaveDropArea}><div className={passed_day + ' hidden_overflow ' + heb_class}>{data}</div></td>);//{data}
                 }
                 jsx.push(<tr key={'tr' + i}><th key={'th' + i}>{props.days[i]}</th>{content}</tr>);
             }

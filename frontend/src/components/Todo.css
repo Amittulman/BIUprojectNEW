@@ -7,7 +7,6 @@
   font-size: calc(22px);
   color: rgb(12, 13, 13);
   user-select: none;
-  /*overflow-y: scroll;*/
 }
 
 .App-link {
@@ -15,16 +14,12 @@
 }
 
 #add_a_new_task {
-  /*position: absolute;*/
-  /*top: 75vh;*/
-  /*bottom: 90px;*/
   width: 50px;
   height: 50px;
   margin-top: -3px;
-  /*margin-left: 20%;*/
   margin-left: 40%;
   background: url("../images/plus_sign.svg") no-repeat;
-  transition: background 0.2s ease-in;
+  transition: background 0.1s ease-in;
   cursor: pointer;
 }
 
@@ -43,7 +38,6 @@
   border-radius: 10px;
   margin-left: 8px;
   margin-right: 8px;
-  /*margin-top: 10px;*/
   padding: 5px;
   width: 70%;
   text-overflow: ellipsis;
@@ -51,7 +45,6 @@
   white-space: nowrap;
   text-align: center;
   -webkit-transition: height 0.4s ease;
-
 }
 
 #combobox {
@@ -63,13 +56,10 @@
 }
 
 #error_popup, #due_date_popup {
-  /*z-index: 100000;*/
   position: absolute;
   bottom: 150px;
   font-size: 20px;
-  /*font-size: 100vw;*/
   padding: 5px 20px 5px 20px;
-  /*right: 150px;*/
   border: 1px solid rgba(0,0,0,.2);
   background-color: rgba(255, 170, 170, 1);
   border-radius: 20px 20px;
@@ -85,14 +75,12 @@
 .expanded_task, .expanded_task_error, .expanded_task_daytime, .expanded_task_daytime_error, .expanded_task_hover,
 .expanded_task_daytime_hover{
   height: 202px;
-  /*height: 500px;*/
   background-color: rgba(250,250,250, .3);
   box-shadow: 1px 0px 3px 3px #ccc;
   border-radius: 10px;
   width: 70%;
   margin-left: 8px;
   margin-right: 8px;
-  /*margin-top: 10px;*/
   padding: 5px;
   text-overflow: ellipsis;
   overflow: hidden ;
@@ -239,16 +227,12 @@ select {
   -moz-appearance: none;
   text-align-last: center;
   text-align: center;
-  /*text-indent: 0px;*/
-  /*text-overflow: '';*/
-  /*direction: ltr;*/
 }
 
 select option {
   direction: ltr;
 
 }
-
 
 #duration_options_arrow, #priority_options_arrow, #category_options_arrow {
   width: 25px;
@@ -328,7 +312,6 @@ select option {
   box-shadow: rgba(0, 0, 0, 0.7) 0px 1px 4px;
 }
 
-
 .recurrence1 {
   background-image: url("../images/repeat_1.svg");
 }
@@ -370,9 +353,6 @@ select option {
 
 .thumbtack:active, .thumbtack_clicked:active, .thumbtack_done:active{
   box-shadow: rgba(0, 0, 0, 0.7) 0px 1px 4px;
-
-
-  /*background-color: yellow;*/
 }
 
 .recurrence {
@@ -391,7 +371,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   color: rgba(0, 0, 0, 0);
   opacity: 1;
   display: block;
-  /*background: transparent;*/
   width: 20px;
   height: 20px;
   border-color: red;
@@ -401,7 +380,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 #time_input {
   margin-left: 20px;
   border-color: red;
-
 }
 
 #datetime-local {
@@ -441,7 +419,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   border: black 1px solid;
   width: 114.5px;
 }
-
 
 #title_place {
   width: 30px;
@@ -501,10 +478,8 @@ margin-left: 20px;
 
 .removed_container {
   width: 100%;
-  /*display: none;*/
   justify-content: center;
   animation: minimize 0.4s ease;
-  /*background-color: red;*/
   position: relative;
   z-index: 1;
 }
@@ -512,7 +487,6 @@ margin-left: 20px;
 @keyframes minimize {
   from {
     opacity: 1;
-
   }
   to {
     opacity: 0;
@@ -546,7 +520,6 @@ margin-left: 20px;
 @keyframes minimize_expanded_daytime {
   from {
     opacity: 1;
-
   }
   to {
     opacity: 0;
@@ -571,11 +544,7 @@ margin-left: 20px;
 }
 
 .title_input {
-  /*width: 11vw !important;*/
   width: 320% !important;
-  /*min-width: 350px !important;*/
-  /*max-width: 450px !important;*/
-  /*background-color: red !important;*/
 }
 
 .day_of_week{
@@ -597,16 +566,11 @@ margin-left: 20px;
 }
 
 .constraints_element {
-  /*flex-direction: row;*/
   padding-left: 2%;
-  /*justify-content: space-around;*/
-  /*min-width: 350px;*/
-  ;
 }
 
 .spacing_days {
   padding-left: 9.5%;
-  /*margin-right: 4%;*/
 }
 
 .task_error {
@@ -628,8 +592,6 @@ margin-left: 20px;
   width: 100%;
   top: 50px;
   height: 80%;
-  /*height: 900px;*/
-
 }
 
 .expand_icon {
@@ -646,16 +608,13 @@ margin-left: 20px;
 .collapse_icon {
   float:left;
   cursor: pointer;
-  /*background-color: red;*/
   margin-top: 10px;
   width: 35px;
   height: 35px;
   background: url("../images/expand_more.svg") no-repeat;
-  /*background: url("../images/expand_less.svg") no-repeat 0 5px;*/
   transform: rotate(180deg);
   transition: transform 0.5s;
   transform-origin: center center;
-  /*transform: scale(2);*/
 }
 
 @keyframes rotate_sign {
@@ -665,11 +624,6 @@ margin-left: 20px;
 }
 
 #submit_button {
-  /*position: absolute;*/
-  /*top: 75vh;*/
-  /*bottom: 125px;*/
-  /*left: 75%;*/
-  /*margin-left: 40px;*/
   height: 40px;
   background-color: #faffa2;
   border-color: #555555;
@@ -684,7 +638,6 @@ margin-left: 20px;
   box-shadow: 1px 0px 3px 3px #ccc;
 }
 
-
 #todo_parent_component {
   background-color: transparent;
 }
@@ -695,17 +648,13 @@ margin-left: 20px;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  /*margin-top: 300px;*/
   width: 114%;
   height: 20%;
   min-height: 150px;
-  /*padding-bottom: 10px;*/
   padding-top: 20px;
   margin-bottom: 20px;
-  /*margin-left: 25%;*/
   z-index: 100000;
   background-color: white;
-  /*float: bottom;*/
 }
 
 .past_due, .past_due_hidden {
@@ -744,7 +693,6 @@ margin-left: 20px;
 
 .dont_reschedule:hover {
   background-image: url("../images/cancel_hover.svg");
-
 }
 
 .reschedule {
@@ -761,6 +709,7 @@ margin-left: 20px;
 .reschedule:hover {
   background: url("../images/approve_hover.svg") no-repeat;
 }
+
 .past_due_hidden {
   visibility: hidden;
 }
@@ -780,13 +729,6 @@ margin-left: 20px;
   fill: red;
 }
 
-
-/*@media screen and (min-width: 800px) {*/
-/*  .task {*/
-/*    max-height: 6vh;*/
-/*  }*/
-/*}*/
-
 .loader {
   border: 3px solid #f3f3f3; /* Light grey */
   border-top: 3px solid #3498db; /* Blue */
@@ -797,10 +739,6 @@ margin-left: 20px;
   margin-left: auto;
   margin-right: auto;
   margin-top: 5%;
-}
-
-.empty {
-  mso-text-: 'empty';
 }
 
 @keyframes spin {
@@ -818,7 +756,6 @@ margin-left: 20px;
   position: absolute;
   background-color: red;
 }
-
 
 ::-webkit-scrollbar {
   width: 5px;

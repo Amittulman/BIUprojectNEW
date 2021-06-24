@@ -8,8 +8,6 @@
 .category_button {
     margin-top: 25px;
     background: url("../images/paint.svg") 50% 50% no-repeat;
-    /*background: url("../images/paint.svg") no-repeat 50% 50%;*/
-    /*border: 1px solid black;*/
     border-radius: 50%;
     height: 30px;
     width: 30px;
@@ -30,9 +28,6 @@
     transition: background-color 0.2s ease-out;
 }
 
-/*.col-4 {*/
-/*    animation: appear 0.7s ease-out;*/
-/*}*/
 .col-8_start {
     animation: appear_from_right 0.7s cubic-bezier(.55,.19,.46,1.06), opac 1.5s ease-out;
 }
@@ -99,9 +94,7 @@
 }
 
 #site_body {
-    /*height: auto;*/
     display: flex !important;
-    /*justify-content: center;*/
 }
 
 
@@ -124,8 +117,6 @@
 }
 
 #schedule_parent {
-    /*flex-grow: 100;*/
-    /*width: 100%;*/
     margin-left: -15px;
 }
 
@@ -241,30 +232,24 @@
 #type_a_button, #added_button_1, #added_button_2, #added_button_3, #added_button_4, #added_button_5, #added_button_0 {
     background-color: #EBFFE2;
     border-radius: 20%;
-    /*transition: background-color 0.2s ease-out, margin-left 0.5s ease-out, opacity 0.5s ease-out;*/
     height: 30px;
     width: auto;
     min-width: 55px;
     padding-left: 5px;
     padding-right: 5px;
     cursor: pointer;
-
-    /*animation: slide-aside_a 0.4s ease;*/
 }
 
 #added_button_1 {
     background-color: #FFFD88;
-    /*transition: background-color 0.5s ease-out;*/
 }
 
 #added_button_2 {
     background-color: #dab17f;
-    /*transition: background-color 0.5s ease-out;*/
 }
 
 #added_button_3 {
     background-color: #D8F3FF;
-    /*transition: background-color 0.5s ease-out;*/
 }
 
 #added_button_1:hover {
@@ -317,7 +302,6 @@
     height: 30px;
     width: 55px;
     cursor: pointer;
-    /*animation: slide-aside_b 0.4s ease;*/
 }
 
 #type_b_button:hover {
@@ -356,8 +340,6 @@
     height: 30px;
     width: 55px;
     cursor: pointer;
-    /*animation: slide-aside_c 0.4s ease;*/
-
 }
 
 #type_c_button:hover {
@@ -400,13 +382,10 @@
 }
 
 #clear_category_button, #add_category_button, #category_send_button {
-    /*background-color: #BED2FE;*/
     border-radius: 50%;
-    /*transition: background-color 0.2s ease-out, margin-left 0.5s ease-out, opacity 0.5s ease-out, visibility 0.5s ease-in;*/
     height: 30px;
     width: 30px;
     cursor: pointer;
-    /*animation: slide-aside_clear 0.4s ease;*/
 }
 
 #clear_category_button {
@@ -441,9 +420,7 @@
 }
 
 #category_send_button {
-    /*background-color: #BED2FE;*/
     background: url("../images/done.svg") no-repeat 50% 50%;
-    /*animation: slide-aside_send 0.4s ease;*/
 }
 
 @keyframes slide-aside_send {
@@ -456,8 +433,6 @@
         transform: translateX(0px);
     }
 }
-
-
 
 .empty_slot {
     background-color: white;
@@ -505,9 +480,7 @@
     margin-top: -20px;
 }
 
-
 .switch {
-
     position: relative;
     display: inline-block;
     width: 60px;
@@ -564,47 +537,20 @@ input:checked + .slider:before {
 
 .row1 {
     position: fixed;
-    /*background-color: red;*/
-    /*padding-top: 100px;*/
-    /*margin-top: 120vh;*/
-    /*margin-left: 200px;*/
-    /*padding-right: 200px;*/
-
 }
 
 .collapsed_row2 {
-    /*display: flex;*/
     margin-top: 90vh;
-    /*width: 1201% !important;*/
     margin-left: 20px;
-    /*width: 20px;*/
-    /*overflow-y: hidden;*/
 }
 
 .row2 {
-    /*display: flex;*/
-    /*width: 1201% !important;*/
     margin-left: 20px;
-    /*width: 20px;*/
-    /*overflow-y: hidden;*/
 }
 
 .tst2 {
     margin-left: 1vw !important;
-    /*position: absolute !important;*/
-    /*top: 0px !important;*/
 }
-
-/*@media screen and (max-width: 500px) {*/
-/*    #todo_parent {*/
-/*        display: none;*/
-/*    }*/
-
-/*    #schedule_component {*/
-
-/*    }*/
-
-/*}*/
 
 @media screen and (max-width: 720px) {
     #todo_component {

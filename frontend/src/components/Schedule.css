@@ -2,9 +2,7 @@
     position: relative;
     overflow-y: scroll;
     height: 100%;
-    /*width: 100%;*/
     padding-right: 25px;
-    /*margin-left: -15px;*/
 }
 
 table {
@@ -19,7 +17,7 @@ th {
     background-color: white;
     position: -webkit-sticky;
     position: sticky;
-    top: 0px;
+    top: 0;
     box-shadow: 4px 8px 8px lightgray;
     user-select: none;
 }
@@ -33,8 +31,6 @@ th {
 #category_component1 {
     position: relative;
     overflow-y: scroll;
-    /*height: 90%;*/
-    /*width: 100%;*/
     max-height: 100vh;
 }
 
@@ -52,14 +48,12 @@ td:empty::after {
 td {
     height: 6vh;
     width: 100%;
-    /*min-width: 50px;*/
     text-overflow: ellipsis;
     overflow: hidden;
 }
 
 .passed {
     background: url("../images/texture.jpg");
-    /*background-size: cover;*/
     height: 100%;
     width: 100%;
     opacity: 0.2;
@@ -76,7 +70,6 @@ td {
 }
 
 .task_label_arrow {
-    /*margin-top: 40%;*/
     float: right;
     margin-right: 50px;
     margin-top: -25px;
@@ -100,18 +93,12 @@ td {
     justify-content: space-around;
 }
 
-.task_label_priority, .task_label_duration {
-    /*text-align: left;*/
-    /*padding-left: 15px;*/
-}
-
-.test123 {
+.hidden_overflow {
     pointer-events: none;
     z-index: -100;
     text-overflow: ellipsis;
     overflow: hidden ;
     white-space: nowrap;
-    /*max-width: 110px;*/
     padding-left: 2px;
     padding-right: 2px;
 }
@@ -166,8 +153,6 @@ tr {
     width: 200px;
     height: 27px;
 }
-
-
 
 #upperPane {
     background-color: red;

@@ -21,7 +21,6 @@
 #login_title {
     font: 70px "Brush Script MT";
     user-select: none;
-    /*margin-left: 25px;*/
     top: -10px;
     left: 0;
     padding-bottom: 300px;
@@ -29,40 +28,28 @@
     width: 200px;
     height: auto;
     z-index: -1;
-    /*height: 1110px;*/
-    /*width: auto;*/
-    /*background: url("../images/BEEZEELOGO.png") no-repeat;*/
 }
 
 #blank_col {
     z-index: 0;
 }
 
-#one {
-    /*margin-top: 25px;*/
-    text-align: left;
-}
-
 .adding_category_container {
     width: 300px;
-    /*background-color: red;*/
     display: flex;
     flex-direction: row;
     margin-top: 60px;
     margin-left: -400px;
     text-align: left;
-    /*visibility: visible;*/
     user-select: none;
 }
 
 #adding_category_container {
     width: 400px;
-    /*background-color: red;*/
     display: flex;
     flex-direction: row;
     margin-top: 60px;
     margin-left: -21%;
-    /*margin-right: auto;*/
     text-align: left;
     user-select: none;
     visibility: hidden;
@@ -86,34 +73,25 @@
     transition: visibility 0.2s ease-in, opacity 0.2s ease-in;
 }
 .spacing {
-    /*margin-left: 500px;*/
     width: calc(200px + 1%);
     height: 1px;
 }
 
 .edit_cat {
-    /*margin-top: -610px;*/
-    /*margin-left: -608px;*/
     margin-top: 10px;
-    /*display: inline-block;*/
     width: 30px;
     height: 30px;
     margin-left: calc(50% - 25px);
-    /*transform: scale(0.04);*/
     background: url("../images/edit.svg") no-repeat;
     animation: show 1.2s ease-in forwards;
     visibility: hidden;
 }
 
 .remove_cat, .remove_cat_grayed {
-    /*margin-top: -610px;*/
-    /*margin-left: -608px;*/
     margin-top: -30px;
-    /*display: inline-block;*/
     margin-left: 50%;
     width: 30px;
     height: 30px;
-    /*transform: scale(0.04);*/
     background: url("../images/decline.svg") no-repeat;
     animation: show 1.2s ease-in forwards;
     visibility: hidden;
@@ -122,7 +100,6 @@
 .remove_cat_grayed {
     background: url("../images/decline_grayedout.svg") no-repeat;
 }
-
 
 @keyframes minimize_site_top {
     0% {
@@ -137,7 +114,6 @@
 .hidden {
     display: none;
 }
-
 
 .category_colors, #category_accept_changes, #category_decline_changes {
     background-color: #E2FFFF;
@@ -197,7 +173,6 @@
     animation: username_appear 3s ease-in forwards ;
     user-select: none;
     z-index: -100;
-    /*font-family: Bookman, URW Bookman L, serif	;*/
 }
 @keyframes username_appear {
     0% {
@@ -216,8 +191,4 @@
         opacity: 0;
         margin-top: -10px;
     }
-}
-
-
-#site_top {
 }
