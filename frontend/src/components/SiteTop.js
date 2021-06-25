@@ -230,7 +230,7 @@ const SiteTop = (props) => {
 
 
     const dragStartCat = (event) => {
-        // console.log('start3')
+        props.setCategoryChanged(true);
         event.dataTransfer.setData('text/plain', event.target.id);
     }
 
