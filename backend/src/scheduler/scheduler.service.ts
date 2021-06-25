@@ -9,10 +9,11 @@ export class SchedulerService {
         //this.tryCalc();
     }
 
-    async tryCalc(ToDoList, categorySlots, current_time_slot) {
-        //create tasks for testing
-        //var temptaskss = await this.createTempTasks();
-        const slots = await this.createSlotsWithCategory(categorySlots, current_time_slot);
+    async tryCalc(ToDoList, category_slots, current_time_slot) {
+
+        const slots = this.createSlotsWithCategory(category_slots, current_time_slot);
+
+        // Create mock tasks for testing
         const mockTasks = await this.createTempTasks();
         const tasksFromUser = ToDoList.tasks;
 
@@ -188,34 +189,22 @@ export class SchedulerService {
         return true;
     }
 
-    private logForDebug(tempTask: Task, tasks: Array<Task>, slots: any, spotsForThisTask: any[], spotIndex: number) {
-        console.log('------------------------ task:');
-        console.log(tempTask);
-        console.log('------------------------ tasks:');
-        console.log(tasks);
-        console.log('------------------------ task:');
-        console.log('------------------------ slots:');
-        console.log(slots);
-        console.log('------------------------ spotsForThisTask:');
-        console.log(spotsForThisTask);
-        console.log('------------------------ spotsForThisTask[spotIndex]:');
-        console.log(spotsForThisTask[spotIndex]);
-    }
-
     private createSlotsWithCategory(categorySlots: Array<number>, current_time_slot: number) {
-        const slotsAndCatagory = Array(SLOTS_SIZE);
-        for(let i = 0;i<slotsAndCatagory.length;i++) {
-            slotsAndCatagory[i] = [-1, 1]
+        const slots_and_catagory = Array(SLOTS_SIZE);
+
+        for(let i = 0;i<slots_and_catagory.length;i++) {
+            slots_and_catagory[i] = [-1, 1]
         }
 
+        // initialize the slots to be [empty, category[
         for (let i = 0; i < categorySlots.length; i++) {
-            slotsAndCatagory[i] = [-1, categorySlots[i]];
+            slots_and_catagory[i] = [-1, categorySlots[i]];
         }
 
         for(let j = 0; j <= current_time_slot; j++) {
-            slotsAndCatagory[j][0] = -999;
+            slots_and_catagory[j][0] = -999;
         }
-        return slotsAndCatagory;
+        return slots_and_catagory;
     }
 
     private async createSlotsFromResult(resultCalc: any) {
@@ -229,8 +218,8 @@ export class SchedulerService {
         return slots;
     }
 
-     private async createTempTasks() {
-         const temp_task1: Task = {
+    private async createTempTasks() : Promise<Array<Task>> {
+         const task1: Task = {
              task_id: 1333,
              user_id: 1, task_title: 'first task',
              duration: 90,
@@ -239,7 +228,7 @@ export class SchedulerService {
              constraints: [[1,0,1],[0,0,0],[1,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
              pinned_slot: 30
          }
-         const temp_task2: Task = {
+         const task2: Task = {
              task_id: 2,
              user_id: 1, task_title: 'second task',
              duration: 90,
@@ -248,7 +237,7 @@ export class SchedulerService {
              recurrings: 1,
              pinned_slot: 10
          }
-         const temp_task3: Task = {
+         const task3: Task = {
              task_id: 3,
              user_id: 1, task_title: 'third task',
              duration: 120,
@@ -258,7 +247,7 @@ export class SchedulerService {
              pinned_slot: null
 
          }
-         const temp_task4: Task = {
+         const task4: Task = {
              task_id: 4,
              user_id: 1, task_title: 'third task',
              duration: 320,
@@ -267,7 +256,7 @@ export class SchedulerService {
              recurrings: 1,
              pinned_slot: 40
          }
-         const temp_task5: Task = {
+         const task5: Task = {
              task_id: 5,
              user_id: 1, task_title: 'third task',
              duration: 4990,
@@ -276,9 +265,8 @@ export class SchedulerService {
              recurrings: 1,
              pinned_slot: 100
          }
-         return new Array<Task>(temp_task1, temp_task2,temp_task3);
+         return new Array<Task>(task1, task2,task3);
     }
-
 
     // sun: 12 - 60
     // mon: 60 -108
