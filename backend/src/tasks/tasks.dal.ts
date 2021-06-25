@@ -302,7 +302,6 @@ export class TasksDal {
   }
 
   async getUserIdByName(user_name: string){
-
     const res = await this.db.from(USERS_TABLE).select(USER_ID).where(USER_NAME,user_name);
     const id:string = res[0][USER_ID];
     return id;

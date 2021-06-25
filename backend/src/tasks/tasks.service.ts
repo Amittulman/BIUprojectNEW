@@ -181,7 +181,6 @@ export class TasksService {
     //Return a JSON object
     return "{\"user_pass\":\""+ret_user['user_pass']+"\"," +
         "\"user_id\":\""+ret_user['user_id']+"\"}";
-
   }
 
   async postNewUser(user: CreateUserDto): Promise<string>{
