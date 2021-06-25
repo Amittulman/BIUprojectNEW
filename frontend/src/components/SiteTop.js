@@ -297,7 +297,7 @@ const SiteTop = (props) => {
                 node.ondragstart = dragStartCat
                 node.ondragover = allowDropCat
                 node.onclick = allowDropCat
-                // node.onDrop = null
+                node.ondrop = () => {console.log('DROP CAT!')}
                 // node.ondragleave = null
                 node.draggable = true
             }

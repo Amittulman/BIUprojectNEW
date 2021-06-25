@@ -186,8 +186,12 @@ const Table = (props) => {
             else if (elm1Sub === elm2Sub) {return 0;}
             else {return -1;}
         });
-        // Calculate the difference between src and dst.
-        // //  If out of range for any slot in array, or dropped on an occupied slot, do not drop.
+        // If dropping when marking category, do not continue.
+        if (event.target.ondrop !== null) return
+        // If source drop slot is empty, dropping its content is irrelevant.
+        if (ids[0].split('_')[3].startsWith('-1')) return;
+        debugger
+        // If out of range for any slot in array, or dropped on an occupied slot, do not drop.
         if (!availableSlots(ids, distance, event)) return
         // let diff = parseInt(dragged_element.id.split('_')[1]) - parseInt(target_element.id.split('_')[1])
         //Drop all slots with the same ID.
@@ -259,18 +263,20 @@ const Table = (props) => {
             });
     }
 
+    // Check if slots to be dropped in are available.
     const availableSlots = (ids, distance, event) => {
+        // Get only cell number of the cell to be dropped in.
         let partial_target_id = 'cell_' + (parseInt(ids[0].split('_')[1]) + distance)
+        // Get category of cell to be dropped in (a/b/c/d/e/slot).
         let dropped_cat = document.querySelector('[id^='+partial_target_id+']').className.split('_')[1]
-        //console.log('IDS ', ids[0].split('_')[3].split('"')[0])
-        let i;
         if (ids[0].split('_')[3].split('"')[0] === '-1' || ids[0]-distance < 0 || ids[ids.length-1] > slots_per_day*7) return false
+
         // Check all ids drop area
+        let i;
         for (i=0;i<ids.length;i++) {
             partial_target_id = 'cell_' + (parseInt(ids[i].split('_')[1]) + distance)
             let curr_drop_cat = document.querySelector('[id^='+partial_target_id+']').className.split('_')[1]
             if (dropped_cat !== curr_drop_cat) return false
-            //console.log('partial target id: ', partial_target_id)
             let source_id = ids[i].split('_')[3].split('"')[0]
             let target_id = document.querySelector('[id^='+partial_target_id+']').id.split('_')[3]
             // If dropped area in an occupied slot, return false.

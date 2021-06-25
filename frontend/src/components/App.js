@@ -207,9 +207,9 @@ const App = () => {
 
     // TODO - check if redundant
     const handleCategoriesSubmission = () => {
-        // removeCategories()
-        // setScheduleJsx(initialSchedule())
-        // setScheduleTrigger(!scheduleTrigger)
+        removeCategories()
+        setScheduleJsx(initialSchedule())
+        setScheduleTrigger(!scheduleTrigger)
     }
 
     const removeCategories = () => {
