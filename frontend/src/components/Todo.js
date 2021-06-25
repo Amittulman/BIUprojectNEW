@@ -517,9 +517,11 @@ const Todo = (props) => {
     { 'opacity': 0, transform: 'translateY(50px)', visibility:'hidden', zIndex:'0'}
   ], { duration: 500, fill: 'forwards', easing: 'ease-in'}];
 
+  // Checks inputs, returns true if should not sent, false to send. //TODO maybe swap bools?
   const checkInputs = () => {
     // Do not send anything if no change has occurred in to-do list.
-    if (Object.keys(props.updated_tasks).length === 0 && removed_tasks.length === 0) return true
+
+    if (Object.keys(props.updated_tasks).length === 0 && removed_tasks.length === 0 && !props.categoryChanged) return true
     let date = new Date()
     let todays_slot = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
     let total_err = false

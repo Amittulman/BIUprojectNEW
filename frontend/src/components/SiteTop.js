@@ -116,6 +116,9 @@ const SiteTop = (props) => {
         }
     }
 
+    const rgba2hex = (divs_color) => `#${divs_color.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+\.{0,1}\d*))?\)$/).slice(1).map((n, ind) =>
+        (ind === 3 ? Math.round(parseFloat(n) * 255) : parseFloat(n)).toString(16).padStart(2, '0').replace('NaN', '')).join('')}`
+
     const addLoadedCategories = () => {
         if (document.getElementsByClassName('category').length > 0) return;
         //Loading categories.
@@ -166,10 +169,24 @@ const SiteTop = (props) => {
             let category_decline_changes = document.getElementById('category_decline_changes');
             category_decline_changes.onclick = () => {unmarkRest(); new_cat_container.style.visibility = 'hidden';}
             edit_cat.onclick = () => {
+                unmarkRest();
                 edit_cat.style.visibility = 'hidden'
                 remove_cat.style.visibility = 'hidden'
-                //Reset title value, when editing title and color of category.
+                //Show existing (or empty) title value, when editing title and color of category.
                 document.getElementById('category_dialog').value = props.categories[i]['category_name']
+                // Show existing color.
+                for (let j=1; j< 7; j++) {
+                    let j_option = document.getElementById('new_category_option_'+j);
+                    let j_option_color = document.defaultView.getComputedStyle(j_option, null)['backgroundColor'];
+                    const j_converted_color = rgba2hex(j_option_color);
+                    let current_color = props.categories[i]['color'];
+                    // If rectangle color equals to category color, mark it.
+                    if (j_converted_color.toUpperCase() === current_color.toUpperCase()) {
+                        j_option.style.boxShadow = 'rgba(0, 0, 0, 1) 0 1px 4px';
+                        setCategoryColor(j)
+                        break;
+                    }
+                }
                 // new_cat_container.style.marginLeft = '-200px'
                 new_cat_container.style.visibility = 'visible'
             }
@@ -230,7 +247,7 @@ const SiteTop = (props) => {
 
 
     const dragStartCat = (event) => {
-        // console.log('start3')
+        props.setCategoryChanged(true);
         event.dataTransfer.setData('text/plain', event.target.id);
     }
 
@@ -280,7 +297,7 @@ const SiteTop = (props) => {
                 node.ondragstart = dragStartCat
                 node.ondragover = allowDropCat
                 node.onclick = allowDropCat
-                // node.onDrop = null
+                node.ondrop = () => {console.log('DROP CAT!')}
                 // node.ondragleave = null
                 node.draggable = true
             }
@@ -392,7 +409,7 @@ const SiteTop = (props) => {
     const setCategories = () => {
         let edit_cat = document.getElementById('edit_cat'+currentCatRef.current)
         let remove_cat = document.getElementById('remove_cat'+currentCatRef.current)
-        let colors = {1:'#E2FFFF', 2:'#FFF0D7', 3:'#E2E6FF', 4:'#FFCFCF', 5:'#FEE2FF', 6:'#E8FFE2'};
+        let colors = {1:'#FFE9E9', 2:'#FFFFE2', 3:'#E9EDFF', 4:'#E2FFFF', 5:'#FFF0D7', 6:'#E8FFE2'};
         let temp_cat = [...props.categories]
         // Updating new value.
         temp_cat[currentCatRef.current]['category_name'] = document.getElementById('category_dialog').value

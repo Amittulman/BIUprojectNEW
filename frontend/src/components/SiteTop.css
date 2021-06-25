@@ -116,7 +116,6 @@
 }
 
 .category_colors, #category_accept_changes, #category_decline_changes {
-    background-color: #E2FFFF;
     border-radius: 20%;
     height: 20px;
     width: 20px;
@@ -137,20 +136,24 @@
     background: url("../images/decline.svg") no-repeat 50% 50%;
 }
 
+#new_category_option_1 {
+    background-color: #FFE9E9;
+}
+
 #new_category_option_2 {
-    background-color: #FFF0D7;
+    background-color: #FFFFE2;
 }
 
 #new_category_option_3 {
-    background-color: #E2E6FF;
+    background-color: #E9EDFF;
 }
 
 #new_category_option_4 {
-    background-color: #FFCFCF;
+    background-color: #E2FFFF;
 }
 
 #new_category_option_5 {
-    background-color: #FEE2FF;
+    background-color: #FFF0D7;
 }
 
 #new_category_option_6 {
