@@ -333,9 +333,11 @@ const Todo = (props) => {
       </select></div>;
     // let category_id = <div key={'category_id'+index} className='task_elm' onChange={(e) => handleChange(e, i)}>Category:&nbsp;<input name='category_id' type='text' defaultValue={values['category_id']}/></div>;
     let options = [<option key={'opt'+-1} value={-1}>{'None'}</option>];
-    for (let i=0; i<props.categories.length; i++) {
-      if (props.categories[i]['category_name'] !== '')
-        options.push(<option key={'opt'+i} value={i}>{props.categories[i]['category_name']}</option>)
+    for (let j=0; j<props.categories.length; j++) {
+      if (props.categories[j]['category_name'] !== '')
+        options.push(<option id={'option_'+j+'_'+index} key={'option_'+j+'_'+index} value={j}>{props.categories[j]['category_name']}</option>)
+      else
+        options.push(<option id={'option_'+j+'_'+index} key={'option_'+j+'_'+index} value={j} style={{display:'none'}}/>)
     }
     let category_id = <div key={'category_id'+index} id={'category_id'+index} className='task_elm' onChange={(e) => handleChange(e, i)}>Category:&nbsp;
       <div className='wrapper_options'><div id='category_options_arrow'/>&nbsp;</div>
@@ -874,7 +876,7 @@ const Todo = (props) => {
   return (
       <div id='todo_parent_component'>
         <header className="App-header">
-          <h1 id='header'>Enter your tasks</h1>
+          <div id='header'>My To-Do List</div>
           <form id='container' onSubmit={onSubmitHandler}>
             <div id='tasks'>{tasks_jsx}</div>
             <div id='empty_todo'/>

@@ -75,7 +75,12 @@ const Table = (props) => {
                         passed_day = ' passed'
                     let class_name = getClass(props.categoryTypes[slots_per_day * (i - 1) + j])
                     let color = props.categories[dct[class_name.split('_')[1]]]
-                    if (color !== undefined) { color = color['color']}
+                    if (color !== undefined) {
+                        color = color['color']
+                    } else {
+                        color = '#fefcf3';
+                    }
+                    console.log(color)
                     content.push(<td key={'cell_' + (slots_per_day * (i - 1) + j)} className={class_name} style={{backgroundColor:color}}
                                      id={'cell_' + (slots_per_day * (i - 1) + j) + '_taskID_' + tasksID[j + (i - 1) * slots_per_day]}
                                      draggable='true' onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop}
@@ -190,7 +195,6 @@ const Table = (props) => {
         if (event.target.ondrop !== null) return
         // If source drop slot is empty, dropping its content is irrelevant.
         if (ids[0].split('_')[3].startsWith('-1')) return;
-        debugger
         // If out of range for any slot in array, or dropped on an occupied slot, do not drop.
         if (!availableSlots(ids, distance, event)) return
         // let diff = parseInt(dragged_element.id.split('_')[1]) - parseInt(target_element.id.split('_')[1])

@@ -7,6 +7,17 @@
   font-size: calc(22px);
   color: rgb(12, 13, 13);
   user-select: none;
+  /*background: linear-gradient(to right, rgba(254, 252, 243, 0.97) 0 100%), url("../images/honeycomb.png") no-repeat;*/
+  /*background-position: -100px 10px;*/
+}
+
+#header {
+  position: absolute;
+  top: -5px;
+  background-color: #fefcf3;
+  font-family: "Kristen ITC", serif;
+  font-size: 35px;
+  width: 100%;
 }
 
 .App-link {
@@ -45,6 +56,8 @@
   white-space: nowrap;
   text-align: center;
   -webkit-transition: height 0.4s ease;
+  background-color: #fefcf3;
+
 }
 
 #combobox {
@@ -87,6 +100,7 @@
   white-space: nowrap;
   text-align: center;
   -webkit-transition: height 0.4s ease;
+  background-color: #fefcf3;
 }
 
 .expanded_task_daytime, .expanded_task_daytime_error {
@@ -116,11 +130,6 @@
   0% {box-shadow: 1px 0 5px 3px rgb(243, 124, 124)}
   50% {box-shadow: 1px 0 5px 5px rgb(243, 124, 124)}
   100% {box-shadow: 1px 0 5px 3px rgb(243, 124, 124)}
-}
-
-#header {
-  position: absolute;
-  top: 0;
 }
 
 input[type=text] {
@@ -243,7 +252,7 @@ select option {
   pointer-events: none;
   position: absolute;
   margin-left: 10px;
-  z-index: -1;
+  z-index: 0;
 }
 
 #priority_options_arrow {
@@ -470,6 +479,10 @@ margin-left: 20px;
   position: relative;
   background-clip: content-box;
   min-height: 100px;
+  background-color: #fefcf3;
+  background-color: transparent;
+
+/*  lala*/
 }
 
 .task_container_error {
@@ -654,7 +667,7 @@ margin-left: 20px;
   padding-top: 20px;
   margin-bottom: 20px;
   z-index: 100000;
-  background-color: white;
+  background-color: transparent;
 }
 
 .past_due, .past_due_hidden {

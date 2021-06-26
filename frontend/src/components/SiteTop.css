@@ -4,7 +4,7 @@
     width: 100%;
     visibility: hidden;
     opacity: 0;
-    transition: visibility 0.4s ease-in, opacity 0.4s ease-in;
+    /*transition: visibility 0.4s ease-in, opacity 0.4s ease-in;*/
 }
 
 #logout {
@@ -21,12 +21,13 @@
 #login_title {
     font: 70px "Brush Script MT";
     user-select: none;
-    top: -10px;
-    left: 0;
-    padding-bottom: 300px;
+    top: 5px;
+    /*left: 0;*/
+    left: 100px;
+    /*padding-bottom: 300px;*/
     position: absolute;
     width: 200px;
-    height: auto;
+    /*height: auto;*/
     z-index: -1;
 }
 
@@ -49,7 +50,7 @@
     display: flex;
     flex-direction: row;
     margin-top: 60px;
-    margin-left: -21%;
+    margin-left: -300px;
     text-align: left;
     user-select: none;
     visibility: hidden;
@@ -170,28 +171,24 @@
 
 .userContainer {
     position: absolute;
-    top: 2%;
-    left: 45%;
+    top: 55px;
+    left: 220px;
     width: 300px;
-    animation: username_appear 3s ease-in forwards ;
+    animation: username_appear 4s ease-in forwards ;
     user-select: none;
-    z-index: -100;
+    z-index: 100;
 }
 @keyframes username_appear {
     0% {
         opacity: 0;
-        margin-top: -10px;
     }
-    20% {
+    10% {
         opacity: 1;
-        margin-top: 0;
     }
-    80% {
+    90% {
         opacity: 1;
-        margin-top: 0;
     }
     100% {
         opacity: 0;
-        margin-top: -10px;
     }
 }

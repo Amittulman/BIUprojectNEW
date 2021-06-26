@@ -212,7 +212,7 @@ const Login = (props) => {
                 name2 = element.id + '_input_error_signup'
         }
         if (error) {
-            debugger
+            // debugger
             document.getElementById(name).className = 'error_sign'
             if (location.pathname === '/signup') {
                 document.getElementById(name2).textContent = msg

@@ -14,6 +14,17 @@ const SiteTop = (props) => {
     const catColorRef = useRef();
     catColorRef.current = categoryColor;
     const [totalNewCat, setTotalNewCat] = useState(0);
+    const [changedCategories, setChangedCategories] = useState([])
+    const [newCat, setNewCat] = useState(false);
+    const newCatref = useRef();
+    newCatref.current = newCat;
+
+    // // Automatically opening category pane.
+    // useEffect(() => {
+    //     setTimeout(() => {
+    //         showCategories();
+    //     },1000)
+    // }, [])
 
     useEffect(() => {
         if (props.userID !== undefined && props.userID !== 'null'){
@@ -37,6 +48,7 @@ const SiteTop = (props) => {
             postCategories();
         // Add categories, received from DB.
         addLoadedCategories();
+
     }, [props.categories])
 
     useEffect(()=> {
@@ -148,9 +160,12 @@ const SiteTop = (props) => {
                 remove_cat.className = 'remove_cat';
             else
                 remove_cat.className = 'remove_cat_grayed';
-            new_category.appendChild(remove_cat)
-
-            category_accept_changes.onclick = (e)=> {
+            new_category.appendChild(remove_cat);
+            category_accept_changes.onclick = ()=> {
+                if (newCatref.current) {
+                    // setCurrentCat(()=>getFirstEmptyCat())
+                    setChangedCategories(prev=>[...prev, [getFirstEmptyCat(), 'add_'+document.getElementById('category_dialog').value]]);
+                }
                 // Do not save changes if title is empty.
                 let dialog_length = document.getElementById('category_dialog').value.length
                 if (dialog_length === 0 || dialog_length > 10 || catColorRef.current === 0) return;
@@ -169,6 +184,9 @@ const SiteTop = (props) => {
             let category_decline_changes = document.getElementById('category_decline_changes');
             category_decline_changes.onclick = () => {unmarkRest(); new_cat_container.style.visibility = 'hidden';}
             edit_cat.onclick = () => {
+                // Not a new category.
+                setNewCat(false);
+                setChangedCategories(prev=>[...prev, [i, '']]);
                 unmarkRest();
                 edit_cat.style.visibility = 'hidden'
                 remove_cat.style.visibility = 'hidden'
@@ -192,6 +210,7 @@ const SiteTop = (props) => {
             }
             if (i >= 3) {
                 remove_cat.onclick = () => {
+                    setChangedCategories(prev=>[...prev, [i, 'remove']]);
                     let temp_cat = [...props.categories]
                     // Updating new value.
                     temp_cat[currentCatRef.current]['category_name'] = ''
@@ -412,6 +431,7 @@ const SiteTop = (props) => {
         let colors = {1:'#FFE9E9', 2:'#FFFFE2', 3:'#E9EDFF', 4:'#E2FFFF', 5:'#FFF0D7', 6:'#E8FFE2'};
         let temp_cat = [...props.categories]
         // Updating new value.
+        debugger
         temp_cat[currentCatRef.current]['category_name'] = document.getElementById('category_dialog').value
         temp_cat[currentCatRef.current]['color'] = colors[catColorRef.current]
         props.setCategories(temp_cat)
@@ -445,6 +465,57 @@ const SiteTop = (props) => {
         }
     }
 
+    const shiftCats = () => {
+        let jsx_to_change = document.querySelectorAll('[id^=added_'+']')
+        debugger
+        let temp_categories = [...props.categories]
+        let reached_empty_spot = false;
+        // debugger
+        for (let i=0; i<temp_categories.length-1; i++) {
+            if (!reached_empty_spot && temp_categories[i]['category_name'].length !== 0) continue
+            reached_empty_spot = true;
+            temp_categories[i]['category_name'] = temp_categories[i+1]['category_name']
+            temp_categories[i]['color'] = temp_categories[i+1]['color']
+            // debugger
+            // jsx_to_change[i].textContent = jsx_to_change[i+1].textContent
+            // jsx_to_change[i].style.backgroundColor = jsx_to_change[i+1].style.backgroundColor
+            //TODO change their jsx.
+        }
+        temp_categories[temp_categories.length-1]['category_name'] = ''
+        props.setCategories(temp_categories);
+    }
+
+    // Updating to-do list categories after approving changes.
+    const updateTodoListCategories = () => {
+        let i, j;
+        for (i=0; i<changedCategories.length; i++) {
+            // let jsx_to_change = document.querySelectorAll('[id^=option_1234]')
+            let jsx_to_change = document.querySelectorAll('[id^=option_' +changedCategories[i][0]+']')
+            debugger
+            // let cat_value  = document.getElementById('added_button_3');
+            let cat_value  = document.getElementById('added_button_'+changedCategories[i][0]);
+            // Editing new values.
+            for (j=0; j<jsx_to_change.length; j++) {
+                // removing element
+                if (changedCategories[i][1] === 'remove') {
+                    // debugger
+                    // jsx_to_change[j].remove()
+                    jsx_to_change[j].textContent = ''
+                    jsx_to_change[j].style.display = 'none'
+                // Adding element.
+                } else if (changedCategories[i][1].startsWith('add')) { // Adding newly added categories
+                    jsx_to_change[j].textContent = changedCategories[i][1].split('_')[1]
+                    jsx_to_change[j].style.display = 'block'
+                // Modifying element.
+                } else {
+                    jsx_to_change[j].textContent = cat_value.textContent;
+                }
+            }
+
+        }
+        shiftCats();
+    }
+
     let login_input = <input onKeyPress={findTask} id='input' name='user_id_input' type='text' placeholder='Enter ID number'/>;
     let time_of_day = new Date().getHours()
     let greeting;
@@ -461,6 +532,7 @@ const SiteTop = (props) => {
             <div className='col-2' id='blank_col'/>
             <div data-toggle="tooltip" title="Modify Categories" onClick={showCategories} id='category_button' className='category_button'/>
             <div data-toggle="tooltip" title="Add category" id='add_category_button' onClick={(e)=>{
+                setNewCat(true);
                 if (props.categories[5]['category_name'] !== '') {
                     document.getElementById('adding_category_container').style.visibility = 'hidden'
                     hideRest()
@@ -488,7 +560,12 @@ const SiteTop = (props) => {
             </div>
             <div data-toggle="tooltip" title="Clear" id='clear_category_button' onClick={()=>{hideRest(); props.setOption(-1)}} className='category_option'/>
             {/*TODO:show indicator of sending category.*/}
-            <div data-toggle="tooltip" title="Save" id='category_send_button' onClick={()=>{props.handleCategoriesSubmission(); showCategories(); props.setCategoryTrigger(!props.categoryTrigger)}} className='category_option'/>
+            <div data-toggle="tooltip" title="Save" id='category_send_button' onClick={()=>{
+                updateTodoListCategories();
+                props.handleCategoriesSubmission();
+                showCategories();
+                props.setCategoryTrigger(!props.categoryTrigger)}
+            } className='category_option'/>
             <div id='adding_category_container'>
                 Title:
                 <input id='category_dialog'/>

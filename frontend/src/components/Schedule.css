@@ -14,12 +14,12 @@ table {
 th {
     width: 100vw;
     text-align: center;
-    background-color: white;
-    position: -webkit-sticky;
     position: sticky;
     top: 0;
-    box-shadow: 4px 8px 8px lightgray;
     user-select: none;
+    background-color: #fefcf3;
+    box-shadow: 4px 8px 8px lightgray !important;
+/*    lalala*/
 }
 
 #empty_todo {
