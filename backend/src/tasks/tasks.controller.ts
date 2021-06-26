@@ -1,11 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
+import {Body, Controller, Delete, Get, Param, Post} from "@nestjs/common";
 import {TasksService} from "./tasks.service";
 import {CreateTaskDto} from "../Dto\'s/createTask.dto";
 import {ToDoList} from "../interfaces/todo.interface";
 import {ScheduledTask} from "../interfaces/scheduledTask.interface";
 import {SchedulerService} from "../scheduler/scheduler.service";
 import {CreateScheduledTaskDto} from "../Dto's/createScheduledTask.dto";
-import {CreateCategorySlotDto} from "../Dto's/createCategorySlot.dto";
 import {CreateUserDto} from "../Dto's/createUser.dto";
 import {CreateCategoryDto} from "../Dto's/createCategoryDto";
 
@@ -26,7 +25,7 @@ export class TasksController {
       return null;
     }
     const categorySlots = await this.getUserCategorySlots(user_id);
-    const errorTasks = await this.checkTasksErrors(tasks.tasks, current_time_slot, user_id, categorySlots);
+    const errorTasks = await this.schedulerService.checkTasksErrors(tasks.tasks, current_time_slot, user_id, categorySlots);
     if (errorTasks.length > 0) {
       return [null, errorTasks];
     }
@@ -175,8 +174,6 @@ export class TasksController {
   }
 
 
-
-
   /// Categories Lookup:
   @Post('PostCategories/')
   postCategories(@Body() categories: Array<CreateCategoryDto>) {
@@ -186,120 +183,5 @@ export class TasksController {
   @Get('GetCategories/:id')
   async getCategories(@Param('id') user_id: string): Promise<Array<CreateCategoryDto>> {
     return this.tasksService.getCategories(user_id);
-  }
-
-  async checkTasksErrors(tasks: Array<any>, timeStamp: number, userID : string, categories : Array<number>): Promise<any> {
-    const day = Math.floor(timeStamp/48);
-    const leftDays = 7-day;
-    const problemTasks = [];
-
-    for (let taskIndex = 0; taskIndex < tasks.length; taskIndex++) {
-      const tempTask = tasks[taskIndex];
-      const tempTaskID = tempTask.task_id;
-      const tempReccuring = tempTask.recurrings;
-      const tempConstraint = tempTask.constraints;
-      const slotnum = Math.ceil(tempTask.duration/30); // calc how many slots the task needs
-      const slotsneed = slotnum*tempTask.recurrings
-
-      const tempErrorTask = [tempTaskID,0,0,0];
-
-
-      if(tempReccuring > leftDays) {
-        //problem with this task - reccuringg
-        tempErrorTask[1] = 1;
-      }
-
-      const curSlot = timeStamp-12;
-      const day = Math.floor(curSlot/48);
-      const toMinus = day*48;
-      const temp = curSlot-toMinus;
-      let partOfTheDay = Math.floor(temp/12);
-      if (partOfTheDay === 3) {
-        partOfTheDay = 2;
-      }
-
-      // check constraints and if there is 1 from current day to the end.
-      let constraintEnough = false;
-      let CounterForDaysConstraints = 0;
-      for(let constraintIndex = day; constraintIndex < tempTask.constraints.length ; constraintIndex++) {
-        const isMorningConstraint = tempConstraint[constraintIndex][0] === 1;
-        const isNoonConstraint = tempConstraint[constraintIndex][1] === 1;
-        const isNightConstraint = tempConstraint[constraintIndex][2] === 1;
-
-        if (partOfTheDay === 2) { // night now
-          if (isNightConstraint) {
-            constraintEnough = true;
-            CounterForDaysConstraints += 1;
-          }
-        } else if (partOfTheDay === 1) { //noon now
-          if (isNoonConstraint || isNightConstraint) {
-            constraintEnough = true;
-            CounterForDaysConstraints += 1;
-          }
-        } else if (partOfTheDay === 0) { // morning now
-          if (isNoonConstraint || isNightConstraint || isMorningConstraint) {
-            constraintEnough = true;
-            CounterForDaysConstraints += 1;
-          }
-        } else {
-          break;
-        }
-      }
-
-      if(!constraintEnough || CounterForDaysConstraints < tempReccuring) {
-        //problem with this task - constraints
-        tempErrorTask[2] = 1;
-      }
-
-      const numOfSlots = Math.ceil(tempTask.duration/30);
-      let start = timeStamp;
-      let end = timeStamp;
-      const curCategory = tempTask.category_id;
-
-      let isCaregoriesEnough = false;
-      let currSlot = [];
-      const spots = []; // the result - all the options
-      let counterTemp = 0;
-      let bigCounter = 0;
-
-      while (end < categories.length){
-        if (curCategory === categories[end]) {
-          currSlot.push(end); // we can use this slot
-          counterTemp += 1;
-          if (counterTemp === numOfSlots) {
-            const CopyForPushCurrSlot  = Object.assign([], currSlot);
-            spots.push(currSlot);
-            bigCounter += counterTemp;
-            if(bigCounter === slotsneed) {
-              isCaregoriesEnough = true;
-              break;
-            }
-            //end = await this.jumpNextDay(end)
-            //currSlot= [];
-            counterTemp = 0;
-          }
-        } else {
-          start = end+1;
-          currSlot = [];
-        }
-        end += 1;
-      }
-
-      if(!isCaregoriesEnough) {
-        //problem with this task - categories
-        tempErrorTask[3] = 1;
-      }
-
-      if(tempErrorTask[1] != 0 || tempErrorTask[2] != 0 || tempErrorTask[3] != 0) {
-        problemTasks.push(tempErrorTask)
-      }
-    }
-    return problemTasks;
-  }
-
-  async jumpNextDay(curSlot: number): Promise<any> {
-    const day = Math.floor(curSlot/48);
-    const newSlot = (day+1)*48;
-    return newSlot;
   }
 }
