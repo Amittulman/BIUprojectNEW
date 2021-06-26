@@ -141,6 +141,8 @@ const SiteTop = (props) => {
             new_category.id='added_button_' + i
             new_category.className = 'category_option category user_category';
             new_category.innerText = props.categories[i]['category_name'];
+            if (new_category.innerText === '')
+                new_category.className = 'category_option_empty'
             new_category.style.backgroundColor = props.categories[i]['color'];
             // Adding category's edit button.
             let edit_cat = document.getElementById('edit_cat'+i);
@@ -181,6 +183,10 @@ const SiteTop = (props) => {
                 // Update category changes in both frontend and DB.
                 setCategories();
             }
+            // category_options[i].style.opacity = '1';
+            // category_options[i].style.visibility = 'visible';
+            // // category_options[i].style.display = 'block';
+            // category_options[i].style.marginLeft = '2px';
             let category_decline_changes = document.getElementById('category_decline_changes');
             category_decline_changes.onclick = () => {unmarkRest(); new_cat_container.style.visibility = 'hidden';}
             edit_cat.onclick = () => {
@@ -210,6 +216,7 @@ const SiteTop = (props) => {
             }
             if (i >= 3) {
                 remove_cat.onclick = () => {
+                    debugger
                     setChangedCategories(prev=>[...prev, [i, 'remove']]);
                     let temp_cat = [...props.categories]
                     // Updating new value.
@@ -222,9 +229,11 @@ const SiteTop = (props) => {
                     let new_category = document.getElementById('added_button_' + currentCatRef.current)
                     new_category.innerText = ''
                     new_category.style.backgroundColor = 'transparent'
+                    new_category.style.display = 'none'
+                    new_category.className = 'category_option_empty'
                     new_category.appendChild(edit_cat)
                     new_category.appendChild(remove_cat)
-                    document.getElementById('category_send_button').click();
+                    // document.getElementById('category_send_button').click();
                 }
             }
             // Showing editing option and marking option.
@@ -245,6 +254,8 @@ const SiteTop = (props) => {
                     remove_cat.style.visibility = 'visible';
                     new_cat_container.style.visibility = 'hidden';
                 }
+                let sched = document.getElementById('schedule_component')
+                paintSlots(sched)
             }
             container.insertBefore(new_category, container.childNodes[container.childNodes.length-6]);
         }
@@ -341,7 +352,7 @@ const SiteTop = (props) => {
     }
 
     const showCategories = () => {
-        changeCategoryButton()
+        // changeCategoryButton()
         let category_options = document.getElementsByClassName('category_option')
         let category_button = document.getElementById('category_button')
         // Hide creating a new category pane when closing categories list.
@@ -356,34 +367,38 @@ const SiteTop = (props) => {
             display_type = 'none'
         }
         for (let i=0; i < category_options.length; i++) {
-            // console.log('ZZZZZ ', category_options[i])
             if (category_options[i].id.startsWith('added_button') && category_options[i].textContent === ''){
                 category_options[i].style.display = 'none'
-                  // console.log('ABBA ', i, category_options[i], category_options[i].className.includes('user_category') && category_options[i].textContent === '')
                 continue
             }
-            // Collapsing categories.
-            if (category_button.className === 'category_button') {
-                hideRest()
-                category_options[i].style.opacity = '0';
-                category_options[i].style.visibility = 'hidden';
-                category_options[i].style.marginLeft = '-40px';
-            // Expanding categories.
-            } else {
-                category_options[i].style.opacity = '1';
-                category_options[i].style.visibility = 'visible';
-                // category_options[i].style.display = 'block';
-                category_options[i].style.marginLeft = '2px';
-            }
+            // // Collapsing categories.
+            // if (category_button.className === 'category_button') {
+            //     hideRest()
+            //     category_options[i].style.opacity = '0';
+            //     category_options[i].style.visibility = 'hidden';
+            //     category_options[i].style.marginLeft = '-40px';
+            // // Expanding categories.
+            // } else {
+            //     category_options[i].style.opacity = '1';
+            //     category_options[i].style.visibility = 'visible';
+            //     // category_options[i].style.display = 'block';
+            //     category_options[i].style.marginLeft = '2px';
+            // }
+            category_options[i].style.opacity = '1';
+            category_options[i].style.visibility = 'visible';
+            // category_options[i].style.display = 'block';
+            category_options[i].style.marginLeft = '2px';
         }
-        if (display_type === 'block') {
-            setTest(false)
-            paintSlots(sched)
-        }
-        else {
-            setTest(true)
+
+        // if (display_type === 'block') {
+        //     paintSlots(sched)
+        // }
+        // else {
+        //     unpaintSlots(sched)
+        // }
+        let node = sched.childNodes.item(0).childNodes.item(0).childNodes.item(0).childNodes.item(5).childNodes.item(7)
+        if (node.ondragover && node.ondragover.name === 'allowDropCat')
             unpaintSlots(sched)
-        }
     }
 
     const findTask = (event) => {
@@ -391,10 +406,6 @@ const SiteTop = (props) => {
             event.preventDefault()
             alert('You typed "' + event.target.value + '" in the search box.')
         }
-    }
-
-    const userIDHandler = (event) => {
-        props.setUserID(parseInt(event.target.parentElement.childNodes[0].childNodes[0].value))
     }
 
     const LogoutWrapper = () => {
@@ -434,11 +445,10 @@ const SiteTop = (props) => {
         debugger
         temp_cat[currentCatRef.current]['category_name'] = document.getElementById('category_dialog').value
         temp_cat[currentCatRef.current]['color'] = colors[catColorRef.current]
-        props.setCategories(temp_cat)
-        // Sending changed to DB.
-        postCategories()
+        // props.setCategories(temp_cat)
         // Changing category value in frontend.
         let new_category = document.getElementById('added_button_' + currentCatRef.current)
+        new_category.className = 'category_option'
         new_category.innerText = props.categories[currentCatRef.current]['category_name']
         new_category.style.backgroundColor = props.categories[currentCatRef.current]['color']
         new_category.appendChild(edit_cat)
@@ -516,7 +526,7 @@ const SiteTop = (props) => {
         shiftCats();
     }
 
-    let login_input = <input onKeyPress={findTask} id='input' name='user_id_input' type='text' placeholder='Enter ID number'/>;
+
     let time_of_day = new Date().getHours()
     let greeting;
     if (time_of_day < 12) greeting = 'Good morning'
@@ -524,13 +534,14 @@ const SiteTop = (props) => {
     else greeting = 'Good evening'
     return (
         <div id='site_top' className='row flex-grow-0'>
-            <img src={siteLogo} id='login_title'/>
+            <img src={siteLogo} id='site_logo'/>
+            <div id={'schedule_for_next_week'} onClick={()=>window.confirm('Warning: planning schedule for next week will delete any previously generated schedule.')}/>
             <div className={'spacing'}/>
             <div className='userContainer'>
                 <div id='greeting'>{greeting}, {username}! 👋</div>
             </div>
             <div className='col-2' id='blank_col'/>
-            <div data-toggle="tooltip" title="Modify Categories" onClick={showCategories} id='category_button' className='category_button'/>
+            <div data-toggle="tooltip" title="Exit paint mode" onClick={()=>{hideRest();showCategories()}} id='category_button' className='category_button'/>
             <div data-toggle="tooltip" title="Add category" id='add_category_button' onClick={(e)=>{
                 setNewCat(true);
                 if (props.categories[5]['category_name'] !== '') {
@@ -560,7 +571,8 @@ const SiteTop = (props) => {
             </div>
             <div data-toggle="tooltip" title="Clear" id='clear_category_button' onClick={()=>{hideRest(); props.setOption(-1)}} className='category_option'/>
             {/*TODO:show indicator of sending category.*/}
-            <div data-toggle="tooltip" title="Save" id='category_send_button' onClick={()=>{
+            <div data-toggle="tooltip" title="Save changes" id='category_send_button' onClick={()=>{
+                hideRest()
                 updateTodoListCategories();
                 props.handleCategoriesSubmission();
                 showCategories();

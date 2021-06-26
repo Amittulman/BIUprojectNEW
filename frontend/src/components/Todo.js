@@ -63,10 +63,13 @@ const Todo = (props) => {
       props.setIsLoaded(true)
       // Load existing tasks.
       if (Object.keys(tasks).length > 0) {
+        let new_task_chunk = [];
         for (let key in tasks) {
-          addTask(key, tasks[key])
+          new_task_chunk.push(addTask(key, tasks[key]))
+          debugger
           // console.log('TASK IS NOW ', jsxRef.current)
         }
+        setTasksJsx(new_task_chunk)
         // updatePastDueTasks()
       }
       // TODO - put it at the bottom. When loading tasks it will always be the bottom task container.
@@ -86,9 +89,9 @@ const Todo = (props) => {
     if (Object.keys(tasks_jsx).length === 0) {
       //console.log('loaded?', isLoaded)
       if (!props.isLoaded) {
-        loading_element.className = 'loader'
-        empty_element.className = ''
-        empty_element.textContent = ''
+        // loading_element.className = 'loader'
+        // empty_element.className = ''
+        // empty_element.textContent = ''
       } else {
         loading_element.className = ''
         empty_element.className = 'empty_todo!'
@@ -272,7 +275,7 @@ const Todo = (props) => {
     pin.className = 'thumbtack'
   }
 
-  const addTask = (index, values) => {
+  const addTask = (index, values, add=false) => {
     if (values == null) {
       values = {'user_id':props.userID,'task_title':'', 'duration':'30','priority':'0', 'recurrings':'1', 'category_id':'-1','constraints':'000000000000000000000', 'pinned_slot':null}
     }
@@ -297,7 +300,11 @@ const Todo = (props) => {
     </select>
     <input onChange={(e) => handleChange(e, i)} name="pinned_choose_time" defaultValue={getTime(values['pinned_slot'])} key={'pinned_choose_time'+index} id={'pinned_choose_time'+index} className='pinned_choose_time' type="time"/>
     </span>;
-    let task_title = <span key={'task_title'+index} id={'task_title'+index} className='task_elm col-sm-3' onChange={(e) => handleChange(e, i)}>Title:&nbsp;<input id={'title_textbox'+index} className='title_input' name='task_title' type='text' defaultValue={values['task_title']}/></span>
+    let hebrew = (/[\u0590-\u05FF]/).test(values['task_title'])
+    let heb_class = ''
+    if (hebrew)
+      heb_class = 'heb_class_title '
+    let task_title = <span key={'task_title'+index} id={'task_title'+index} className='task_elm col-sm-3' onChange={(e) => handleChange(e, i)}>Title:&nbsp;<input id={'title_textbox'+index} className={heb_class +'title_input'} name='task_title' type='text' defaultValue={values['task_title']}/></span>
     let recurrence = <input key={'recurrence'+index} id={'recurrings'+index} name='recurrings' onClick={(e)=> {
       if (document.getElementById('thumbtack'+index).className !== 'thumbtack_done') {
         handleChange(e, i);
@@ -357,10 +364,17 @@ const Todo = (props) => {
         handlePastDue(e, i);
       }}/>
     </div>
-    let task_container = <div style={{zIndex:100000-index}} key={'task_container'+index} id={'task_container'+index} className='task_container' >{[sign, pastDue, task,trash_bin]}</div>
+    let animation = '';
+    if (add || jsxRef.current.size === 0) {
+      debugger
+      animation = ' task_appear'
+    }
+    let task_container = <div style={{zIndex:100000-index}} key={'task_container'+index} id={'task_container'+index} className={'task_container'+animation} >{[sign, pastDue, task,trash_bin]}</div>
     containerRef.current = task_container
-    setTasksJsx(prevArr => [...prevArr,task_container])
+    if (add === true)
+      setTasksJsx(prevArr => [...prevArr,task_container])
     setTaskNumber(task_number+1)
+    return task_container;
   }
 
   const removeFromPastDue = (e, i) => {
@@ -522,7 +536,6 @@ const Todo = (props) => {
   // Checks inputs, returns true if should not sent, false to send. //TODO maybe swap bools?
   const checkInputs = () => {
     // Do not send anything if no change has occurred in to-do list.
-
     if (Object.keys(props.updated_tasks).length === 0 && removed_tasks.length === 0 && !props.categoryChanged) return true
     let date = new Date()
     let todays_slot = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
@@ -627,7 +640,7 @@ const Todo = (props) => {
     props.setUpdatedTasks({})
     setRemovedTasks([])
     setTodoIDs({})
-    setTasksJsx(new Set())
+    // setTasksJsx(new Set())
     props.setToOptimize(true)
     props.handleCategoriesSubmission()
     props.setCategoryTrigger(true)
@@ -883,7 +896,9 @@ const Todo = (props) => {
             <div id='loading_todo'/>
           </form><br/>
           <div id={'bottom_content'}>
-            <div id='add_a_new_task' onClick={() => addTask(task_number)}/>
+            <div id='add_a_new_task' onClick={() => {
+              addTask(task_number,null, true)
+            }}/>
             <input id='submit_button' value='Send' className="btn btn-primary btn-md" type='submit' form='container'/>
           </div>
           <div id='due_date_popup'>Please handle past due tasks.</div>

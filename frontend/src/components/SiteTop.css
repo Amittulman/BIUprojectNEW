@@ -18,7 +18,22 @@
     text-decoration: underline;
 }
 
-#login_title {
+#schedule_for_next_week {
+    position: absolute;
+    left: 300px;
+    top: 50px;
+    height: 30px;
+    width: 30px;
+    background: url("../images/next_week.svg") no-repeat;
+    cursor: pointer;
+    z-index: 101;
+}
+
+#schedule_for_next_week:hover {
+}
+
+
+#site_logo {
     font: 70px "Brush Script MT";
     user-select: none;
     top: 5px;
@@ -172,8 +187,8 @@
 .userContainer {
     position: absolute;
     top: 55px;
-    left: 220px;
-    width: 300px;
+    left: 330px;
+    width: 220px;
     animation: username_appear 4s ease-in forwards ;
     user-select: none;
     z-index: 100;

@@ -13,8 +13,7 @@
 
 #header {
   position: absolute;
-  top: -5px;
-  background-color: #fefcf3;
+  /*background-color: #fefcf3;*/
   font-family: "Kristen ITC", serif;
   font-size: 35px;
   width: 100%;
@@ -280,11 +279,13 @@ select option {
   border-radius: 50%;
   transition: box-shadow 0.2s ease-out, margin-left 0.2s ease-out, opacity 0.2s ease-out;
   cursor: pointer;
-  background-image: url("../images/thumbtack.svg");
   background-repeat: no-repeat;
   margin-right: 10px;
   z-index: 99999999;
 
+}
+.thumbtack, .thumbtack_clicked,.thumbtack_error {
+  background-image: url("../images/thumbtack.svg");
 }
 
 .thumbtack_done {
@@ -307,6 +308,7 @@ select option {
   border-radius: 50%;
   transition: box-shadow 0.2s ease-out, margin-left 0.2s ease-out, opacity 0.2s ease-out, background-image 0.1s ease-out;
   width: 30px;
+  background-image: url("../images/repeat_1.svg");
   height: 30px;
   margin-left: 40px;
   cursor: pointer;
@@ -474,7 +476,7 @@ margin-left: 20px;
   width: 100%;
   display: flex;
   justify-content: center;
-  animation: expand .4s ease;
+  /*animation: expand .4s ease;*/
   background-color: white;
   position: relative;
   background-clip: content-box;
@@ -483,6 +485,10 @@ margin-left: 20px;
   background-color: transparent;
 
 /*  lala*/
+}
+
+.task_appear {
+  animation: expand .4s ease;
 }
 
 .task_container_error {
@@ -549,6 +555,10 @@ margin-left: 20px;
 }
 
 .task_container > * {
+}
+
+.heb_class_title {
+  direction: rtl;
 }
 
 .task_elm {
@@ -676,8 +686,8 @@ margin-left: 20px;
   width: inherit;
   margin-top: -10px;
   padding-top: 30px;
-  background-color: white;
-  z-index: 22222;
+  background-color: #fefcf3;
+  z-index: 100000000;
 }
 
 .past_due {

@@ -1,13 +1,13 @@
 #schedule_component1 {
     position: relative;
     overflow-y: scroll;
-    height: 100%;
+    height: 98%;
     padding-right: 25px;
 }
 
 table {
     display: table;
-    width: 100%;
+    width: 99%;
     empty-cells: show;
 }
 
@@ -19,7 +19,14 @@ th {
     user-select: none;
     background-color: #fefcf3;
     box-shadow: 4px 8px 8px lightgray !important;
-/*    lalala*/
+}
+
+#aba {
+    box-shadow: 0 4px 2px -2px gray;
+    margin-bottom: -100px;
+    /*background-color: red;*/
+    height: 100px;
+
 }
 
 #empty_todo {
@@ -53,11 +60,19 @@ td {
 }
 
 .passed {
-    background: url("../images/texture.jpg");
+    display: block;
+    /*background: linear-gradient(rgba(254, 252, 243,.8), rgba(254, 252, 243,.8)), url("../images/texture.png");*/
+    background: url("../images/grey_texture.png");
+    opacity: 1;
     height: 100%;
     width: 100%;
-    opacity: 0.2;
     pointer-events: none;
+}
+
+.th_parent {
+    box-shadow: 0 6px 8px -4px lightgray;
+    top: 0;
+    position: sticky;
 }
 
 .task_label {
@@ -110,11 +125,14 @@ td {
 table th {
     text-align: center;
     z-index: 1;
+
 }
 
 table tr {
     display: table-cell;
-    vertical-align: top;
+    /*vertical-align: top;*/
+    /*text-align: center;*/
+
 }
 
 table tr td {
@@ -122,6 +140,8 @@ table tr td {
     border: 1px solid rgba(0,0,0,.25);
     border-radius: 5%;
     text-align: center;
+    vertical-align: middle;
+    line-height: 6vh;
 }
 
 tr {

@@ -86,7 +86,7 @@ const Table = (props) => {
                                      draggable='true' onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop}
                                      onDragLeave={leaveDropArea}><div className={passed_day + ' hidden_overflow ' + heb_class}>{data}</div></td>);//{data}
                 }
-                jsx.push(<tr key={'tr' + i}><th key={'th' + i}>{props.days[i]}</th>{content}</tr>);
+                jsx.push(<tr key={'tr' + i}><div className={'th_parent'}><th key={'th' + i}>{props.days[i]}</th></div>{content}</tr>);
             }
             let table = [<table key='table_schedule'><tbody key='tbody_schedule'>{time_jsx}{jsx}</tbody></table>]
             props.setScheduleTable(table)

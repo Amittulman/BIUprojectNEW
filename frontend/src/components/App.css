@@ -9,7 +9,7 @@
 
 .category_button {
     margin-top: 25px;
-    background: url("../images/paint.svg") 50% 50% no-repeat;
+    background: url("../images/close.svg") 50% 50% no-repeat;
     border-radius: 50%;
     height: 30px;
     width: 30px;
@@ -61,15 +61,27 @@
     transition: background-color 0.2s ease-out;
 }
 
+.category_option_empty {
+    margin-top: 25px;
+    display: none;
+    transition: background-color 0.4s ease-out, margin-left 0.4s ease-out, opacity 0.4s ease-out, visibility 0.4s ease-out;
+    opacity: 0;
+    visibility: hidden;
+    margin-left: -55px;
+    user-select: none;
+}
+
 .category_option {
     margin-top: 25px;
     display: block;
     transition: background-color 0.4s ease-out, margin-left 0.4s ease-out, opacity 0.4s ease-out, visibility 0.4s ease-out;
-    opacity: 0;
-    visibility: hidden;
-    margin-left: -30px;
+    opacity: 1;
+    visibility: visible;
+    /*margin-left: -30px;*/
+    margin-left: 2px;
     user-select: none;
 }
+
 
 .user_category_empty {
     display: none;
@@ -557,6 +569,7 @@ input:checked + .slider:before {
 .tst2 {
     margin-left: 1vw !important;
 }
+
 
 @media screen and (max-width: 720px) {
     #todo_component {

@@ -49,6 +49,8 @@ const App = () => {
         setRememberMe(localStorage.getItem('rememberMe'))
     }, [])
 
+
+
     // Hides a pinned popup.
     const checkClick = (e,i) => {
         let current_pinned = document.getElementById('pinned_calendar'+i)
@@ -291,7 +293,7 @@ const App = () => {
             if (minute === 0) minute = '00'
             content.push(<td className='td1' key={'time' + hour + ':' + minute}>{hour}:{minute}</td>);
         }
-        jsx.push(<tr className='tr1' key={'tr' + 0}><th className='th1' key={'th' + 0}>Time</th>{content}</tr>);
+        jsx.push(<tr className='tr1' key={'tr' + 0}><div className={'th_parent'}><th className='th1' key={'th' + 0}>Time</th></div>{content}</tr>);
         return jsx
     }
 
