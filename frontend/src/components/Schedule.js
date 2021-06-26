@@ -39,20 +39,21 @@ const Table = (props) => {
     }, [tasks])
 
     useEffect(() => {
-        // //debugger
+        // ////debugger
         setTasksID(props.tasksID)
     }, [props.tasksID, tasksID])
 
     useEffect(() => {
+         //debugger
         if (props.categories === undefined) return;
         let dct = {'a':0, 'b':1,'c':2,'d':3,'e':4,'f':5};
         let date = new Date();
         let today_slot = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
         console.log('today is: ', today_slot)
         let passed_day = ''
-        // //debugger
+        // ////debugger
         if (tasksID[0] === undefined) return;
-        // //debugger
+        // ////debugger
         //console.log(props.categoryTrigger)
         if (!props.categoryTrigger) return
         let time_jsx = props.initialSchedule()
@@ -80,7 +81,6 @@ const Table = (props) => {
                     } else {
                         color = '#fefcf3';
                     }
-                    console.log(color)
                     content.push(<td key={'cell_' + (slots_per_day * (i - 1) + j)} className={class_name} style={{backgroundColor:color}}
                                      id={'cell_' + (slots_per_day * (i - 1) + j) + '_taskID_' + tasksID[j + (i - 1) * slots_per_day]}
                                      draggable='true' onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop}
@@ -88,6 +88,7 @@ const Table = (props) => {
                 }
                 jsx.push(<tr key={'tr' + i}><div className={'th_parent'}><th key={'th' + i}>{props.days[i]}</th></div>{content}</tr>);
             }
+
             let table = [<table key='table_schedule'><tbody key='tbody_schedule'>{time_jsx}{jsx}</tbody></table>]
             props.setScheduleTable(table)
             props.setTable(table)

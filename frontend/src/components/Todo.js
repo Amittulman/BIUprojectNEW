@@ -66,7 +66,7 @@ const Todo = (props) => {
         let new_task_chunk = [];
         for (let key in tasks) {
           new_task_chunk.push(addTask(key, tasks[key]))
-          debugger
+          //debugger
           // console.log('TASK IS NOW ', jsxRef.current)
         }
         setTasksJsx(new_task_chunk)
@@ -304,7 +304,7 @@ const Todo = (props) => {
     let heb_class = ''
     if (hebrew)
       heb_class = 'heb_class_title '
-    let task_title = <span key={'task_title'+index} id={'task_title'+index} className='task_elm col-sm-3' onChange={(e) => handleChange(e, i)}>Title:&nbsp;<input id={'title_textbox'+index} className={heb_class +'title_input'} name='task_title' type='text' defaultValue={values['task_title']}/></span>
+    let task_title = <span key={'task_title'+index} id={'task_title'+index} className='task_elm col-sm-3' onChange={(e) => handleChange(e, i)}>Title:&nbsp;<input id={'title_textbox'+index} className={'title_input'} name='task_title' type='text' defaultValue={values['task_title']}/></span>
     let recurrence = <input key={'recurrence'+index} id={'recurrings'+index} name='recurrings' onClick={(e)=> {
       if (document.getElementById('thumbtack'+index).className !== 'thumbtack_done') {
         handleChange(e, i);
@@ -366,7 +366,6 @@ const Todo = (props) => {
     </div>
     let animation = '';
     if (add || jsxRef.current.size === 0) {
-      debugger
       animation = ' task_appear'
     }
     let task_container = <div style={{zIndex:100000-index}} key={'task_container'+index} id={'task_container'+index} className={'task_container'+animation} >{[sign, pastDue, task,trash_bin]}</div>
@@ -706,7 +705,7 @@ const Todo = (props) => {
       "recurrings": "1",
       "task_title": "trythis",
       "user_id": "193"}]
-    //debugger
+    ////debugger
     console.log('updated tasks(before post)2: ', Object.values(props.updated_tasks))
     fetch('http://localhost:5000/tasks/UpdateTasks/{tasks}', {
       method: 'POST',
@@ -799,7 +798,7 @@ const Todo = (props) => {
       if (current_value === 7) current_value = 0;
       val = current_value + 1;
     } else if (nam === 'category_id') {
-      // ////debugger
+      // //////debugger
     }
     let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'30','priority':'0', 'recurrings':'1', 'category_id':'-1','constraints':'000000000000000000000', 'pinned_slot':null};
     let updated = updatedRef.current

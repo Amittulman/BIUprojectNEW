@@ -73,7 +73,7 @@ const SiteTop = (props) => {
     }
 
     const getUsername = () => {
-        // //debugger
+        // ////debugger
         console.log('THE ID IS ', props.userID)
         fetch("http://localhost:5000/tasks/getUsernameByID/"+props.userID)
             .then(res => res.json())
@@ -164,6 +164,7 @@ const SiteTop = (props) => {
                 remove_cat.className = 'remove_cat_grayed';
             new_category.appendChild(remove_cat);
             category_accept_changes.onclick = ()=> {
+                props.setCategoryTrigger(!props.categoryTrigger)
                 if (newCatref.current) {
                     // setCurrentCat(()=>getFirstEmptyCat())
                     setChangedCategories(prev=>[...prev, [getFirstEmptyCat(), 'add_'+document.getElementById('category_dialog').value]]);
@@ -178,7 +179,7 @@ const SiteTop = (props) => {
                     new_cat.style.display = 'block';
                     new_cat.style.marginLeft = '2px';
                 }
-                // ////debugger
+                // //////debugger
                 new_cat_container.style.visibility = 'hidden';
                 // Update category changes in both frontend and DB.
                 setCategories();
@@ -216,7 +217,7 @@ const SiteTop = (props) => {
             }
             if (i >= 3) {
                 remove_cat.onclick = () => {
-                    debugger
+                    //debugger
                     setChangedCategories(prev=>[...prev, [i, 'remove']]);
                     let temp_cat = [...props.categories]
                     // Updating new value.
@@ -442,7 +443,6 @@ const SiteTop = (props) => {
         let colors = {1:'#FFE9E9', 2:'#FFFFE2', 3:'#E9EDFF', 4:'#E2FFFF', 5:'#FFF0D7', 6:'#E8FFE2'};
         let temp_cat = [...props.categories]
         // Updating new value.
-        debugger
         temp_cat[currentCatRef.current]['category_name'] = document.getElementById('category_dialog').value
         temp_cat[currentCatRef.current]['color'] = colors[catColorRef.current]
         // props.setCategories(temp_cat)
@@ -477,16 +477,16 @@ const SiteTop = (props) => {
 
     const shiftCats = () => {
         let jsx_to_change = document.querySelectorAll('[id^=added_'+']')
-        debugger
+        //debugger
         let temp_categories = [...props.categories]
         let reached_empty_spot = false;
-        // debugger
+        // //debugger
         for (let i=0; i<temp_categories.length-1; i++) {
             if (!reached_empty_spot && temp_categories[i]['category_name'].length !== 0) continue
             reached_empty_spot = true;
             temp_categories[i]['category_name'] = temp_categories[i+1]['category_name']
             temp_categories[i]['color'] = temp_categories[i+1]['color']
-            // debugger
+            // //debugger
             // jsx_to_change[i].textContent = jsx_to_change[i+1].textContent
             // jsx_to_change[i].style.backgroundColor = jsx_to_change[i+1].style.backgroundColor
             //TODO change their jsx.
@@ -501,14 +501,14 @@ const SiteTop = (props) => {
         for (i=0; i<changedCategories.length; i++) {
             // let jsx_to_change = document.querySelectorAll('[id^=option_1234]')
             let jsx_to_change = document.querySelectorAll('[id^=option_' +changedCategories[i][0]+']')
-            debugger
+            //debugger
             // let cat_value  = document.getElementById('added_button_3');
             let cat_value  = document.getElementById('added_button_'+changedCategories[i][0]);
             // Editing new values.
             for (j=0; j<jsx_to_change.length; j++) {
                 // removing element
                 if (changedCategories[i][1] === 'remove') {
-                    // debugger
+                    // //debugger
                     // jsx_to_change[j].remove()
                     jsx_to_change[j].textContent = ''
                     jsx_to_change[j].style.display = 'none'
@@ -523,9 +523,18 @@ const SiteTop = (props) => {
             }
 
         }
-        shiftCats();
+        // shiftCats();
     }
 
+    const scheduleForNextWeek = () => {
+        if (window.confirm('Warning: planning schedule for next week will delete any previously generated schedule.')) {
+            // TODO today becomes sunday 00:00.
+            localStorage.setItem('nextWeek', 't')
+            // TODO need to change texture?
+        }
+    }
+
+    let sched = document.getElementById('schedule_component')
 
     let time_of_day = new Date().getHours()
     let greeting;
@@ -535,7 +544,7 @@ const SiteTop = (props) => {
     return (
         <div id='site_top' className='row flex-grow-0'>
             <img src={siteLogo} id='site_logo'/>
-            <div id={'schedule_for_next_week'} onClick={()=>window.confirm('Warning: planning schedule for next week will delete any previously generated schedule.')}/>
+            <div id={'schedule_for_next_week'} onClick={()=>scheduleForNextWeek()}/>
             <div className={'spacing'}/>
             <div className='userContainer'>
                 <div id='greeting'>{greeting}, {username}! 👋</div>
@@ -543,6 +552,7 @@ const SiteTop = (props) => {
             <div className='col-2' id='blank_col'/>
             <div data-toggle="tooltip" title="Exit paint mode" onClick={()=>{hideRest();showCategories()}} id='category_button' className='category_button'/>
             <div data-toggle="tooltip" title="Add category" id='add_category_button' onClick={(e)=>{
+                hideRest()
                 setNewCat(true);
                 if (props.categories[5]['category_name'] !== '') {
                     document.getElementById('adding_category_container').style.visibility = 'hidden'
@@ -569,14 +579,15 @@ const SiteTop = (props) => {
                 }
             }} className='category_option'>
             </div>
-            <div data-toggle="tooltip" title="Clear" id='clear_category_button' onClick={()=>{hideRest(); props.setOption(-1)}} className='category_option'/>
+            <div data-toggle="tooltip" title="Clear" id='clear_category_button' onClick={()=>{hideRest(); paintSlots(sched); props.setOption(-1)}} className='category_option'/>
             {/*TODO:show indicator of sending category.*/}
             <div data-toggle="tooltip" title="Save changes" id='category_send_button' onClick={()=>{
                 hideRest()
                 updateTodoListCategories();
                 props.handleCategoriesSubmission();
-                showCategories();
-                props.setCategoryTrigger(!props.categoryTrigger)}
+                // showCategories();
+                props.setCategoryTrigger(true)
+            }
             } className='category_option'/>
             <div id='adding_category_container'>
                 Title:

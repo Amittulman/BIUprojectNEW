@@ -194,7 +194,7 @@
     background-color: #EBFFE2;
     content: 'type a';
     transition: background-color 0.2s ease;
-    opacity: 0.9;
+    opacity: 1;
 }
 
 .type_a:before {
@@ -343,7 +343,7 @@
 .type_c {
     background-color: #EBEDFF;
     transition: background-color 0.2s ease;
-    opacity: 0.9;
+    opacity: 1;
 }
 
 .type_c:before {
@@ -382,19 +382,19 @@
 .type_d {
     background-color: #FFFD88;
     transition: background-color 0.2s ease;
-    opacity: 0.9;
+    opacity: 1;
 }
 
 .type_e {
     background-color: #dab17f;
     transition: background-color 0.2s ease;
-    opacity: 0.9;
+    opacity: 1;
 }
 
 .type_f {
     background-color: #D8F3FF;
     transition: background-color 0.2s ease;
-    opacity: 0.9;
+    opacity: 1;
 }
 
 #clear_category_button, #add_category_button, #category_send_button {
