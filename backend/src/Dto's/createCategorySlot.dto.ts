@@ -1,6 +1,3 @@
-import { CategorySlot } from "../interfaces/categorySlot.interface";
-
-
 import {IsNotEmpty, IsNumber} from 'class-validator';
 
 export class CreateCategorySlotDto {

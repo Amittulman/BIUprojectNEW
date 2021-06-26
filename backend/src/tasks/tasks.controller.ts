@@ -5,32 +5,19 @@ import {ToDoList} from "../interfaces/todo.interface";
 import {ScheduledTask} from "../interfaces/scheduledTask.interface";
 import {SchedulerService} from "../scheduler/scheduler.service";
 import {CreateScheduledTaskDto} from "../Dto's/createScheduledTask.dto";
-import {CreateToDoListDto} from "../Dto's/createToDoList.dto";
 import {CreateCategorySlotDto} from "../Dto's/createCategorySlot.dto";
 import {CreateUserDto} from "../Dto's/createUser.dto";
 import {CreateCategoryDto} from "../Dto's/createCategoryDto";
-import {Task} from "../interfaces/task.interface";
+
+//constants:
+const default_category = -1;
+const empty_slot = -1;
 
 @Controller('tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService, private readonly schedulerService: SchedulerService) {
   }
-
-  @Get('GetHello')
-  async getHello(): Promise<string> {
-    return this.tasksService.getHello();
-  }
-
-  @Get('GetTry')
-  async getTry(): Promise<void> {
-    //this.schedulerService.tryCalc([]);
-  }
-  //
-  // @Post('TaskForToDoList/:createTaskDto')
-  // postTask(@Body() createTaskDto: CreateTaskDto) {
-  //   return this.tasksService.postTask(createTaskDto); //TODO check DTO enforce
-  // }
-
+  //Method that runs the scheduling algorithm
   @Get('trig/:id/:slot')
   async trig(@Param('id') user_id: string, @Param('slot') current_time_slot: number): Promise<any[]> {
     console.log(current_time_slot)
@@ -59,133 +46,63 @@ export class TasksController {
     return [res,null];
   }
 
+  //Gets all user's tasks, with constraints as an array
   @Get('GetToDoList/:id')
   async getToDoList(@Param('id') user_id: string): Promise<ToDoList> {
     return await this.tasksService.GetToDoList(user_id);
   }
+
+  //Gets all user's tasks, with constraints as a string
   @Get('GetTasks/:id')
   async getTasks(@Param('id') user_id: string): Promise<ToDoList> {
     return await this.tasksService.getTasks(user_id);
   }
 
+  //Inserts user's tasks in db
   @Post('PostTasks/:tasks')
   postTasks(@Body() tasksArray: Array<CreateTaskDto>) {
-    // const tasks:Array<CreateTaskDto> = tasks_array;
-    const tasks:Array<CreateTaskDto> = [];
-    for(const task in tasksArray){
-      const schedule_task:CreateTaskDto = {
-        task_id : null,
-        user_id : tasksArray[task]['user_id'],
-        task_title : tasksArray[task]['task_title'],
-        duration: tasksArray[task]['duration'],
-        priority: tasksArray[task]['priority'],
-        category_id: tasksArray[task]['category_id'],
-        constraints: tasksArray[task]['constraints'],
-        recurrings: tasksArray[task]['recurrings'],
-        pinned_slot: tasksArray[task]['pinned_slot']
-
-      };
-      if (tasksArray[task]['recurrings'] === undefined){
-        schedule_task.recurrings = 1;
-      }
-      tasks.push(schedule_task);
-    }
-    return this.tasksService.postTasks(tasks);
+    return this.tasksService.postTasks(tasksArray);
   }
 
+  //Upserts user's tasks in db
   @Post('UpdateTasks/:tasks')
-  updateTasks(@Body() tasksArray: Array<CreateTaskDto>) {
-    const tasks:Array<CreateTaskDto> = [];
-    for(const task in tasksArray){
-      const schedule_task:CreateTaskDto = {
-        task_id : tasksArray[task]['task_id'],
-        user_id : tasksArray[task]['user_id'],
-        task_title : tasksArray[task]['task_title'],
-        duration: tasksArray[task]['duration'],
-        priority: tasksArray[task]['priority'],
-        category_id: tasksArray[task]['category_id'],
-        constraints: tasksArray[task]['constraints'],
-        recurrings: tasksArray[task]['recurrings'],
-        pinned_slot: tasksArray[task]['pinned_slot']
-
-      };
-      if (tasksArray[task]['recurrings'] === undefined){
-        schedule_task.recurrings = 1;
-      }
-      if (tasksArray[task]['pinned_slot'] === undefined){
-        schedule_task.pinned_slot = null;
-      }
-      tasks.push(schedule_task);
-    }
-
-    return this.tasksService.updateTasks(tasks);
+  updateTasks(@Body() tasks_array: Array<CreateTaskDto>) {
+    return this.tasksService.updateTasks(tasks_array);
   }
 
 
-@Post('UpdateScheduledTasks/:tasks')
-updateScheduledTasks(@Body() tasksArray: Array<any>) {
-    const tasks:Array<any> = [];
-    for(const task in tasksArray){
-      const schedule_task:any = {
-        task_id : tasksArray[task]['task_id'],
-        user_id : tasksArray[task]['user_id'],
-        slot_id : tasksArray[task]['slot_id'],
-        new_slot : tasksArray[task]['new_slot']
-      };
-      tasks.push(schedule_task);
-    }
-
-    return this.tasksService.updateScheduledTasks(tasks);
-  }
-
-  // @Post('TaskForToDoList/:createTaskDto')
-  // createTask(@Body() createTaskDto: CreateTaskDto) {
-  //   return this.tasksService.postTaskForToDoList(createTaskDto);
-  // }
-
-
-  // Scheduled tasks:
+  /// Scheduled tasks:
+  //Gets the schedule for a user, in an array of 337 slots, where "-1" is an empty slot
   @Get('GetSchedule/:id')
   async getSchedule(@Param('id') user_id: string): Promise<Array<number>> {
-    const result = await this.tasksService.getSchedule(user_id);
-    const schedule_array = new Array<number>(336);
-    schedule_array.fill(-1)
-    let i;
-
-
-    for (const slot in result){
-      schedule_array[result[slot]['slot_id']]   = result[slot]['task_id']
-    }
-
-    return schedule_array;
+    return this.tasksService.getSchedule(user_id);
   }
 
+  //Updates user's scheduled tasks (the ones that already have assigned slots)
+  @Post('UpdateScheduledTasks/:tasks')
+  updateScheduledTasks(@Body() tasks_array: Array<CreateTaskDto>) {
+    return this.tasksService.updateScheduledTasks(tasks_array);
+  }
+
+  //Gets a the task that is scheduled for a specific slot of a given user
   @Get('GetScheduleTask/:id/:slot')
   async getScheduleTask(@Param('id') user_id: string, @Param('slot') slot_id:string): Promise<ScheduledTask> {
     return this.tasksService.getScheduleTask(user_id,slot_id);
   }
-  @Post('PostSchedule/:user_id')
-  postSchedule(@Body() tasksArray: Array<number>, @Param('user_id')user_id:string) {
-    const schedule:Array<CreateScheduledTaskDto> = [];
-    for(const task in tasksArray){
-      if (tasksArray[task] != -1){
-        const schedule_task:CreateScheduledTaskDto = {
-          task_id: tasksArray[task],
-          user_id : parseInt(user_id),
-          slot_id : parseInt(task)
-        };
-        schedule.push(schedule_task);
 
-      }
-    }
-    return this.tasksService.postSchedule(schedule);
+  //Gets all the scheduled tasks of a given user
+  @Get('GetAllScheduledTasks/:user_id')
+  async getAllScheduledTasks(@Param('user_id') user_id: string): Promise<Array<ScheduledTask>> {
+    return this.tasksService.getAllScheduledTasks(user_id);
   }
-  // @Post('UpdateSchedule/:new_slot')
-  // updateScheduleSlot(@Body() task: CreateScheduledTaskDto, @Param('new_slot')slot : number) {
-  //   console.log(task)
-  //   return this.tasksService.updateScheduleSlot(task, slot);
-  // }
 
+  //Inserts the schedule for the user
+  @Post('PostSchedule/:user_id')
+  postSchedule(@Body() tasks_array: Array<number>, @Param('user_id')user_id:string) {
+    return this.tasksService.postSchedule(tasks_array, user_id);
+  }
+
+  //Changes the slot number of a given scheduled task
   @Post('UpdateSchedule/:new_slot')
   updateScheduleSlot(@Body() task: CreateScheduledTaskDto, @Param('new_slot')slot_id:number) {
     console.log(task)
@@ -193,71 +110,72 @@ updateScheduledTasks(@Body() tasksArray: Array<any>) {
   }
 
 
-  //Categories-Slots shit
-
+  ///Categories-Slots related API:
+  //Gives the categories that are assigned to the schedule - 336 slots array, -1 for default category
   @Get('GetUserCategorySlots/:id')
   async getUserCategorySlots(@Param('id') user_id: string): Promise<Array<number>> {
-    const result = await this.tasksService.getUserCategorySlots(user_id);
-    // console.log(result)
-    const category_slots_array = new Array<number>(336);
-    category_slots_array.fill(-1)
-
-    for (const slot in result){
-      category_slots_array[result[slot]['slot_id']]   = result[slot]['category_id']
-    }
-    return category_slots_array;
+    return this.tasksService.getUserCategorySlots(user_id);
   }
 
+  //Inserts the categories the user assigned to his schedule
   @Post('PostCategorySlots/:user_id')
-  postCategorySlots(@Body() categorySlots: Array<number>, @Param('user_id')user_id:string) {
-    const categories: Array<CreateCategorySlotDto> = [];
-    for (const slot in categorySlots) {
-      if (categorySlots[slot] != -1) {
-        const category_slot: CreateCategorySlotDto = {
-          category_id: categorySlots[slot],
-          user_id: parseInt(user_id),
-          slot_id: parseInt(slot)
-        };
-        categories.push(category_slot);
-
-      }
-    }
-    return this.tasksService.PostCategorySlots(categories);
+  postCategorySlots(@Body() category_slots: Array<number>, @Param('user_id')user_id:string) {
+    return this.tasksService.postCategorySlots(category_slots,user_id);
   }
 
+  //Deletes the schedule for a given user
   @Delete('DeleteSchedule/:id')
   async deleteSchedule(@Param('id') user_id: string): Promise<string> {
     return this.tasksService.deleteSchedule(user_id);
   }
 
+  //Deletes the category slots that a given user has
   @Delete('DeleteUserCategories/:id')
   async deleteUserCategories(@Param('id') user_id: string): Promise<string> {
     return this.tasksService.deleteUserCategories(user_id);
   }
 
-
+  //Deletes all the tasks given in the array for a given user
   @Delete('DeleteTasks/:user_id')
   deleteTasks(@Body() tasksArray: Array<number>, @Param('user_id')user_id:string) {
     return this.tasksService.deleteTasks(user_id, tasksArray);
   }
 
-//USERS:
+  ///User related API:
+  //Requests the credentials of a given user - username and hashed password
   @Post('CheckUserCredentials/')
   checkUserCredentials(@Body() user: CreateUserDto) {
     console.log(user)
     return this.tasksService.checkUserCredentials(user);
   }
 
+  //Posts a new user for given username and password
   @Post('PostNewUser/')
   postNewUser(@Body() user: CreateUserDto) {
     console.log(user)
     return this.tasksService.postNewUser(user);
   }
 
+  //returns the name of a user by id
   @Get('getUsernameByID/:user_id')
   getUsernameByID(@Param('user_id')user_id:string){
     return this.tasksService.getUsernameByID(user_id);
   }
+
+  //returns the id of a user by name
+  @Get('getUserIdByName/:user_name')
+  getUserIdByName(@Param('user_name')user_name:string){
+    return this.tasksService.getUserIdByName(user_name);
+  }
+
+  //Deletes all the users who's id is in a given array
+  @Delete('DeleteUsers/')
+  deleteUsers(@Body() users: Array<number>) {
+    return this.tasksService.deleteUsers(users);
+  }
+
+
+
 
   /// Categories Lookup:
   @Post('PostCategories/')
@@ -283,7 +201,7 @@ updateScheduledTasks(@Body() tasksArray: Array<any>) {
       const slotnum = Math.ceil(tempTask.duration/30); // calc how many slots the task needs
       const slotsneed = slotnum*tempTask.recurrings
 
-      let tempErrorTask = Array(tempTaskID,0,0,0);
+      const tempErrorTask = [tempTaskID,0,0,0];
 
 
       if(tempReccuring > leftDays) {
@@ -291,7 +209,7 @@ updateScheduledTasks(@Body() tasksArray: Array<any>) {
         tempErrorTask[1] = 1;
       }
 
-      let curSlot = timeStamp-12;
+      const curSlot = timeStamp-12;
       const day = Math.floor(curSlot/48);
       const toMinus = day*48;
       const temp = curSlot-toMinus;
@@ -304,9 +222,9 @@ updateScheduledTasks(@Body() tasksArray: Array<any>) {
       let constraintEnough = false;
       let CounterForDaysConstraints = 0;
       for(let constraintIndex = day; constraintIndex < tempTask.constraints.length ; constraintIndex++) {
-        let isMorningConstraint = tempConstraint[constraintIndex][0] === 1;
-        let isNoonConstraint = tempConstraint[constraintIndex][1] === 1;
-        let isNightConstraint = tempConstraint[constraintIndex][2] === 1;
+        const isMorningConstraint = tempConstraint[constraintIndex][0] === 1;
+        const isNoonConstraint = tempConstraint[constraintIndex][1] === 1;
+        const isNightConstraint = tempConstraint[constraintIndex][2] === 1;
 
         if (partOfTheDay === 2) { // night now
           if (isNightConstraint) {
@@ -336,7 +254,7 @@ updateScheduledTasks(@Body() tasksArray: Array<any>) {
       const numOfSlots = Math.ceil(tempTask.duration/30);
       let start = timeStamp;
       let end = timeStamp;
-      let curCategory = tempTask.category_id;
+      const curCategory = tempTask.category_id;
 
       let isCaregoriesEnough = false;
       let currSlot = [];
@@ -381,7 +299,7 @@ updateScheduledTasks(@Body() tasksArray: Array<any>) {
 
   async jumpNextDay(curSlot: number): Promise<any> {
     const day = Math.floor(curSlot/48);
-    let newSlot = (day+1)*48;
+    const newSlot = (day+1)*48;
     return newSlot;
   }
 }

@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import {ValidationPipe} from "@nestjs/common";
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const cors = require('cors')
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,10 +12,9 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({transform:true}));
 
   const config = new DocumentBuilder()
-      .setTitle('Amit swagger')
-      .setDescription('The Chong API description')
+      .setTitle('BeeZee Swagger')
+      .setDescription('Backend controller API')
       .setVersion('1.0')
-      .addTag('amit swagger')
       .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
