@@ -324,6 +324,8 @@ export class SchedulerService {
         return resultsOnlySlots;
     }
 
+    // optimizations to the algorithm. we check before sending to calc backtracking, if can be problems with
+    // recurring / constraints or categories
     public async checkTasksErrors(tasks: Array<any>, timeStamp: number, userID : string, categories : Array<number>): Promise<any> {
         const day = Math.floor(timeStamp/48);
         const leftDays = 7-day;
@@ -389,18 +391,24 @@ export class SchedulerService {
                 tempErrorTask[2] = 1;
             }
 
+            let isConstraintForPartOfTheDayIsCompatible = false;
+            let counterForConstraintsCompatibleWithCategory = 0;
+            let constarintsWithCategoreiesByDaysAndParts = [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]];
+
             while (rightPointer < categories.length){
                 if (tempTask.category_id === categories[rightPointer]) {
                     counterTodayConstraintsSlots += 1;
                     if (counterTodayConstraintsSlots === numberOfSlotsTaskNeed) {
-                        let isConstraintForPartOfTheDayIsCompatible = await SchedulerService.checkConstraintBySlot(rightPointer, tempTask);
-                        if (!isConstraintForPartOfTheDayIsCompatible) {
-                            tempErrorTask[2] = 1;
+                        let isConstraintForPartOfTheDayIsCompatibletemp = await SchedulerService.checkConstraintBySlot(rightPointer, tempTask);
+                        const day = Math.floor(rightPointer/48);
+                        let partOftheDay = await SchedulerService.convertSlotToPartOfDay(rightPointer);
+                        if (isConstraintForPartOfTheDayIsCompatibletemp) {
+                            constarintsWithCategoreiesByDaysAndParts[day][partOftheDay] = 1;
                         }
                         counterAllConstraintsSlotForCurTask += counterTodayConstraintsSlots;
                         if(counterAllConstraintsSlotForCurTask === numberOfSlotsTaskNeedAllWeek) {
                             isCaregoriesEnough = true;
-                            break;
+                            //break;
                         }
                         rightPointer = await SchedulerService.jumpNextDay(rightPointer)
                         counterTodayConstraintsSlots = 0;
@@ -417,6 +425,17 @@ export class SchedulerService {
                 tempErrorTask[3] = 1;
             }
 
+            let countDaysIsOkByConstraintsAndCategories = 0;
+            for (var dayIndex = 0; dayIndex < constarintsWithCategoreiesByDaysAndParts.length; dayIndex++) {
+                if(constarintsWithCategoreiesByDaysAndParts[dayIndex][0] === 1 || constarintsWithCategoreiesByDaysAndParts[dayIndex][1] === 1 ||constarintsWithCategoreiesByDaysAndParts[dayIndex][2] === 1) {
+                    countDaysIsOkByConstraintsAndCategories += 1 ;
+                }
+            }
+
+            if (countDaysIsOkByConstraintsAndCategories < currentTaskRecurring) {
+                tempErrorTask[2] = 1;
+            }
+
             if(tempErrorTask[1] != 0 || tempErrorTask[2] != 0 || tempErrorTask[3] != 0) {
                 problemTasks.push(tempErrorTask)
             }
@@ -424,6 +443,7 @@ export class SchedulerService {
         return problemTasks;
     }
 
+    // get slot and jump from current day to the next
     private static async jumpNextDay(curSlot: number): Promise<any> {
         const day = Math.floor(curSlot/48);
         return (day + 1) * 48;
