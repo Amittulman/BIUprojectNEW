@@ -596,7 +596,7 @@ const SiteTop = (props) => {
                 hideRest()
                 updateTodoListCategories();
                 props.handleCategoriesSubmission();
-                // showCategories();
+                showCategories();
                 props.setCategoryTrigger(true)
             }
             } className='category_option'/>
