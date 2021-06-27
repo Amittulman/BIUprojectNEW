@@ -232,7 +232,7 @@ const Todo = (props) => {
 
   const updatePastDueTasks = () => {
     let date = new Date()
-    let todays_slot = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
+    let todays_slot = props.scheduleMoment
     let i = 0;
     while (i < todays_slot) {
       if (props.tasksID[i] !== -1) {
@@ -275,6 +275,55 @@ const Todo = (props) => {
     pin.className = 'thumbtack'
   }
 
+  const showInputError = (e, enter) => {
+    let x = e.target.childNodes
+    let y = e.target.childNodes.length;
+    let shnips;
+    debugger
+    let err = e.target.classList.contains('task_error') || e.currentTarget.classList.contains('task_error') || e.target.classList.contains('thumbtack_error')
+    if (!err) return;
+    //TODO add parent and then child as well
+    let chosen_class;
+    if (e.target.childNodes.length > 1) {
+      chosen_class = e.target.childNodes[e.target.childNodes.length-1]
+      shnips = e.target.childNodes
+    } else {
+      chosen_class = e.target.parentNode.childNodes[e.target.parentNode.childNodes.length-1]
+      shnips = e.target.parentNode.childNodes
+    }
+    // shnips = shnips[0].textContent
+    // shnips = shnips[0]
+    let tag = chosen_class.tagName
+
+    if (!chosen_class || e.target.tagName === 'INPUT' || e.target.tagName === 'LABEL'|| e.target.classList.contains('row') || e.target.classList.contains('spacing_days')|| e.target.classList.contains('day')) return
+    debugger
+    // this function will be called when hovering a certain task element (added when error received)
+    if (enter) {
+      chosen_class.className = 'task_element_input_error'
+      setTimeout(()=> {
+        if (chosen_class.classList === undefined) return
+        chosen_class.classList.replace('task_element_input_error','hidden_task_element_input_error')
+      }, 4000)
+    }
+    else
+      setTimeout(()=> {
+        if (chosen_class.classList === undefined) return
+        chosen_class.classList.replace('task_element_input_error','hidden_task_element_input_error')
+      }, 0)
+    // let x = document.getElementsByClassName('task_elm');
+    // debugger;
+    // let y = document.getElementsByClassName('hidden_task_element_input_error')
+    // for (let i=0; i<y.length; i++) {
+    //   y[i].className = 'task_element_input_error';
+    // }
+    // let x = e.target.parentNode.childNodes[0].childNodes[2].className = 'task_element_input_error';
+    // e.target.childNodes[1].className = 'task_element_input_error'
+    // if (e.target !== undefined)
+    //   e.target.parentNode.childNodes[2].classList.replace('hidden_task_element_input_error', 'task_element_input_error')
+    // else
+    //   e.childNodes[2].classList.replace('hidden_input_error', 'input_error')
+  }
+
   const addTask = (index, values, add=false) => {
     if (values == null) {
       values = {'user_id':props.userID,'task_title':'', 'duration':'30','priority':'0', 'recurrings':'1', 'category_id':'-1','constraints':'000000000000000000000', 'pinned_slot':null}
@@ -284,7 +333,7 @@ const Todo = (props) => {
     let constraints_params = getConstraints(index, values['constraints']);
     let i = index
     let trash_bin = <svg className='bin_icon' id={'trash_bin'+index} onClick={(e) => bin_task(e,index)}  key={'trash_bin'+index} height="30px" viewBox="-40 0 427 427.00131" width="30px" xmlns="http://www.w3.org/2000/svg"><path d="m232.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0"/><path d="m114.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0"/><path d="m28.398438 127.121094v246.378906c0 14.5625 5.339843 28.238281 14.667968 38.050781 9.285156 9.839844 22.207032 15.425781 35.730469 15.449219h189.203125c13.527344-.023438 26.449219-5.609375 35.730469-15.449219 9.328125-9.8125 14.667969-23.488281 14.667969-38.050781v-246.378906c18.542968-4.921875 30.558593-22.835938 28.078124-41.863282-2.484374-19.023437-18.691406-33.253906-37.878906-33.257812h-51.199218v-12.5c.058593-10.511719-4.097657-20.605469-11.539063-28.03125-7.441406-7.421875-17.550781-11.5546875-28.0625-11.46875h-88.796875c-10.511719-.0859375-20.621094 4.046875-28.0625 11.46875-7.441406 7.425781-11.597656 17.519531-11.539062 28.03125v12.5h-51.199219c-19.1875.003906-35.394531 14.234375-37.878907 33.257812-2.480468 19.027344 9.535157 36.941407 28.078126 41.863282zm239.601562 279.878906h-189.203125c-17.097656 0-30.398437-14.6875-30.398437-33.5v-245.5h250v245.5c0 18.8125-13.300782 33.5-30.398438 33.5zm-158.601562-367.5c-.066407-5.207031 1.980468-10.21875 5.675781-13.894531 3.691406-3.675781 8.714843-5.695313 13.925781-5.605469h88.796875c5.210937-.089844 10.234375 1.929688 13.925781 5.605469 3.695313 3.671875 5.742188 8.6875 5.675782 13.894531v12.5h-128zm-71.199219 32.5h270.398437c9.941406 0 18 8.058594 18 18s-8.058594 18-18 18h-270.398437c-9.941407 0-18-8.058594-18-18s8.058593-18 18-18zm0 0"/><path d="m173.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0"/></svg>
-    let thumbtack = <div onMouseOver={(e) => slotToTime(values['pinned_slot'], e)} onClick={(e)=>showPinnedCalendar(e,i)} className={values['pinned_slot']?'col-1 thumbtack_done':'col-1 thumbtack'} id={'thumbtack'+index}/>;
+    let thumbtack = <div onMouseOver={(e)=>showInputError(e, true)} onMouseLeave={(e)=>showInputError(e, false)}><div onMouseOver={(e) => slotToTime(values['pinned_slot'], e)} onClick={(e)=>showPinnedCalendar(e,i)} className={values['pinned_slot']?'col-1 thumbtack_done':'col-1 thumbtack'} id={'thumbtack'+index}/>    <div id={'pinned_error_message'} className={'hidden_task_element_input_error'}>Cannot pin past dates.</div></div>;
     // let pinned_calendar = <DatePicker shouldCloseOnSelect={false} selected={startDate} onChange={(e,date) => handleChange(['pinned_slot',date,e], i)} name='pinned_slot' dateFormat="dd/MM/yyyy h:mm aa" showTimeInput calendarContainer={calendarContainer} id={'pinned_calendar'+index} key={'pinned_calendar'+index} customInput={thumbtack}/>;
     // let pinned_calendar = <div onChange={console.log('changed1')} id={'pinned_calendar'+index} key={'pinned_calendar'+index} className='pinned_calendar' ><Datetime onChange={console.log('changed2')} closeOnClickOutside={true} input={false} isValidDate={checkValidity}/></div>;
     let pinned_calendar = <span key={'pinned_calendar'+index} className='pinned_calendar' id={'pinned_calendar'+index}>
@@ -304,17 +353,18 @@ const Todo = (props) => {
     let heb_class = ''
     if (hebrew)
       heb_class = 'heb_class_title '
-    let task_title = <span key={'task_title'+index} id={'task_title'+index} className='task_elm col-sm-3' onChange={(e) => handleChange(e, i)}>Title:&nbsp;<input id={'title_textbox'+index} className={'title_input'} name='task_title' type='text' defaultValue={values['task_title']}/></span>
-    let recurrence = <input key={'recurrence'+index} id={'recurrings'+index} name='recurrings' onClick={(e)=> {
+    let task_title = <span onMouseOver={(e)=>showInputError(e, true)} onMouseLeave={(e)=>showInputError(e, false)} key={'task_title'+index} id={'task_title'+index} className=' col-sm-3' onChange={(e) => handleChange(e, i)}><span className= 'task_elm'>Title:&nbsp;</span><input id={'title_textbox'+index} className={'title_input'} name='task_title' type='text' defaultValue={values['task_title']}/><div id={'title_error_message'} className={'hidden_task_element_input_error'}>Title is too long.</div></span>
+    let recurrence = <div onMouseOver={(e)=>showInputError(e, true)} onMouseLeave={(e)=>showInputError(e, false)}><input key={'recurrence'+index} id={'recurrings'+index} name='recurrings' onClick={(e)=> {
       if (document.getElementById('thumbtack'+index).className !== 'thumbtack_done') {
         handleChange(e, i);
         unpinTask(e, i);
         recurrenceIconChange(e, i);
       }
-    }} onChange={(e) => handleChange(e, i)} className={'recurrence recurrence'+values['recurrings']}/>;
+    }} onChange={(e) => handleChange(e, i)} className={'recurrence recurrence'+values['recurrings']}/><div id={'recurrence_error_message'} className={'hidden_task_element_input_error'}>Too many recurrences.</div>
+    </div>;
     let rec_pin = <div className={'row rec_pin'}>{recurrence}{thumbtack}</div>
     let title_and_thumbtack = <span key={'title_and_thumbtack'+index} className='row justify-content-between'>{task_title}{rec_pin}</span>;
-    let duration = <div key={'duration'+index} id={'duration'+index} className='row ttt'><div className={'task_elm'}>Duration:</div>
+    let duration = <div onMouseOver={(e)=>showInputError(e, true)} onMouseLeave={(e)=>showInputError(e, false)} key={'duration'+index} id={'duration'+index} className='row ttt '><div className={'task_elm'}>Duration:</div>
       <div className={'first_row'}>
         <div id='duration_options_arrow'/>&nbsp;
         <select key={'duration_options'+index} size='1' id={'duration_options'+index} className={getDuration(values['duration']) === 'null'?'duration_options_hidden':'duration_options'} name='duration' defaultValue={getDuration(values['duration'])} onChange={(e) => handleChange(e, i)}>
@@ -329,8 +379,9 @@ const Todo = (props) => {
         <input placeholder='___' maxLength={3} id={'input_duration'+i} className={getDuration(values['duration']) === 'null'?'input_duration':'input_duration_hidden'} name='duration' type='text' defaultValue={getDuration(values['duration']) === 'null'?values['duration']/60:''} onChange={(e) => handleChange(e, i)}/>
       </div>
       <div>hours</div>
+      <div id={'duration_error_message'} className={'hidden_task_element_input_error'}>Duration is too long.</div>
     </div>;
-    let priority = <div key={'priority'+index} className='task_elm'>Priority:
+    let priority = <div key={'priority'+index} id={'priority'+index} className='priority_elm'><span className='task_elm'>Priority:</span>
       <div className='wrapper_options'><div id='priority_options_arrow'/>&nbsp;</div>
       <select key={'priority_options'+index} id={'priority_options'+index} className={'priority_options'} name='priority' defaultValue={values['priority']} onChange={(e) => handleChange(e, i)}>
         <option value="0">None</option>
@@ -346,13 +397,14 @@ const Todo = (props) => {
       else
         options.push(<option id={'option_'+j+'_'+index} key={'option_'+j+'_'+index} value={j} style={{display:'none'}}/>)
     }
-    let category_id = <div key={'category_id'+index} id={'category_id'+index} className='task_elm' onChange={(e) => handleChange(e, i)}>Category:&nbsp;
+    let category_id = <div onMouseOver={(e)=>showInputError(e, true)} onMouseLeave={(e)=>showInputError(e, false)} key={'category_id'+index} id={'category_id'+index} className={'cat_elm'} onChange={(e) => handleChange(e, i)}><span className='task_elm' >Category:&nbsp;</span>
       <div className='wrapper_options'><div id='category_options_arrow'/>&nbsp;</div>
       <select key={'category_options'+index}  className='category_options' name='category_id' defaultValue={values['category_id']} onChange={(e) => handleChange(e, i)}>
         {options}
       </select>
+      <div id={'category_error_message'} className={'hidden_task_element_input_error'}>No slots available for<br/>chosen category..</div>
     </div>;
-    let constraints = <div key={'constraints'+index} id={'constraints'+index} onChange={(e) => handleChange(e, i)}><div className='task_elm'>Day of Week:&nbsp;</div><div className={'constraints_element'} >{constraints_params}</div></div>;
+    let constraints = <div onMouseOver={(e)=>showInputError(e, true)} onMouseLeave={(e)=>showInputError(e, false)} key={'constraints'+index} id={'constraints'+index}  onChange={(e) => handleChange(e, i)}><div className='task_elm'>Day of Week:&nbsp;</div><div className={'constraints_element'} >{constraints_params}</div><div id={'daysofweek_error_message'} className={'hidden_task_element_input_error'}>Cannot schedule chosen<br/>days of week.</div></div>;
     let task = <div key={'task'+index} id={'task'+index} className='closed_task'>{[pinned_calendar, title_and_thumbtack, duration, priority, category_id, constraints]}</div>
     let sign = <div id={'expand_icon'+index} className={'expand_icon'} onClick={(e) =>  expandTask(e, task, index)} key='plus_sign'/>
     let pastDue = <div key={'pastDue'+index} id={'pastDue_'+index} className={'past_due_hidden'}>
@@ -537,7 +589,7 @@ const Todo = (props) => {
     // Do not send anything if no change has occurred in to-do list.
     if (Object.keys(props.updated_tasks).length === 0 && removed_tasks.length === 0 && !props.categoryChanged) return true
     let date = new Date()
-    let todays_slot = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
+    let todays_slot = props.scheduleMoment
     let total_err = false
     let pastDueErr = false
     // Go through all jsx elements.
@@ -555,14 +607,17 @@ const Todo = (props) => {
       // If current task wasn't updated, no need to check its input.
       if (!(task_index in props.updated_tasks)) continue
       // Check title length.
-      let temp_task = document.getElementById('title_textbox' + task_index)
+      // let temp_task = document.getElementById('title_textbox' + task_index)
+      let title_item = document.getElementById('task_title' + task_index)
       // If title is too long
       if (props.updated_tasks[task_index]['task_title'].length > 30) {
-        temp_task.classList.add('task_error')
+        // temp_task.classList.add('task_error')
+        title_item.classList.add('task_error')
         task_err = true
         total_err = true
       } else {
-        temp_task.classList.remove('task_error')
+        // temp_task.classList.remove('task_error')
+        title_item.classList.remove('task_error')
       }
       // Check duration length.
       let duration = document.getElementById('duration' + task_index)
@@ -592,7 +647,7 @@ const Todo = (props) => {
       if (task_err){
         container.classList.replace('expanded_task', 'closed_task_error')
         container.classList.replace('expanded_task_daytime', 'closed_task_error')
-        container.classList.replace('closed_task', 'closed_task_error')
+        // container.classList.replace('closed_task', 'closed_task_error')
         expansion_button.className = 'expand_icon'
       } else {
         container.classList.replace('expanded_task_error', 'expanded_task')
@@ -642,7 +697,9 @@ const Todo = (props) => {
     // setTasksJsx(new Set())
     props.setToOptimize(true)
     props.handleCategoriesSubmission()
-    props.setCategoryTrigger(true)
+
+    // props.setCategoryTrigger(true)
+
     // Prevent duplicates after submitting, when user has no tasks prior to submitting new tasks.
     // if (tasks.length === 0) setIsLoaded(true)
     //Reloading page to reload updates jsx.

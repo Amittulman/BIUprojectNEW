@@ -527,10 +527,21 @@ const SiteTop = (props) => {
     }
 
     const scheduleForNextWeek = () => {
+        props.setCategoryTrigger(false)
         if (window.confirm('Warning: planning schedule for next week will delete any previously generated schedule.')) {
-            // TODO today becomes sunday 00:00.
-            localStorage.setItem('nextWeek', 't')
-            // TODO need to change texture?
+            // TODO set state changed, to enable submitting todo list.
+            let date = new Date();
+            let now = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
+            if (localStorage.getItem('nextWeek').split('_')[0] === 't') {
+                localStorage.setItem('nextWeek', 'f_' + now)
+                props.setScheduleMoment(now);
+            } else {
+                localStorage.setItem('nextWeek', 't_' + now)
+                props.setScheduleMoment(0);
+            }
+            setTimeout(() => {
+                props.setCategoryTrigger(true)
+            }, 800)
         }
     }
 

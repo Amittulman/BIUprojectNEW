@@ -4,6 +4,7 @@
     width: calc(100% );
     overflow: hidden;
     background-color: #fefcf3;
+    white-space:pre-wrap;
 /*    lala*/
 }
 

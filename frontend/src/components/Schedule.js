@@ -44,11 +44,12 @@ const Table = (props) => {
     }, [props.tasksID, tasksID])
 
     useEffect(() => {
+
          //debugger
         if (props.categories === undefined) return;
         let dct = {'a':0, 'b':1,'c':2,'d':3,'e':4,'f':5};
         let date = new Date();
-        let today_slot = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
+        let today_slot = props.scheduleMoment;
         console.log('today is: ', today_slot)
         let passed_day = ''
         // ////debugger
@@ -72,6 +73,7 @@ const Table = (props) => {
                     let heb_class = ''
                     if (hebrew)
                         heb_class = 'heb_class'
+
                     if (today_slot > (j + (i - 1) * slots_per_day))
                         passed_day = ' passed'
                     let class_name = getClass(props.categoryTypes[slots_per_day * (i - 1) + j])
@@ -102,7 +104,7 @@ const Table = (props) => {
 
     const scrollToThisMoment = () => {
         let date = new Date()
-        let today_slot = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
+        let today_slot = props.scheduleMoment;
         today_slot -= (Math.ceil(today_slot/slots_per_day)-1) * slots_per_day
         // console.log('BOOM! ', today_slot)
         // document.getElementById('schedule_component1').scrollTop += (window.innerHeight * 0.06) * today_slot;

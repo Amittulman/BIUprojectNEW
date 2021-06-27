@@ -84,6 +84,74 @@
   background-color: rgba(170, 230, 255, 1);
 }
 
+.hidden_task_element_input_error {
+  visibility: hidden;
+  border-radius: 15px;
+  background-color: #d77c73;
+  box-shadow: rgba(0, 0, 0, 0.16) 0 1px 4px;
+  padding: 0 10px;
+  font-size: 15px;
+  position: absolute;
+  box-sizing: border-box;
+  transition: visibility 0.4s linear;
+  animation: rem_error 0.4s ease forwards;
+}
+
+#testid {
+  width: 40px;
+  height: 40px;
+}
+
+.task_element_input_error {
+  visibility: visible;
+  border-radius: 15px;
+  background-color: #FF7D7B;
+  color: white !important;
+  box-shadow: rgba(0, 0, 0, 0.16) 0 1px 4px;
+  padding: 0 10px;
+  font-size: 15px;
+  /*width: 100%;*/
+  /*top: 30px;*/
+  /*display: none;*/
+  z-index: 0;
+  position: absolute;
+  /*position: relative;*/
+  box-sizing: border-box;
+  animation: show_error 0.4s ease forwards;
+}
+
+#title_error_message {
+  top: 10px;
+  left: 65px;
+  opacity: 0.9 !important;
+}
+
+#duration_error_message {
+  top: 60px;
+  left: 165px;
+  opacity: 0.9 !important;
+}
+
+#category_error_message {
+  top: 125px;
+  left: 165px;
+  font-size: 12px;
+  opacity: 0.9 !important;
+}
+
+#daysofweek_error_message {
+  top: 150px;
+  left: 200px;
+  font-size: 12px;
+  opacity: 0.9 !important;
+}
+
+#recurrence_error_message, #pinned_error_message {
+  top: 50px;
+  left: 200px;
+  opacity: 0.9 !important;
+}
+
 .expanded_task, .expanded_task_error, .expanded_task_daytime, .expanded_task_daytime_error, .expanded_task_hover,
 .expanded_task_daytime_hover{
   height: 202px;
@@ -562,6 +630,11 @@ margin-left: 20px;
 }
 
 .task_elm {
+  text-align: left !important;
+  user-select: none;
+}
+
+.priority_elm, .cat_elm {
   text-align: left !important;
   user-select: none;
 }

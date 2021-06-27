@@ -39,6 +39,8 @@ const App = () => {
     const [scheduleJsx, setScheduleJsx] = useState([])
     const [userID, setUserID] = useState()
     const [categoryChanged, setCategoryChanged] = useState(false);
+    const [scheduleMoment, setScheduleMoment] = useState();
+    const [nextWeekChanged, setNextWeekChanged] = useState(false);
 
     // On main page load, get userID and "remember me" from local storage.
     useEffect(() => {
@@ -47,6 +49,20 @@ const App = () => {
         console.log('rememberme ', localStorage.getItem('rememberMe'))
         setUserID(localStorage.getItem('userID'))
         setRememberMe(localStorage.getItem('rememberMe'))
+
+        let date = new Date();
+        let slot = timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
+        setScheduleMoment(slot);
+        // localStorage.setItem('nextWeek', 'f')
+        if (localStorage.getItem('nextWeek') === null || localStorage.getItem('nextWeek').includes('f')) {
+            let slot = timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
+            setScheduleMoment(slot);
+            localStorage.setItem('nextWeek', 'f_'+slot)
+        }
+        else {
+            setScheduleMoment(0);
+            localStorage.setItem('nextWeek', 't_'+slot)
+        }
     }, [])
 
 
@@ -82,7 +98,7 @@ const App = () => {
     // Calling trig API, with current day as beginning slot parameter.
     const taskIDTrig = () => {
         let date = new Date()
-        trigTasks(timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes()))
+        trigTasks(scheduleMoment)
         return tasksID
     }
 
@@ -154,6 +170,19 @@ const App = () => {
         }, 3000)
     }
 
+    const unmarkTasksWithErrors = () => {
+        let i;
+
+        for (let id in taskRef.current) {
+            let recurrences = document.getElementById('recurrings' + id);
+            let constraints = document.getElementById('constraints' + id);
+            let categories = document.getElementById('category_id' + id);
+            recurrences.classList.remove('thumbtack_error');
+            constraints.classList.remove('task_error');
+            categories.classList.remove('task_error');
+        }
+    }
+
     // Marking errors in specific properties of specific tasks.
     const markTasksWithErrors = (err_tasks) => {
         let i;
@@ -178,16 +207,21 @@ const App = () => {
 
     // Trig API. Receiving calculated schedule.
     const trigTasks = (slot) => {
+
         fetch("http://localhost:5000/tasks/trig/"+userID+"/"+slot)
             .then(res => res.json())
             .then(
                 (result) => {
                     if (result['statusCode'] === 500) throw new Error('Internal server error.');
                     // If it was not possible to generate schedule.
+                    console.log('HEYYY ', result)
                     if (result[0] === null) {
+                        console.error('Error in trig: ', result)
                         showErrorMessage();
                         markTasksWithErrors(result[1]);
                         return;
+                    } else {
+                        unmarkTasksWithErrors();
                     }
                     setTaskID(result[0])
                 })
@@ -328,19 +362,19 @@ const App = () => {
         window.onresize = resizeResponse;
        return (
            <div className="App d-flex flex-column">
-               <SiteTop setCategoryChanged={setCategoryChanged} categories={categories} setCategories={setCategories} optionRef={optionRef} setCategoryTypes={setCategoryTypes}  categoryTypes={categoryTypes} userID={userID} setUserID={setUserID} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setOption={setOption}/>
+               <SiteTop setNextWeekChanged={setNextWeekChanged} setScheduleMoment={setScheduleMoment} timeToSlot={timeToSlot} setCategoryChanged={setCategoryChanged} categories={categories} setCategories={setCategories} optionRef={optionRef} setCategoryTypes={setCategoryTypes}  categoryTypes={categoryTypes} userID={userID} setUserID={setUserID} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setOption={setOption}/>
                <div id='site_body' className='row flex-grow-1'>
                    {/*<div id='show_hide_todo' className='show_hide_todo' onClick={closeTaskPane}/>*/}
                    <div id='todo_parent' className='col-4'>
                        <div id='todo_component' className='sticky-top row'>
                        <div className='tst col-12'>
-                           <Todo categoryChanged={categoryChanged} categories={categories} setUpdatedTasks={setUpdatedTasks} updated_tasks={updated_tasks} tasksID={tasksID} timeToSlot={timeToSlot} userID={userID} isLoaded={todoIsLoaded} setIsLoaded={setTodoIsLoaded} errorAnimation={errorAnimation} endErrorAnimation={endErrorAnimation} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setToOptimize={setToOptimize} updating_tasks={tasks} trigTasks={taskIDTrig} getTasks={taskGetter} setTasks={setTasks}/>
+                           <Todo nextWeekChanged={nextWeekChanged} scheduleMoment={scheduleMoment} categoryChanged={categoryChanged} categories={categories} setUpdatedTasks={setUpdatedTasks} updated_tasks={updated_tasks} tasksID={tasksID} timeToSlot={timeToSlot} userID={userID} isLoaded={todoIsLoaded} setIsLoaded={setTodoIsLoaded} errorAnimation={errorAnimation} endErrorAnimation={endErrorAnimation} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setToOptimize={setToOptimize} updating_tasks={tasks} trigTasks={taskIDTrig} getTasks={taskGetter} setTasks={setTasks}/>
                        </div>
                        </div>
                    </div>
                    <div id='schedule_parent' className='col col-8_start'>
                        <div id='schedule_component'>
-                           <Schedule days={days} setDays={setDays} categories={categories} setCategories={setCategories} timeToSlot={timeToSlot} userID={userID} categoryTrigger={categoryTrigger} setCategoryTypes={setCategoryTypes}  categoryTypes={categoryTypes} schedRef={schedRef} scheduleTable={scheduleTable} setScheduleTable={setScheduleTable} setScheduleJsx={setScheduleJsx} scheduleJsx={scheduleJsx} initialSchedule={initialSchedule} table1={table1} setTable={setTable} getCategoryTable={categoryTable} setCategoryTable={setCategoryTable} setToOptimize={setToOptimize} toOptimize={toOptimize} tasksID={tasksID} getTasksID={taskIDGetter} trigTasksID={taskIDTrig} updating_tasks={tasks} getTasks={taskGetter} setTasks={setTasks}/>
+                           <Schedule scheduleMoment={scheduleMoment} days={days} setDays={setDays} categories={categories} setCategories={setCategories} timeToSlot={timeToSlot} userID={userID} categoryTrigger={categoryTrigger} setCategoryTypes={setCategoryTypes}  categoryTypes={categoryTypes} schedRef={schedRef} scheduleTable={scheduleTable} setScheduleTable={setScheduleTable} setScheduleJsx={setScheduleJsx} scheduleJsx={scheduleJsx} initialSchedule={initialSchedule} table1={table1} setTable={setTable} getCategoryTable={categoryTable} setCategoryTable={setCategoryTable} setToOptimize={setToOptimize} toOptimize={toOptimize} tasksID={tasksID} getTasksID={taskIDGetter} trigTasksID={taskIDTrig} updating_tasks={tasks} getTasks={taskGetter} setTasks={setTasks}/>
                            {/*<Categories userID={userID} setCategoryTrigger={setCategoryTrigger} categoryTrigger={categoryTrigger} setScheduleTrigger={setScheduleTrigger} scheduleTrigger={scheduleTrigger} table1={table1} categoryTable={categoryTable} setTable={setTable} optionRef={optionRef} setCategoryTable={setCategoryTable} setCategoryTypes={setCategoryTypes}  categoryTypes={ categoryTypes} initialScedule={initialSchedule} scheduleJsx={scheduleJsx} setScheduleJsx={setScheduleJsx} />*/}
                        </div>
                        <div id='category_component'>
@@ -357,7 +391,7 @@ const App = () => {
             {/*<Login setUserID={setUserID}/>*/}
             <Switch>
                 <Route path='/mainPage' render={mainPage}/>
-                <Route path='/' component={()=><Login rememberMe={rememberMe} setRememberMe={setRememberMe} userID={userID} setUserID={setUserID}/>}/>
+                <Route path='/' component={()=><Login setScheduleMoment={setScheduleMoment} timeToSlot={timeToSlot} rememberMe={rememberMe} setRememberMe={setRememberMe} userID={userID} setUserID={setUserID}/>}/>
                 {/*<Route path='/signup' component={()=><div>HELLO</div>}/>*/}
             </Switch>
         </div>

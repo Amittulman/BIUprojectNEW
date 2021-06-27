@@ -29,12 +29,19 @@ const Login = (props) => {
 
 
     useEffect(() => {
-        // let login = document.getElementById('login_container');
-        // let signup = document.getElementById('signup_container');
-        // console.log('check login ', localStorage.getItem('rememberMe') === 'true', localStorage.getItem('userID') > 0)
-        // console.log('it worths ', localStorage.getItem('rememberMe'))
-        if (localStorage.getItem('nextWeek') === null)
-            localStorage.setItem('nextWeek', 'f')
+        let date = new Date();
+        // let slot = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
+        // props.setScheduleMoment(slot);
+        // localStorage.setItem('nextWeek', 'f')
+        // if (localStorage.getItem('nextWeek') === null || localStorage.getItem('nextWeek') === 'f') {
+        //     let date = new Date();
+        //     let slot = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
+        //     props.setScheduleMoment(slot);
+        //     localStorage.setItem('nextWeek', 'f')
+        // }
+        // else {
+        //     props.setScheduleMoment(0);
+        // }
         if (localStorage.getItem('rememberMe') === 'true' && localStorage.getItem('userID') > 0) {
             // console.log('YUPS')
             history.push('/mainPage')
@@ -88,6 +95,22 @@ const Login = (props) => {
                 localStorage.setItem('userID', loginAnswer);
                 // console.log('this will be added: ', document.getElementById('remember_me_input').checked)
                 localStorage.setItem('rememberMe', document.getElementById('remember_me_input').checked === true)
+
+                let date = new Date();
+                let x = parseInt(props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes()))
+                let y = parseInt(localStorage.getItem('nextWeek').split('_')[1])
+
+                let slot = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
+                if (parseInt(props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())) < parseInt(localStorage.getItem('nextWeek').split('_')[1])) {
+                    props.setScheduleMoment(slot);
+                }
+                if (localStorage.getItem('nextWeek').split('_')[0] === 't') {
+
+                    props.setScheduleMoment(0);
+                } else {
+                    props.setScheduleMoment(slot);
+                }
+
                 break;
         }
         // console.log(text_to_client)
@@ -111,7 +134,9 @@ const Login = (props) => {
             default:
                 removeInputError(username)
                 // TODO change f to storage value check
-                localStorage.setItem('nextWeek', 'f');
+                let date = new Date();
+                let now = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
+                localStorage.setItem('nextWeek', 'f_'+now);
                 text_to_client = 'Signed up successfully.';
                 props.setUserID(signUpAnswer);
                 break;
