@@ -7,7 +7,7 @@
     top: 0;
     bottom: 0;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
     margin: auto;
     width: 20vw;
@@ -31,11 +31,11 @@
 
 #login_title, .signup_title {
     position: absolute;
-    top: 20px;
-    min-width: 200px;
-    left: 50px;
+    top: 1vh;
+    min-width: 40vh;
+    /*left: 4vw;*/
     user-select: none;
-    width: 11vw;
+    width: 22vh;
     z-index: 1;
 
 }
@@ -50,11 +50,11 @@
 
 .login_subtitle {
     display: flex;
-    position: absolute;
+    position: relative;
     margin-right: auto;
-    margin-left: 10px;
-    margin-top: -20px;
-    font-size: 15px;
+    margin-left: 5%;
+    /*margin-top: -2vh;*/
+    font-size: 3vh;
 }
 
 .textbox_title_clicked, .textbox_title {
@@ -82,8 +82,13 @@ input {
 #username, #password, #confirm_password, #email {
     display: flex;
     flex-direction: column;
-    margin-left: 10%;
+    /*margin-left: 10%;*/
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 3vh;
 }
+
+input[type='text'] { font-size: 3vh !important; }
 
 .input, #username_text, #password_text, #confirm_password_text, #email_text {
     border: 0;
@@ -95,6 +100,7 @@ input {
     width: 15vw;
     min-width: 200px;
     display: block;
+    height: 5vh;
 }
 
 .input_clicked {
@@ -156,9 +162,10 @@ input:focus {
 }
 
 .remember_me {
-    font-size: smaller;
+    /*font-size: smaller;*/
     cursor: pointer;
     user-select: none;
+    font-size: 3vh;
 }
 
 .remember_me:hover {
@@ -194,13 +201,15 @@ input:focus {
 }
 
 #remember_me_container {
-    position: absolute;
-    margin-right: 40%;
-    top: 51%;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    /*top: 51%;*/
 }
 
 #remember_me_label {
     padding-left: 5px;
+    height: 3vw;
 }
 
 .hidden_input_error {
