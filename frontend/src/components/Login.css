@@ -7,7 +7,7 @@
     top: 0;
     bottom: 0;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
     margin: auto;
     width: 20vw;
@@ -23,7 +23,6 @@
     min-height: 550px;
     background-color: #fefcf3;
 }
-
 .login_container_gone {
     visibility: hidden;
     opacity: 0;
@@ -31,30 +30,28 @@
 
 #login_title, .signup_title {
     position: absolute;
-    top: 1vh;
-    min-width: 40vh;
-    /*left: 4vw;*/
+    top: 20px;
+    min-width: 200px;
+    left: 50px;
     user-select: none;
-    width: 22vh;
+    width: 11vw;
     z-index: 1;
 
 }
-
 .spacing {
     height: 50px;
 }
-
 .spacing_signup {
     height: 100px;
 }
 
 .login_subtitle {
     display: flex;
-    position: relative;
+    position: absolute;
     margin-right: auto;
-    margin-left: 5%;
-    /*margin-top: -2vh;*/
-    font-size: 3vh;
+    margin-left: 10px;
+    margin-top: -20px;
+    font-size: 15px;
 }
 
 .textbox_title_clicked, .textbox_title {
@@ -64,31 +61,22 @@
     margin-right: 50px;
     margin-top: -20px;
 }
-
 .textbox_title_clicked, .textbox_title:focus  {
     color: blue;
     outline: none;
 }
-
 .textbox_title_error {
     color: blue;
 }
-
 input {
     background-color: transparent;
     border: none;
 }
-
 #username, #password, #confirm_password, #email {
     display: flex;
     flex-direction: column;
-    /*margin-left: 10%;*/
-    margin-left: auto;
-    margin-right: auto;
-    font-size: 3vh;
+    margin-left: 10%;
 }
-
-input[type='text'] { font-size: 3vh !important; }
 
 .input, #username_text, #password_text, #confirm_password_text, #email_text {
     border: 0;
@@ -100,22 +88,18 @@ input[type='text'] { font-size: 3vh !important; }
     width: 15vw;
     min-width: 200px;
     display: block;
-    height: 5vh;
 }
 
 .input_clicked {
     border-color: blue !important;
 }
-
 input:focus {
     outline: none;
     color: rgb(12, 13, 13);
 }
-
 .input_error {
     border-color: red !important;
 }
-
 .no_error_sign, .error_sign {
     position: absolute;
     color: red;
@@ -124,17 +108,14 @@ input:focus {
     font-size: 20px;
     visibility: hidden;
 }
-
 .error_sign {
     visibility: visible;
 }
-
 .sign_up, .log_in, .signing_up {
     font-size: medium;
     cursor: pointer;
     user-select: none;
 }
-
 .log_in, .signing_up {
     border-radius: 15px;
     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
@@ -144,72 +125,59 @@ input:focus {
     box-sizing: border-box;
     transition: background-color 0.2s linear;
 }
-
 .sign_up:hover {
     text-decoration: underline;
 }
-
 .log_in:hover, .signing_up:hover {
     background-color: #faffa2;
 }
-
 .log_in:active, signing_up:active {
     background-color: #dbdb70;
 }
-
 .remember_me_signup_container {
     width: 100%;
 }
 
 .remember_me {
-    /*font-size: smaller;*/
+    font-size: smaller;
     cursor: pointer;
     user-select: none;
-    font-size: 3vh;
 }
 
 .remember_me:hover {
     text-decoration: underline;
 }
-
 .forgot_password {
     cursor: pointer;
     user-select: none;
 }
-
 .back_to_login {
     margin-bottom: 50px;
 }
-
 .forgot_password:hover {
     text-decoration: underline;
 }
-
 .fade-enter {
     opacity: 0;
     z-index: 1;
 }
-
 .fade-enter.fade-enter-active {
     opacity: 1;
     transition: opacity 1000ms ease-in;
 }
-
 .fade-exit.fade-exit-active {
     opacity: 0;
     transition: opacity 350ms ease-in;
 }
 
 #remember_me_container {
-    position: relative;
-    margin-left: auto;
-    margin-right: auto;
-    /*top: 51%;*/
+    position: absolute;
+    margin-right: 40%;
+    top: 51%;
 }
 
 #remember_me_label {
     padding-left: 5px;
-    height: 3vw;
 }
 
 .hidden_input_error {
@@ -222,7 +190,6 @@ input:focus {
     transition: visibility 5s linear;
     animation: rem_error 0.4s ease forwards;
 }
-
 .input_error {
     visibility: visible;
     border-radius: 15px;
@@ -231,70 +198,4 @@ input:focus {
     padding: 0 10px;
     box-sizing: border-box;
     animation: show_error 0.4s ease forwards;
-}
-
-@keyframes show_error {
-    0% {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateX(0px);
-    }
-}
-
-@keyframes rem_error {
-    0% {
-        opacity: 1;
-        transform: translateX(0px);
-    }
-    100% {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-}
-
-#username_input_error_login {
-    position: absolute;
-    margin-left: 65px;
-}
-
-#username_input_error_login:after {
-    content: 'User does not exist.';
-}
-
-#password_input_error_login {
-    position: absolute;
-    margin-left: 60px;
-}
-
-#password_input_error_login:after {
-    content: 'Password is incorrect.';
-}
-
-#username_input_error_signup {
-    position: absolute;
-    /*margin-top: -5px;*/
-    margin-left: 65px;
-}
-
-#password_input_error_signup {
-    position: absolute;
-    margin-left: 65px;
-}
-
-#confirm_password_input_error_signup {
-    position: absolute;
-    margin-left: 110px;
-    font-size: 11px;
-}
-
-#email_input_error_signup {
-    position: absolute;
-    margin-left: 35px;
-}
-
-#email_input_error_signup:after {
-    content: 'Illegal Email address.';
 }
