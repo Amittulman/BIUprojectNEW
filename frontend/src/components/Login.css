@@ -190,6 +190,29 @@ input:focus {
     transition: visibility 5s linear;
     animation: rem_error 0.4s ease forwards;
 }
+
+@keyframes show_error {
+    0% {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0px);
+    }
+}
+
+@keyframes rem_error {
+    0% {
+        opacity: 1;
+        transform: translateX(0px);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+}
+
 .input_error {
     visibility: visible;
     border-radius: 15px;
