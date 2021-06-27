@@ -5,4 +5,6 @@ export class CreateUserDto {
     user_name:string;
     @IsNotEmpty()
     user_pass:string;
+    @IsNotEmpty()
+    next_week:boolean;
 }

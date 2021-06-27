@@ -24,6 +24,7 @@ const USER_NAME = 'user_name';
 const CATEGORY_ID = 'category_id';
 const TASK_ID = 'task_id';
 const SLOT_ID = 'slot_id';
+const NEXT_WEEK = 'next_week';
 const ERROR = '-1';
 @Injectable()
 export class TasksDal {
@@ -283,7 +284,6 @@ export class TasksDal {
   async postNewUser(user: CreateUserDto){
     let suc = SUCCESS;
     try{
-
       const res = await  this.db(USERS_TABLE).insert(user);
     }
     catch (e){
@@ -305,6 +305,16 @@ export class TasksDal {
     const res = await this.db.from(USERS_TABLE).select(USER_ID).where(USER_NAME,user_name);
     const id:string = res[0][USER_ID];
     return id;
+  }
+  async postNextWeek(user_id : number, next_week: boolean){
+    let suc = SUCCESS;
+    try{
+      const res = await this.db(USERS_TABLE).where({USER_ID: user_id}).update(NEXT_WEEK,next_week);
+    }
+    catch (e){
+      suc = e
+    }
+    return suc;
   }
 
   async deleteUsers(users: Array<number>): Promise<string> {
