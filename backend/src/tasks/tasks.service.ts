@@ -180,10 +180,12 @@ export class TasksService {
     }
     //Return a JSON object
     return "{\"user_pass\":\""+ret_user['user_pass']+"\"," +
-        "\"user_id\":\""+ret_user['user_id']+"\"}";
+        "\"user_id\":\""+ret_user['user_id']+"\","+
+        "\"next_week\":\""+ret_user['next_week']+"\"}";
   }
 
   async postNewUser(user: CreateUserDto): Promise<string>{
+    user["next_week"] = false;
     const res = await this.tasksDal.postNewUser(user);
     if(res === "Success"){
       const user_id:string = await this.getUserIdByName(user['user_name']);
@@ -201,6 +203,10 @@ export class TasksService {
   }
   async getUsernameByID(user_id: string):Promise<string>{
     return this.tasksDal.getUsernameByID(user_id);
+  }
+
+  async postNextWeek(user_id : number, next_week: boolean):Promise<string>{
+    return this.tasksDal.postNextWeek(user_id, next_week);
   }
 
   async getUserIdByName(user_name: string):Promise<string>{
