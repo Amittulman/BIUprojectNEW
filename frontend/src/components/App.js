@@ -122,7 +122,7 @@ const App = () => {
             hours += 1
             minutes = 0
         }
-        return day*48 + hours*2+minutes
+        return day*48 + hours*2+minutes - 1
     }
 
     // Fetching task list of a specific user.
