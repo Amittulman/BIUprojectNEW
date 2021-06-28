@@ -56,6 +56,7 @@ const SiteTop = (props) => {
     }, [props.optionRef])
 
     const getCategories = () => {
+        //debugger
         // console.log('USER ID IN CATTT ', props.userID)
         fetch("http://localhost:5000/tasks/GetCategories/"+props.userID)
             .then(res => res.json())
@@ -73,7 +74,7 @@ const SiteTop = (props) => {
     }
 
     const getUsername = () => {
-        // ////debugger
+        // //////debugger
         console.log('THE ID IS ', props.userID)
         fetch("http://localhost:5000/tasks/getUsernameByID/"+props.userID)
             .then(res => res.json())
@@ -88,6 +89,7 @@ const SiteTop = (props) => {
     }
 
     const postCategories = () => {
+        debugger
         fetch('http://localhost:5000/tasks/PostCategories/', {
             method: 'POST',
             headers: {
@@ -179,7 +181,7 @@ const SiteTop = (props) => {
                     new_cat.style.display = 'block';
                     new_cat.style.marginLeft = '2px';
                 }
-                // //////debugger
+                // ////////debugger
                 new_cat_container.style.visibility = 'hidden';
                 // Update category changes in both frontend and DB.
                 setCategories();
@@ -217,7 +219,7 @@ const SiteTop = (props) => {
             }
             if (i >= 3) {
                 remove_cat.onclick = () => {
-                    //debugger
+                    // removeCatFromSchedule() //TODO - num to char (currencatref.current), iterate entire sched (todayref) and swap to empty_class(?)
                     setChangedCategories(prev=>[...prev, [i, 'remove']]);
                     let temp_cat = [...props.categories]
                     // Updating new value.
@@ -314,8 +316,9 @@ const SiteTop = (props) => {
         else
             event.target.style.backgroundColor = 'transparent'
         let event_slot = event.target.id.split('_')[1]
-        props.categoryTypes[event_slot] = ref
-        props.setCategoryTypes(props.categoryTypes)
+        debugger
+        props.timeRef.current[event_slot] = ref
+        props.setCategoryTypes(props.timeRef.current)
     }
 
     const paintSlots = (sched) => {
@@ -445,7 +448,7 @@ const SiteTop = (props) => {
         // Updating new value.
         temp_cat[currentCatRef.current]['category_name'] = document.getElementById('category_dialog').value
         temp_cat[currentCatRef.current]['color'] = colors[catColorRef.current]
-        // props.setCategories(temp_cat)
+        props.setCategories(temp_cat)
         // Changing category value in frontend.
         let new_category = document.getElementById('added_button_' + currentCatRef.current)
         new_category.className = 'category_option'
@@ -477,16 +480,16 @@ const SiteTop = (props) => {
 
     const shiftCats = () => {
         let jsx_to_change = document.querySelectorAll('[id^=added_'+']')
-        //debugger
+        ////debugger
         let temp_categories = [...props.categories]
         let reached_empty_spot = false;
-        // //debugger
+        // ////debugger
         for (let i=0; i<temp_categories.length-1; i++) {
             if (!reached_empty_spot && temp_categories[i]['category_name'].length !== 0) continue
             reached_empty_spot = true;
             temp_categories[i]['category_name'] = temp_categories[i+1]['category_name']
             temp_categories[i]['color'] = temp_categories[i+1]['color']
-            // //debugger
+            // ////debugger
             // jsx_to_change[i].textContent = jsx_to_change[i+1].textContent
             // jsx_to_change[i].style.backgroundColor = jsx_to_change[i+1].style.backgroundColor
             //TODO change their jsx.
@@ -501,14 +504,14 @@ const SiteTop = (props) => {
         for (i=0; i<changedCategories.length; i++) {
             // let jsx_to_change = document.querySelectorAll('[id^=option_1234]')
             let jsx_to_change = document.querySelectorAll('[id^=option_' +changedCategories[i][0]+']')
-            //debugger
+            ////debugger
             // let cat_value  = document.getElementById('added_button_3');
             let cat_value  = document.getElementById('added_button_'+changedCategories[i][0]);
             // Editing new values.
             for (j=0; j<jsx_to_change.length; j++) {
                 // removing element
                 if (changedCategories[i][1] === 'remove') {
-                    // //debugger
+                    // ////debugger
                     // jsx_to_change[j].remove()
                     jsx_to_change[j].textContent = ''
                     jsx_to_change[j].style.display = 'none'
@@ -598,6 +601,7 @@ const SiteTop = (props) => {
                 props.handleCategoriesSubmission();
                 showCategories();
                 props.setCategoryTrigger(true)
+                postCategories()
             }
             } className='category_option'/>
             <div id='adding_category_container'>

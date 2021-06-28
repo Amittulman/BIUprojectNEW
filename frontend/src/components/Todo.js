@@ -66,7 +66,7 @@ const Todo = (props) => {
         let new_task_chunk = [];
         for (let key in tasks) {
           new_task_chunk.push(addTask(key, tasks[key]))
-          //debugger
+          ////debugger
           // console.log('TASK IS NOW ', jsxRef.current)
         }
         setTasksJsx(new_task_chunk)
@@ -279,7 +279,7 @@ const Todo = (props) => {
     let x = e.target.childNodes
     let y = e.target.childNodes.length;
     let shnips;
-    debugger
+    // //debugger
     let err = e.target.classList.contains('task_error') || e.currentTarget.classList.contains('task_error') || e.target.classList.contains('thumbtack_error')
     if (!err) return;
     //TODO add parent and then child as well
@@ -296,14 +296,16 @@ const Todo = (props) => {
     let tag = chosen_class.tagName
 
     if (!chosen_class || e.target.tagName === 'INPUT' || e.target.tagName === 'LABEL'|| e.target.classList.contains('row') || e.target.classList.contains('spacing_days')|| e.target.classList.contains('day')) return
-    debugger
+    // //debugger
+    let aa = e.target.tagName
+    //debugger
     // this function will be called when hovering a certain task element (added when error received)
     if (enter) {
       chosen_class.className = 'task_element_input_error'
-      setTimeout(()=> {
-        if (chosen_class.classList === undefined) return
-        chosen_class.classList.replace('task_element_input_error','hidden_task_element_input_error')
-      }, 4000)
+      // setTimeout(()=> {
+      //   if (chosen_class.classList === undefined) return
+      //   chosen_class.classList.replace('task_element_input_error','hidden_task_element_input_error')
+      // }, 4000)
     }
     else
       setTimeout(()=> {
@@ -311,7 +313,7 @@ const Todo = (props) => {
         chosen_class.classList.replace('task_element_input_error','hidden_task_element_input_error')
       }, 0)
     // let x = document.getElementsByClassName('task_elm');
-    // debugger;
+    // //debugger;
     // let y = document.getElementsByClassName('hidden_task_element_input_error')
     // for (let i=0; i<y.length; i++) {
     //   y[i].className = 'task_element_input_error';
@@ -404,7 +406,7 @@ const Todo = (props) => {
       </select>
       <div id={'category_error_message'} className={'hidden_task_element_input_error'}>No slots available for<br/>chosen category..</div>
     </div>;
-    let constraints = <div onMouseOver={(e)=>showInputError(e, true)} onMouseLeave={(e)=>showInputError(e, false)} key={'constraints'+index} id={'constraints'+index}  onChange={(e) => handleChange(e, i)}><div className='task_elm'>Day of Week:&nbsp;</div><div className={'constraints_element'} >{constraints_params}</div><div id={'daysofweek_error_message'} className={'hidden_task_element_input_error'}>Cannot schedule chosen<br/>days of week.</div></div>;
+    let constraints = <div key={'constraints'+index} id={'constraints'+index}  onChange={(e) => handleChange(e, i)}><div onMouseOver={(e)=>showInputError(e, true)} onMouseLeave={(e)=>showInputError(e, false)} className='task_elm'>Day of Week:&nbsp;</div><div className={'constraints_element'} >{constraints_params}</div><div id={'daysofweek_error_message'} className={'hidden_task_element_input_error'}>Cannot schedule chosen<br/>days of week.</div></div>;
     let task = <div key={'task'+index} id={'task'+index} className='closed_task'>{[pinned_calendar, title_and_thumbtack, duration, priority, category_id, constraints]}</div>
     let sign = <div id={'expand_icon'+index} className={'expand_icon'} onClick={(e) =>  expandTask(e, task, index)} key='plus_sign'/>
     let pastDue = <div key={'pastDue'+index} id={'pastDue_'+index} className={'past_due_hidden'}>
@@ -693,9 +695,12 @@ const Todo = (props) => {
     // props.getTasks()
     props.setUpdatedTasks({})
     setRemovedTasks([])
-    setTodoIDs({})
+
+    // setTodoIDs({})
     // setTasksJsx(new Set())
-    props.setToOptimize(true)
+
+    // props.setToOptimize(true)
+    // Update new changes (painted slots).
     props.handleCategoriesSubmission()
 
     // props.setCategoryTrigger(true)
@@ -762,7 +767,7 @@ const Todo = (props) => {
       "recurrings": "1",
       "task_title": "trythis",
       "user_id": "193"}]
-    ////debugger
+    //////debugger
     console.log('updated tasks(before post)2: ', Object.values(props.updated_tasks))
     fetch('http://localhost:5000/tasks/UpdateTasks/{tasks}', {
       method: 'POST',
@@ -773,7 +778,7 @@ const Todo = (props) => {
       body: JSON.stringify(Object.values(props.updated_tasks))
     })
         .then((response) => {
-          setTrigger(!trigger)
+          setTrigger(!trigger) //TODO - this causes schedule to disappear
           if (response.status === 201) {
             console.log("User's tasks hes been sent successfully.");
           } else {
@@ -855,7 +860,7 @@ const Todo = (props) => {
       if (current_value === 7) current_value = 0;
       val = current_value + 1;
     } else if (nam === 'category_id') {
-      // //////debugger
+      // ////////debugger
     }
     let empty_task = {'temp_task_id':index,'user_id':props.userID,'task_title':'', 'duration':'30','priority':'0', 'recurrings':'1', 'category_id':'-1','constraints':'000000000000000000000', 'pinned_slot':null};
     let updated = updatedRef.current

@@ -41,6 +41,7 @@ const Categories = (props) => {
     }
 
     const markCategories = () => {
+        return;
         if (!props.scheduleJsx.length) return
         for (let i = 1; i < 8; i++) {
             let empty_content = []
@@ -50,7 +51,7 @@ const Categories = (props) => {
                                        id={'cell_' + (slots_per_day * (i - 1) + j) + '_empty'} className={class_name}
                                        draggable='true' onDragStart={dragStart} onClick={allowDropCategory} onDragOver={allowDropCategory}/>);
             }
-            props.scheduleJsx.push(<tr key={'tr' + i + '_empty'}>
+            props.scheduleJsx.push(<tr key={'tr_cat_' + i + '_empty'}>
                 <th key={'th' + i + '_empty'}>{day[i]}</th>
                 {empty_content}</tr>)
         }
@@ -82,6 +83,7 @@ const Categories = (props) => {
                 break;
         }
         let event_slot = event.target.id.split('_')[1]
+        debugger
         props.categoryTypes[event_slot] = ref
         props.setCategoryTypes(props.categoryTypes)
     }
@@ -103,6 +105,7 @@ const Categories = (props) => {
                 (result) => {
                     //console.log(result)
                     if (result['statusCode'] === 500) throw new Error('Internal server error.');
+                    debugger
                     props.setCategoryTypes(result)
                     props.setCategoryTrigger(true)
                     // setCategoryTable(result)
