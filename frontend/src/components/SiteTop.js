@@ -27,6 +27,11 @@ const SiteTop = (props) => {
     // }, [])
 
     useEffect(() => {
+        if (localStorage.getItem('nextWeek').split('_')[0] === 't') {
+            document.getElementById('schedule_for_next_week_text').innerText = 'Next Week'
+        } else {
+            document.getElementById('schedule_for_next_week_text').innerText = 'This Week'
+        }
         if (props.userID !== undefined && props.userID !== 'null'){
             getCategories();
             getUsername()

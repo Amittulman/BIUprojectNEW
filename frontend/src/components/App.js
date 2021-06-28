@@ -44,6 +44,7 @@ const App = () => {
 
     // On main page load, get userID and "remember me" from local storage.
     useEffect(() => {
+        console.log('kfar kasem ', document.getElementById('schedule_for_next_week_text'))
         window.addEventListener('click', detectOutsideClicking)
         console.log('useid ', localStorage.getItem('userID'))
         console.log('rememberme ', localStorage.getItem('rememberMe'))
@@ -54,13 +55,14 @@ const App = () => {
         let slot = timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
         setScheduleMoment(slot);
         // localStorage.setItem('nextWeek', 'f')
+        if (document.getElementById('schedule_for_next_week_text') === null) return null;
         if (localStorage.getItem('nextWeek') === null || localStorage.getItem('nextWeek').includes('f')) {
             let slot = timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
             setScheduleMoment(slot);
             localStorage.setItem('nextWeek', 'f_'+slot)
             document.getElementById('schedule_for_next_week_text').innerText = 'This Week'
         }
-        else {
+        else  {
             setScheduleMoment(0);
             localStorage.setItem('nextWeek', 't_'+slot)
             document.getElementById('schedule_for_next_week_text').innerText = 'Next Week'
