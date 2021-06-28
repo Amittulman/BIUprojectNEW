@@ -386,7 +386,7 @@ const App = () => {
                    <div id='todo_parent' className='col-4'>
                        <div id='todo_component' className='sticky-top row'>
                        <div className='tst col-12'>
-                           <Todo nextWeekChanged={nextWeekChanged} scheduleMoment={scheduleMoment} categoryChanged={categoryChanged} categories={categories} setUpdatedTasks={setUpdatedTasks} updated_tasks={updated_tasks} tasksID={tasksID} timeToSlot={timeToSlot} userID={userID} isLoaded={todoIsLoaded} setIsLoaded={setTodoIsLoaded} errorAnimation={errorAnimation} endErrorAnimation={endErrorAnimation} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setToOptimize={setToOptimize} updating_tasks={tasks} trigTasks={taskIDTrig} getTasks={taskGetter} setTasks={setTasks}/>
+                           <Todo setCategoryChanged={setCategoryChanged} nextWeekChanged={nextWeekChanged} scheduleMoment={scheduleMoment} categoryChanged={categoryChanged} categories={categories} setUpdatedTasks={setUpdatedTasks} updated_tasks={updated_tasks} tasksID={tasksID} timeToSlot={timeToSlot} userID={userID} isLoaded={todoIsLoaded} setIsLoaded={setTodoIsLoaded} errorAnimation={errorAnimation} endErrorAnimation={endErrorAnimation} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setToOptimize={setToOptimize} updating_tasks={tasks} trigTasks={taskIDTrig} getTasks={taskGetter} setTasks={setTasks}/>
                        </div>
                        </div>
                    </div>
