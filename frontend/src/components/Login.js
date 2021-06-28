@@ -73,9 +73,15 @@ const Login = (props) => {
         let username = document.getElementById('username')
         let password = document.getElementById('password')
         if (loginAnswer === undefined) return
+        let userID = loginAnswer[0];
+        if (loginAnswer[1] === '1')
+            loginAnswer[1] = 't';
+        else
+            loginAnswer[1] = 'f';
+        let next_week = loginAnswer[1];
         let text_to_client;
         ////////debugger
-        switch(loginAnswer) {
+        switch(userID) {
             case -1:
                 text_to_client = 'Wrong username.';
                 removeInputError(password)
@@ -90,9 +96,9 @@ const Login = (props) => {
                 removeInputError(username);
                 removeInputError(password);
                 text_to_client = 'Success!';
-                props.setUserID(loginAnswer);
+                props.setUserID(userID);
                 props.setRememberMe(document.getElementById('remember_me_input').checked);
-                localStorage.setItem('userID', loginAnswer);
+                localStorage.setItem('userID', userID);
                 // console.log('this will be added: ', document.getElementById('remember_me_input').checked)
                 localStorage.setItem('rememberMe', document.getElementById('remember_me_input').checked === true)
 
@@ -104,8 +110,9 @@ const Login = (props) => {
                 if (parseInt(props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())) < parseInt(localStorage.getItem('nextWeek').split('_')[1])) {
                     props.setScheduleMoment(slot);
                 }
-                if (localStorage.getItem('nextWeek').split('_')[0] === 't') {
 
+                localStorage.setItem('nextWeek', next_week);
+                if (next_week === 't') {
                     props.setScheduleMoment(0);
                 } else {
                     props.setScheduleMoment(slot);
@@ -329,18 +336,14 @@ const Login = (props) => {
             .then((response) => {
                 if (response.status !== 201) {
                     console.log('response: ', response)
-                    // console.log('SUCCESSFULL LOGIN!')
-                    ////////debugger
                     // If successful logging in
                         if (requestName === 'checkusercredentials') {
-                            // console.log('INSIDE CHECK USER CREDENTIALS ', response['user_id'])
-                            // //////debugger
                         bcryptjs.compare(apiParams['user_pass'], response['user_pass'], function(err, result) {
                             if (result) {
                                 console.log('response after success: ', response['user_id'])
                                     setLoggedIn(true)
                                     setLoginAnswer(undefined)
-                                    setLoginAnswer(response['user_id'])
+                                    setLoginAnswer([response['user_id'], response['next_week']])
                                     history.push('/mainPage')
                             } else {
                                 let username = document.getElementById('username_input_error_login')
@@ -349,21 +352,15 @@ const Login = (props) => {
                                 if (response === -1) {
                                     username.textContent = 'Wrong username';
                                     password.textContent = '';
-                                    setLoginAnswer(-1)
+                                    setLoginAnswer([-1, null])
                                 }
                                 else {
                                     username.textContent = '';
                                     password.textContent = 'Incorrect password';
-                                    setLoginAnswer(-2)
+                                    setLoginAnswer([-2, null])
                                 }
                             }
                         });
-                        // if (response['pass'] > 0) {
-                        //     setLoggedIn(true)
-                        //     history.push('/mainPage')
-                        // }
-                        // setLoginAnswer(undefined)
-                        // setLoginAnswer(response)
                     // If successful signing up.
                     } else {
                             if (response === -1) {

@@ -545,9 +545,37 @@ const SiteTop = (props) => {
         // shiftCats();
     }
 
+    const postNextWeek = (next_week) => {
+        fetch('http://localhost:5000/tasks/PostNextWeek/'+ props.userID + '/' + next_week, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify()
+        })
+            .then((response) => {
+                if (response.status === 201) {
+                    console.log("User's tasks hes been sent successfully.");
+                } else {
+                    console.log("User's tasks hes been sent. HTTP request status code: " + response.status);
+                }
+                console.log('received info from postnextweek!!')
+                console.log(response)
+                console.log(response.text())
+            })
+            .catch((error) => {
+                console.error("Error while submitting task: " + error.message);
+            });
+    }
+
     const scheduleForNextWeek = () => {
         props.setCategoryTrigger(false)
         if (window.confirm('Warning: planning schedule for next week will delete any previously generated schedule.')) {
+            let is_next_week = true;
+            if (localStorage.getItem('nextWeek').startsWith('t'))
+                is_next_week = false;
+            postNextWeek(is_next_week);
             // TODO set state changed, to enable submitting todo list.
             let date = new Date();
             let now = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
