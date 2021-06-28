@@ -85,7 +85,7 @@ const Table = (props) => {
                     }
                     content.push(<td key={'cell_' + (slots_per_day * (i - 1) + j)} className={class_name} style={{backgroundColor:color}}
                                      id={'cell_' + (slots_per_day * (i - 1) + j) + '_taskID_' + tasksID[j + (i - 1) * slots_per_day]}
-                                     draggable='true' onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop}
+                                     draggable='true' onClick={()=>foo(tasksID[j + (i - 1) * slots_per_day])}  onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop}
                                      onDragLeave={leaveDropArea}><div className={passed_day + ' hidden_overflow ' + heb_class}>{data}</div></td>);//{data}
                 }
                 jsx.push(<tr key={'tr' + i}><div className={'th_parent'}><th key={'th' + i}>{props.days[i]}</th></div>{content}</tr>);
@@ -96,6 +96,16 @@ const Table = (props) => {
             props.setTable(table)
         }
     }, [tasks, tasksID, props.categoryTrigger, props.categories, props.days])
+
+    const foo = (id) => {
+        let task_height = document.getElementById('task_container'+id).offsetTop//.getBoundingClientRect().height
+        document.getElementById('container').scrollTo({top:(task_height) * 1, behavior:'smooth' })
+        let task = document.getElementById('task'+id);
+        task.style.animation = 'hovered 1.5s 2 forwards'
+        setTimeout(() => {
+            task.style.animation = ''
+        },(3000))
+    }
 
     let content = [];
     let jsx = [];

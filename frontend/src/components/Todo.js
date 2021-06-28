@@ -685,7 +685,7 @@ const Todo = (props) => {
   }
 
   const onSubmitHandler = (event) => {
-    // let task_height = document.getElementsByClassName('task_container')[0].getBoundingClientRect().height
+    // let task_height = document.getElementsByClassName('task_container')[1].getBoundingClientRect().height
     // document.getElementById('container').scrollTo({top:(task_height) * 1, behavior:'smooth' })
     // document.getElementsByClassName('closed_task')[1].className = 'closed_task_hover'
     event.preventDefault();

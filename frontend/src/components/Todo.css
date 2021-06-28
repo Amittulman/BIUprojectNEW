@@ -181,8 +181,8 @@
 
 .expanded_task_hover, .closed_task_hover, .expanded_task_daytime_hover {
   box-shadow: 1px 0px 3px 3px #ccc;
-  animation: hovered 1.5s;
-  animation-iteration-count: 2;
+  /*animation: hovered 1.5s 2 forwards;*/
+  /*animation-iteration-count: 2;*/
 }
 
 @keyframes hovered {
