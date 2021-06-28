@@ -343,8 +343,19 @@ const Login = (props) => {
                                     setLoginAnswer(response['user_id'])
                                     history.push('/mainPage')
                             } else {
+                                let username = document.getElementById('username_input_error_login')
+                                let password = document.getElementById('password_input_error_login')
                                 setLoginAnswer(undefined)
-                                setLoginAnswer(-2)
+                                if (response === -1) {
+                                    username.textContent = 'Wrong username';
+                                    password.textContent = '';
+                                    setLoginAnswer(-1)
+                                }
+                                else {
+                                    username.textContent = '';
+                                    password.textContent = 'Incorrect password';
+                                    setLoginAnswer(-2)
+                                }
                             }
                         });
                         // if (response['pass'] > 0) {
@@ -380,6 +391,7 @@ const Login = (props) => {
     }
 
     const showInputError = (e) => {
+        debugger
         // e.target.parentNode.childNodes[2].classList.replace('hidden_input_error', 'input_error')
         if (e.target !== undefined)
             e.target.parentNode.childNodes[2].classList.replace('hidden_input_error', 'input_error')

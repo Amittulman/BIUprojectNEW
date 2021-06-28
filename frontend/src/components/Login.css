@@ -99,6 +99,7 @@ input:focus {
 }
 .input_error {
     border-color: red !important;
+
 }
 .no_error_sign, .error_sign {
     position: absolute;
