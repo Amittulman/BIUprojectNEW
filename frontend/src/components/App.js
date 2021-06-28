@@ -186,9 +186,13 @@ const App = () => {
             let recurrences = document.getElementById('recurrings' + id);
             let constraints = document.getElementById('constraints' + id);
             let categories = document.getElementById('category_id' + id);
+            let task = document.getElementById('task' + id);
             recurrences.classList.remove('thumbtack_error');
             constraints.classList.remove('task_error');
             categories.classList.remove('task_error');
+            task.classList.remove('closed_task_error');
+            task.classList.remove('expanded_task_daytime_error');
+            task.classList.remove('expanded_task_error');
         }
     }
 
