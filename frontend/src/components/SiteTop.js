@@ -89,7 +89,7 @@ const SiteTop = (props) => {
     }
 
     const postCategories = () => {
-        debugger
+        // debugger
         fetch('http://localhost:5000/tasks/PostCategories/', {
             method: 'POST',
             headers: {
@@ -132,6 +132,23 @@ const SiteTop = (props) => {
 
     const rgba2hex = (divs_color) => `#${divs_color.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+\.{0,1}\d*))?\)$/).slice(1).map((n, ind) =>
         (ind === 3 ? Math.round(parseFloat(n) * 255) : parseFloat(n)).toString(16).padStart(2, '0').replace('NaN', '')).join('')}`
+
+    const removeCatFromSchedule = (currentCat) => {
+        // Iterating entire schedule
+        let entire_schedule = document.querySelectorAll('[id^=cell_'+']')
+        let i;
+        for (i=0; i<props.timeRef.current.length; i++) {
+            // Changing value of all slots with old cat classname to an empty class.
+            if (props.timeRef.current[i] === currentCat){
+                entire_schedule[i].className = 'empty_slot';
+                entire_schedule[i].style.backgroundColor = 'transparent';
+                props.timeRef.current[i] = -1;
+                debugger
+            }
+        }
+
+    } //TODO - num to char (currencatref.current), iterate entire sched (timeref) and swap to empty_class(?)
+
 
     const addLoadedCategories = () => {
         if (document.getElementsByClassName('category').length > 0) return;
@@ -219,7 +236,7 @@ const SiteTop = (props) => {
             }
             if (i >= 3) {
                 remove_cat.onclick = () => {
-                    // removeCatFromSchedule() //TODO - num to char (currencatref.current), iterate entire sched (todayref) and swap to empty_class(?)
+                    removeCatFromSchedule(i) //TODO - num to char (currencatref.current), iterate entire sched (todayref) and swap to empty_class(?)
                     setChangedCategories(prev=>[...prev, [i, 'remove']]);
                     let temp_cat = [...props.categories]
                     // Updating new value.
@@ -228,6 +245,7 @@ const SiteTop = (props) => {
                     props.setCategories(temp_cat)
                     // Sending changed to DB.
                     postCategories()
+                    props.handleCategoriesSubmission();
                     // Changing category value in frontend.
                     let new_category = document.getElementById('added_button_' + currentCatRef.current)
                     new_category.innerText = ''
@@ -316,7 +334,7 @@ const SiteTop = (props) => {
         else
             event.target.style.backgroundColor = 'transparent'
         let event_slot = event.target.id.split('_')[1]
-        debugger
+        // debugger
         props.timeRef.current[event_slot] = ref
         props.setCategoryTypes(props.timeRef.current)
     }

@@ -83,7 +83,7 @@ const Categories = (props) => {
                 break;
         }
         let event_slot = event.target.id.split('_')[1]
-        debugger
+        // debugger
         props.categoryTypes[event_slot] = ref
         props.setCategoryTypes(props.categoryTypes)
     }
@@ -105,7 +105,7 @@ const Categories = (props) => {
                 (result) => {
                     //console.log(result)
                     if (result['statusCode'] === 500) throw new Error('Internal server error.');
-                    debugger
+                    // debugger
                     props.setCategoryTypes(result)
                     props.setCategoryTrigger(true)
                     // setCategoryTable(result)

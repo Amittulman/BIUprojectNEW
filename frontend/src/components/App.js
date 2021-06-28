@@ -67,7 +67,7 @@ const App = () => {
 
     useEffect(() => {
         let x = categoryTypes
-        debugger
+        // debugger
     }, [categoryTypes])
 
 
@@ -370,7 +370,7 @@ const App = () => {
         window.onresize = resizeResponse;
        return (
            <div className="App d-flex flex-column">
-               <SiteTop timeRef={timeRef} setNextWeekChanged={setNextWeekChanged} setScheduleMoment={setScheduleMoment} timeToSlot={timeToSlot} setCategoryChanged={setCategoryChanged} categories={categories} setCategories={setCategories} optionRef={optionRef} setCategoryTypes={setCategoryTypes}  categoryTypes={categoryTypes} userID={userID} setUserID={setUserID} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setOption={setOption}/>
+               <SiteTop setScheduleJsx={setScheduleJsx} scheduleJsx={scheduleJsx} timeRef={timeRef} setNextWeekChanged={setNextWeekChanged} setScheduleMoment={setScheduleMoment} timeToSlot={timeToSlot} setCategoryChanged={setCategoryChanged} categories={categories} setCategories={setCategories} optionRef={optionRef} setCategoryTypes={setCategoryTypes}  categoryTypes={categoryTypes} userID={userID} setUserID={setUserID} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setOption={setOption}/>
                <div id='site_body' className='row flex-grow-1'>
                    {/*<div id='show_hide_todo' className='show_hide_todo' onClick={closeTaskPane}/>*/}
                    <div id='todo_parent' className='col-4'>
