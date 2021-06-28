@@ -147,7 +147,7 @@ const SiteTop = (props) => {
             }
         }
 
-    } //TODO - num to char (currencatref.current), iterate entire sched (timeref) and swap to empty_class(?)
+    }
 
 
     const addLoadedCategories = () => {
