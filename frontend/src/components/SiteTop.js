@@ -143,12 +143,10 @@ const SiteTop = (props) => {
                 entire_schedule[i].className = 'empty_slot';
                 entire_schedule[i].style.backgroundColor = 'transparent';
                 props.timeRef.current[i] = -1;
-                debugger
             }
         }
 
     }
-
 
     const addLoadedCategories = () => {
         if (document.getElementsByClassName('category').length > 0) return;

@@ -195,6 +195,8 @@ const App = () => {
             let task = document.getElementById('task' + err_tasks[i][0]);
             // Showing error of a specific task.
             task.classList.replace('closed_task', 'closed_task_error');
+            task.classList.replace('expanded_task', 'expanded_task_error');
+            task.classList.replace('expanded_task_daytime', 'expanded_task_daytime_error');
             let recurrences = document.getElementById('recurrings' + err_tasks[i][0]);
             let constraints = document.getElementById('constraints' + err_tasks[i][0]);
             let categories = document.getElementById('category_id' + err_tasks[i][0]);
