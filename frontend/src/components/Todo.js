@@ -591,6 +591,7 @@ const Todo = (props) => {
   const checkInputs = () => {
     // Do not send anything if no change has occurred in to-do list.
     if (Object.keys(props.updated_tasks).length === 0 && removed_tasks.length === 0 && !props.categoryChanged) return true
+    props.setCategoryChanged(false);
     let date = new Date()
     let todays_slot = props.scheduleMoment
     let total_err = false

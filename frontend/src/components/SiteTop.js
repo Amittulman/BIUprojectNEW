@@ -652,6 +652,7 @@ const SiteTop = (props) => {
                 updateTodoListCategories();
                 props.handleCategoriesSubmission();
                 showCategories();
+                props.setCategoryChanged(true);
                 props.setCategoryTrigger(true)
                 postCategories()
             }
