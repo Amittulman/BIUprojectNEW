@@ -65,6 +65,11 @@ const App = () => {
         }
     }, [])
 
+    useEffect(() => {
+        let x = categoryTypes
+        debugger
+    }, [categoryTypes])
+
 
 
     // Hides a pinned popup.
@@ -258,6 +263,7 @@ const App = () => {
         })
             .then((response) => {
                 if (response.status === 200) {
+                    //debugger
                     //console.log("User's tasks hes been removed successfully.");
                     // setCategoryTypes([])
                     PostCategorySlots()
@@ -274,6 +280,8 @@ const App = () => {
 
     //TODO - check how to send the data without receiving an error.
     const PostCategorySlots = (event) => {
+        debugger
+
         fetch('http://localhost:5000/tasks/PostCategorySlots/'+userID, {
             method: 'POST',
             headers: {
@@ -327,7 +335,7 @@ const App = () => {
             if (minute === 0) minute = '00'
             content.push(<td className='td1' key={'time' + hour + ':' + minute}>{hour}:{minute}</td>);
         }
-        jsx.push(<tr className='tr1' key={'tr' + 0}><div className={'th_parent'}><th className='th1' key={'th' + 0}>Time</th></div>{content}</tr>);
+        jsx.push(<tr className='tr1' key={'tr' + 0}><th className='th1 th_parent' key={'th' + 0}>Time</th>{content}</tr>);
         return jsx
     }
 
@@ -356,13 +364,13 @@ const App = () => {
     }
 
     const mainPage = () => {
-        // ////debugger
+        // //////debugger
 
         // console.log('main page, userid ', userID)
         window.onresize = resizeResponse;
        return (
            <div className="App d-flex flex-column">
-               <SiteTop setNextWeekChanged={setNextWeekChanged} setScheduleMoment={setScheduleMoment} timeToSlot={timeToSlot} setCategoryChanged={setCategoryChanged} categories={categories} setCategories={setCategories} optionRef={optionRef} setCategoryTypes={setCategoryTypes}  categoryTypes={categoryTypes} userID={userID} setUserID={setUserID} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setOption={setOption}/>
+               <SiteTop timeRef={timeRef} setNextWeekChanged={setNextWeekChanged} setScheduleMoment={setScheduleMoment} timeToSlot={timeToSlot} setCategoryChanged={setCategoryChanged} categories={categories} setCategories={setCategories} optionRef={optionRef} setCategoryTypes={setCategoryTypes}  categoryTypes={categoryTypes} userID={userID} setUserID={setUserID} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setOption={setOption}/>
                <div id='site_body' className='row flex-grow-1'>
                    {/*<div id='show_hide_todo' className='show_hide_todo' onClick={closeTaskPane}/>*/}
                    <div id='todo_parent' className='col-4'>
