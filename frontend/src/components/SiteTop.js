@@ -581,9 +581,11 @@ const SiteTop = (props) => {
             let now = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
             if (localStorage.getItem('nextWeek').split('_')[0] === 't') {
                 localStorage.setItem('nextWeek', 'f_' + now)
+                document.getElementById('schedule_for_next_week_text').innerText = 'This Week'
                 props.setScheduleMoment(now);
             } else {
                 localStorage.setItem('nextWeek', 't_' + now)
+                document.getElementById('schedule_for_next_week_text').innerText = 'Next Week'
                 props.setScheduleMoment(0);
             }
             setTimeout(() => {
@@ -603,6 +605,7 @@ const SiteTop = (props) => {
         <div id='site_top' className='row flex-grow-0'>
             <img src={siteLogo} id='site_logo'/>
             <div id={'schedule_for_next_week'} onClick={()=>scheduleForNextWeek()}/>
+            <div id={'schedule_for_next_week_text'}/>
             <div className={'spacing'}/>
             <div className='userContainer'>
                 <div id='greeting'>{greeting}, {username}! 👋</div>

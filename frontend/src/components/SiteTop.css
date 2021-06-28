@@ -29,6 +29,17 @@
     z-index: 101;
 }
 
+#schedule_for_next_week_text {
+    position: absolute;
+    left: 170px;
+    top: 75px;
+    height: 30px;
+    width: 300px;
+    cursor: default;
+    z-index: 101;
+    user-select: none;
+}
+
 #schedule_for_next_week:hover {
 }
 

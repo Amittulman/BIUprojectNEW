@@ -58,10 +58,12 @@ const App = () => {
             let slot = timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
             setScheduleMoment(slot);
             localStorage.setItem('nextWeek', 'f_'+slot)
+            document.getElementById('schedule_for_next_week_text').innerText = 'This Week'
         }
         else {
             setScheduleMoment(0);
             localStorage.setItem('nextWeek', 't_'+slot)
+            document.getElementById('schedule_for_next_week_text').innerText = 'Next Week'
         }
     }, [])
 
