@@ -190,9 +190,9 @@ const App = () => {
             recurrences.classList.remove('thumbtack_error');
             constraints.classList.remove('task_error');
             categories.classList.remove('task_error');
-            task.classList.remove('closed_task_error');
-            task.classList.remove('expanded_task_daytime_error');
-            task.classList.remove('expanded_task_error');
+            task.classList.replace('closed_task_error', 'closed_task');
+            task.classList.replace('expanded_task_daytime_error', 'expanded_task_daytime');
+            task.classList.replace('expanded_task_error', 'expanded_task');
         }
     }
 
