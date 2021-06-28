@@ -98,8 +98,10 @@ const Table = (props) => {
     }, [tasks, tasksID, props.categoryTrigger, props.categories, props.days])
 
     const foo = (id) => {
-        let task_height = document.getElementById('task_container'+id).offsetTop//.getBoundingClientRect().height
-        document.getElementById('container').scrollTo({top:(task_height) * 1, behavior:'smooth' })
+        let task_container = document.getElementById('task_container'+id);
+        if (task_container === null) return
+        let task_container_height = task_container.offsetTop
+        document.getElementById('container').scrollTo({top:(task_container_height) * 1, behavior:'smooth' })
         let task = document.getElementById('task'+id);
         task.style.animation = 'hovered 1.5s 2 forwards'
         setTimeout(() => {

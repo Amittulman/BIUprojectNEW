@@ -96,6 +96,39 @@ td {
 
 }
 
+/*#schedule_error {*/
+/*    position: sticky;*/
+/*    left: 40%;*/
+/*    top: 3%;*/
+/*    padding-left: 10px;*/
+/*    padding-right: 10px;*/
+/*    border-radius: 15px;*/
+/*    color: white;*/
+/*    width: 20vw;*/
+/*    background-color: #ff3030;*/
+/*    font-size: 15px;*/
+/*    animation: error_appear 4s ease-in infinite;*/
+/*}*/
+
+@keyframes error_appear {
+    0% {
+        top: 2.5%;
+        opacity: 0;
+    }
+    20% {
+        top: 5.5%;
+        opacity: 1;
+    }
+    80% {
+        top: 5%;
+        opacity: 1;
+    }
+    100% {
+        top: 2.5%;
+        opacity: 0;
+    }
+}
+
 .task_label_title {
     font-size: 20px;
     text-align: left;
