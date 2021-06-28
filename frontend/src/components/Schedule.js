@@ -74,7 +74,7 @@ const Table = (props) => {
                     if (hebrew)
                         heb_class = 'heb_class'
 
-                    if (today_slot > (j + (i - 1) * slots_per_day))
+                    if (today_slot >= (j + (i - 1) * slots_per_day))
                         passed_day = ' passed'
                     let class_name = getClass(props.categoryTypes[slots_per_day * (i - 1) + j])
                     let color = props.categories[dct[class_name.split('_')[1]]]
