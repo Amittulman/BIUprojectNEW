@@ -224,6 +224,7 @@ const Todo = (props) => {
   }
 
   const recurrenceIconChange = (e, i) => {
+    debugger
     let recurrence = (parseInt(e.target.className.slice(-1)[0] )+ 1).toString()
     if (recurrence === '8' || isNaN(recurrence))
       recurrence = '1';
@@ -302,10 +303,10 @@ const Todo = (props) => {
     // this function will be called when hovering a certain task element (added when error received)
     if (enter) {
       chosen_class.className = 'task_element_input_error'
-      // setTimeout(()=> {
-      //   if (chosen_class.classList === undefined) return
-      //   chosen_class.classList.replace('task_element_input_error','hidden_task_element_input_error')
-      // }, 4000)
+      setTimeout(()=> {
+        if (chosen_class.classList === undefined) return
+        chosen_class.classList.replace('task_element_input_error','hidden_task_element_input_error')
+      }, 3000)
     }
     else
       setTimeout(()=> {
@@ -356,7 +357,7 @@ const Todo = (props) => {
     if (hebrew)
       heb_class = 'heb_class_title '
     let task_title = <span onMouseOver={(e)=>showInputError(e, true)} onMouseLeave={(e)=>showInputError(e, false)} key={'task_title'+index} id={'task_title'+index} className=' col-sm-3' onChange={(e) => handleChange(e, i)}><span className= 'task_elm'>Title:&nbsp;</span><input id={'title_textbox'+index} className={'title_input'} name='task_title' type='text' defaultValue={values['task_title']}/><div id={'title_error_message'} className={'hidden_task_element_input_error'}>Title is too long.</div></span>
-    let recurrence = <div onMouseOver={(e)=>showInputError(e, true)} onMouseLeave={(e)=>showInputError(e, false)}><input key={'recurrence'+index} id={'recurrings'+index} name='recurrings' onClick={(e)=> {
+    let recurrence = <div onMouseOver={(e)=>showInputError(e, true)} onMouseLeave={(e)=>showInputError(e, false)}><input key={'recurrence'+index} autoComplete={'off'} id={'recurrings'+index} name='recurrings' onClick={(e)=> {
       if (document.getElementById('thumbtack'+index).className !== 'thumbtack_done') {
         handleChange(e, i);
         unpinTask(e, i);
@@ -856,8 +857,9 @@ const Todo = (props) => {
       val *= 60;
     }
     else if (nam === 'recurrings') {
+      debugger
       let current_value = parseInt(event.target.className.slice(-1)[0])
-      if (current_value === 7) current_value = 0;
+      if (current_value === 7 || isNaN(current_value)) current_value = 0;
       val = current_value + 1;
     } else if (nam === 'category_id') {
       // ////////debugger

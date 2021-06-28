@@ -89,7 +89,7 @@ const SiteTop = (props) => {
     }
 
     const postCategories = () => {
-        debugger
+        // debugger
         fetch('http://localhost:5000/tasks/PostCategories/', {
             method: 'POST',
             headers: {
@@ -132,6 +132,21 @@ const SiteTop = (props) => {
 
     const rgba2hex = (divs_color) => `#${divs_color.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+\.{0,1}\d*))?\)$/).slice(1).map((n, ind) =>
         (ind === 3 ? Math.round(parseFloat(n) * 255) : parseFloat(n)).toString(16).padStart(2, '0').replace('NaN', '')).join('')}`
+
+    const removeCatFromSchedule = (currentCat) => {
+        // Iterating entire schedule
+        let entire_schedule = document.querySelectorAll('[id^=cell_'+']')
+        let i;
+        for (i=0; i<props.timeRef.current.length; i++) {
+            // Changing value of all slots with old cat classname to an empty class.
+            if (props.timeRef.current[i] === currentCat){
+                entire_schedule[i].className = 'empty_slot';
+                entire_schedule[i].style.backgroundColor = 'transparent';
+                props.timeRef.current[i] = -1;
+            }
+        }
+
+    }
 
     const addLoadedCategories = () => {
         if (document.getElementsByClassName('category').length > 0) return;
@@ -219,7 +234,7 @@ const SiteTop = (props) => {
             }
             if (i >= 3) {
                 remove_cat.onclick = () => {
-                    // removeCatFromSchedule() //TODO - num to char (currencatref.current), iterate entire sched (todayref) and swap to empty_class(?)
+                    removeCatFromSchedule(i) //TODO - num to char (currencatref.current), iterate entire sched (todayref) and swap to empty_class(?)
                     setChangedCategories(prev=>[...prev, [i, 'remove']]);
                     let temp_cat = [...props.categories]
                     // Updating new value.
@@ -228,6 +243,7 @@ const SiteTop = (props) => {
                     props.setCategories(temp_cat)
                     // Sending changed to DB.
                     postCategories()
+                    props.handleCategoriesSubmission();
                     // Changing category value in frontend.
                     let new_category = document.getElementById('added_button_' + currentCatRef.current)
                     new_category.innerText = ''
@@ -316,7 +332,7 @@ const SiteTop = (props) => {
         else
             event.target.style.backgroundColor = 'transparent'
         let event_slot = event.target.id.split('_')[1]
-        debugger
+        // debugger
         props.timeRef.current[event_slot] = ref
         props.setCategoryTypes(props.timeRef.current)
     }
@@ -529,17 +545,47 @@ const SiteTop = (props) => {
         // shiftCats();
     }
 
+    const postNextWeek = (next_week) => {
+        fetch('http://localhost:5000/tasks/PostNextWeek/'+ props.userID + '/' + next_week, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify()
+        })
+            .then((response) => {
+                if (response.status === 201) {
+                    console.log("User's tasks hes been sent successfully.");
+                } else {
+                    console.log("User's tasks hes been sent. HTTP request status code: " + response.status);
+                }
+                console.log('received info from postnextweek!!')
+                console.log(response)
+                console.log(response.text())
+            })
+            .catch((error) => {
+                console.error("Error while submitting task: " + error.message);
+            });
+    }
+
     const scheduleForNextWeek = () => {
         props.setCategoryTrigger(false)
         if (window.confirm('Warning: planning schedule for next week will delete any previously generated schedule.')) {
+            let is_next_week = true;
+            if (localStorage.getItem('nextWeek').startsWith('t'))
+                is_next_week = false;
+            postNextWeek(is_next_week);
             // TODO set state changed, to enable submitting todo list.
             let date = new Date();
             let now = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
             if (localStorage.getItem('nextWeek').split('_')[0] === 't') {
                 localStorage.setItem('nextWeek', 'f_' + now)
+                document.getElementById('schedule_for_next_week_text').innerText = 'This Week'
                 props.setScheduleMoment(now);
             } else {
                 localStorage.setItem('nextWeek', 't_' + now)
+                document.getElementById('schedule_for_next_week_text').innerText = 'Next Week'
                 props.setScheduleMoment(0);
             }
             setTimeout(() => {
@@ -559,6 +605,7 @@ const SiteTop = (props) => {
         <div id='site_top' className='row flex-grow-0'>
             <img src={siteLogo} id='site_logo'/>
             <div id={'schedule_for_next_week'} onClick={()=>scheduleForNextWeek()}/>
+            <div id={'schedule_for_next_week_text'}/>
             <div className={'spacing'}/>
             <div className='userContainer'>
                 <div id='greeting'>{greeting}, {username}! 👋</div>

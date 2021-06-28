@@ -58,16 +58,18 @@ const App = () => {
             let slot = timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
             setScheduleMoment(slot);
             localStorage.setItem('nextWeek', 'f_'+slot)
+            document.getElementById('schedule_for_next_week_text').innerText = 'This Week'
         }
         else {
             setScheduleMoment(0);
             localStorage.setItem('nextWeek', 't_'+slot)
+            document.getElementById('schedule_for_next_week_text').innerText = 'Next Week'
         }
     }, [])
 
     useEffect(() => {
         let x = categoryTypes
-        debugger
+        // debugger
     }, [categoryTypes])
 
 
@@ -195,6 +197,8 @@ const App = () => {
             let task = document.getElementById('task' + err_tasks[i][0]);
             // Showing error of a specific task.
             task.classList.replace('closed_task', 'closed_task_error');
+            task.classList.replace('expanded_task', 'expanded_task_error');
+            task.classList.replace('expanded_task_daytime', 'expanded_task_daytime_error');
             let recurrences = document.getElementById('recurrings' + err_tasks[i][0]);
             let constraints = document.getElementById('constraints' + err_tasks[i][0]);
             let categories = document.getElementById('category_id' + err_tasks[i][0]);
@@ -370,7 +374,7 @@ const App = () => {
         window.onresize = resizeResponse;
        return (
            <div className="App d-flex flex-column">
-               <SiteTop timeRef={timeRef} setNextWeekChanged={setNextWeekChanged} setScheduleMoment={setScheduleMoment} timeToSlot={timeToSlot} setCategoryChanged={setCategoryChanged} categories={categories} setCategories={setCategories} optionRef={optionRef} setCategoryTypes={setCategoryTypes}  categoryTypes={categoryTypes} userID={userID} setUserID={setUserID} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setOption={setOption}/>
+               <SiteTop setScheduleJsx={setScheduleJsx} scheduleJsx={scheduleJsx} timeRef={timeRef} setNextWeekChanged={setNextWeekChanged} setScheduleMoment={setScheduleMoment} timeToSlot={timeToSlot} setCategoryChanged={setCategoryChanged} categories={categories} setCategories={setCategories} optionRef={optionRef} setCategoryTypes={setCategoryTypes}  categoryTypes={categoryTypes} userID={userID} setUserID={setUserID} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setOption={setOption}/>
                <div id='site_body' className='row flex-grow-1'>
                    {/*<div id='show_hide_todo' className='show_hide_todo' onClick={closeTaskPane}/>*/}
                    <div id='todo_parent' className='col-4'>

@@ -180,70 +180,74 @@ const Table = (props) => {
     }
 
     const drop = (event) => {
-        event.preventDefault();
-        // drop effect.
-        event.target.style.boxShadow = 'none';
-        event.target.style.transition = 'box-shadow .2s linear';
-        let target_element, slots_to_update = [];
-        let ids = event.dataTransfer.getData('text/plain').slice(1,-1).split(",");
-        let distance = (parseInt(event.target.id.split('_')[1]) - parseInt(ids[0].split('_')[1]))
-        ids = ids.sort(function(elm1, elm2) {
-            let elm1Sub = parseInt(elm1.split('_')[1])
-            let elm2Sub = parseInt(elm2.split('_')[1])
-            if (elm1Sub>elm2Sub) {return 1;}
-            else if (elm1Sub === elm2Sub) {return 0;}
-            else {return -1;}
-        });
-        // If dropping when marking category, do not continue.
-        if (event.target.ondrop !== null) return
-        // If source drop slot is empty, dropping its content is irrelevant.
-        if (ids[0].split('_')[3].startsWith('-1')) return;
-        // If out of range for any slot in array, or dropped on an occupied slot, do not drop.
-        if (!availableSlots(ids, distance, event)) return
-        // let diff = parseInt(dragged_element.id.split('_')[1]) - parseInt(target_element.id.split('_')[1])
-        //Drop all slots with the same ID.
-        let tasks_id = tasksID
-        for (let i=0; i<ids.length; i++) {
-            // Current slot id iterated.
-            ids[i] = ids[i].replaceAll('"', '')
-            // The element itself.
-            let dragged_element = document.getElementById(ids[i]);
-            // If dragged slots are in paint mode, do not drop.
-            if (dragged_element.ondragover !== null) return
-            let target_id = 'cell_' + (parseInt(ids[i].split('_')[1]) + distance)
-            target_element = document.querySelector('[id^='+target_id+']')
-            // If not an empty slot, not being dropped on an occupied slot and not being dropped to the same slot.
-            if (dragged_element.textContent && target_element !== dragged_element) {
-                let temp_target_element_text = target_element.textContent
-                // Swapping text contents between source and destination slots.
-                target_element.childNodes[0].textContent = dragged_element.textContent;
-                let src_data = ids[i].split('_')
-                let dest_slot = target_element.id.split('_')[1]
-                let src_slot = src_data[1]
-                let src_task_id = tasks_id[src_slot]
-                tasks_id[dest_slot] = parseInt(src_task_id)
-                if ((distance > 0 && i < distance) || (distance < 0 && Math.abs(i-(ids.length-1)) < Math.abs(distance))) {
-                    dragged_element.childNodes[0].textContent = '';
-                    tasks_id[src_slot] = -1
+        try {
+            event.preventDefault();
+            // drop effect.
+            event.target.style.boxShadow = 'none';
+            event.target.style.transition = 'box-shadow .2s linear';
+            let target_element, slots_to_update = [];
+            let ids = event.dataTransfer.getData('text/plain').slice(1,-1).split(",");
+            let distance = (parseInt(event.target.id.split('_')[1]) - parseInt(ids[0].split('_')[1]))
+            ids = ids.sort(function(elm1, elm2) {
+                let elm1Sub = parseInt(elm1.split('_')[1])
+                let elm2Sub = parseInt(elm2.split('_')[1])
+                if (elm1Sub>elm2Sub) {return 1;}
+                else if (elm1Sub === elm2Sub) {return 0;}
+                else {return -1;}
+            });
+            // If dropping when marking category, do not continue.
+            if (event.target.ondrop !== null) return
+            // If source drop slot is empty, dropping its content is irrelevant.
+            if (ids[0].split('_')[3].startsWith('-1')) return;
+            // If out of range for any slot in array, or dropped on an occupied slot, do not drop.
+            if (!availableSlots(ids, distance, event)) return
+            // let diff = parseInt(dragged_element.id.split('_')[1]) - parseInt(target_element.id.split('_')[1])
+            //Drop all slots with the same ID.
+            let tasks_id = tasksID
+            for (let i=0; i<ids.length; i++) {
+                // Current slot id iterated.
+                ids[i] = ids[i].replaceAll('"', '')
+                // The element itself.
+                let dragged_element = document.getElementById(ids[i]);
+                // If dragged slots are in paint mode, do not drop.
+                if (dragged_element.ondragover !== null) return
+                let target_id = 'cell_' + (parseInt(ids[i].split('_')[1]) + distance)
+                target_element = document.querySelector('[id^='+target_id+']')
+                // If not an empty slot, not being dropped on an occupied slot and not being dropped to the same slot.
+                if (dragged_element.textContent && target_element !== dragged_element) {
+                    let temp_target_element_text = target_element.textContent
+                    // Swapping text contents between source and destination slots.
+                    target_element.childNodes[0].textContent = dragged_element.textContent;
+                    let src_data = ids[i].split('_')
+                    let dest_slot = target_element.id.split('_')[1]
+                    let src_slot = src_data[1]
+                    let src_task_id = tasks_id[src_slot]
+                    tasks_id[dest_slot] = parseInt(src_task_id)
+                    if ((distance > 0 && i < distance) || (distance < 0 && Math.abs(i-(ids.length-1)) < Math.abs(distance))) {
+                        dragged_element.childNodes[0].textContent = '';
+                        tasks_id[src_slot] = -1
+                    }
+                    dragged_element.id = (dragged_element.id.split('_').slice(0,3) + '_' + tasks_id[src_slot]).replaceAll(',','_');
+                    target_element.id = (target_element.id.split('_').slice(0,3) + '_' + src_task_id).replaceAll(',','_');
+                    setTasksID(tasks_id)
+                    slots_to_update.push({'slot_id':src_slot, 'task_id':src_task_id, 'user_id':props.userID, 'new_slot':dest_slot})
                 }
-                dragged_element.id = (dragged_element.id.split('_').slice(0,3) + '_' + tasks_id[src_slot]).replaceAll(',','_');
-                target_element.id = (target_element.id.split('_').slice(0,3) + '_' + src_task_id).replaceAll(',','_');
-                setTasksID(tasks_id)
-                slots_to_update.push({'slot_id':src_slot, 'task_id':src_task_id, 'user_id':props.userID, 'new_slot':dest_slot})
             }
+            updateTasksLocation(slots_to_update)
+            // Update new category after dropping task, if was dropped into one.
+            setTimeout(()=> {
+                updateTaskCategory(tasks[target_element.id.split('_')[3]])
+            }, 500)
+            let temp_tasks = {...props.updating_tasks}
+            // If task is dragged into a different category slot, change category and send changed to DB.
+            if (temp_tasks[ids[0].split('_')[3]]['category_id'] !== parseInt(props.categoryTypes[event.target.id.split('_')[1]])) {
+                temp_tasks[ids[0].split('_')[3]]['category_id'] = parseInt(props.categoryTypes[event.target.id.split('_')[1]])
+            }
+            props.setTasks(temp_tasks)
+            event.dataTransfer.clearData();
+        } catch (exception) {
+
         }
-        updateTasksLocation(slots_to_update)
-        // Update new category after dropping task, if was dropped into one.
-        setTimeout(()=> {
-            updateTaskCategory(tasks[target_element.id.split('_')[3]])
-        }, 500)
-        let temp_tasks = {...props.updating_tasks}
-        // If task is dragged into a different category slot, change category and send changed to DB.
-        if (temp_tasks[ids[0].split('_')[3]]['category_id'] !== parseInt(props.categoryTypes[event.target.id.split('_')[1]])) {
-            temp_tasks[ids[0].split('_')[3]]['category_id'] = parseInt(props.categoryTypes[event.target.id.split('_')[1]])
-        }
-        props.setTasks(temp_tasks)
-        event.dataTransfer.clearData();
     }
 
     const updateTaskCategory = (task) => {
