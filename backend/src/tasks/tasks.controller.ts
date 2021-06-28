@@ -155,6 +155,12 @@ export class TasksController {
     return this.tasksService.postNewUser(user);
   }
 
+  //Posts user's preference for next-week planning
+  @Post('PostNextWeek/:user_id/:next_week')
+  postNextWeek(@Param('user_id')user_id:number,@Param('next_week')next_week:boolean) {
+    return this.tasksService.postNextWeek(user_id, next_week);
+  }
+
   //returns the name of a user by id
   @Get('getUsernameByID/:user_id')
   getUsernameByID(@Param('user_id')user_id:string){

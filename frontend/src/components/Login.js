@@ -220,7 +220,7 @@ const Login = (props) => {
         }
         // If indicator is true, some fields are not valid, so do not sign up with given data.
         if (input_indicator) {
-            let apiParams = {"user_name":username.value, "user_pass": password.value}
+            let apiParams = {"user_name":username.value, "user_pass": password.value, "next_week":false}
             APICall('checkusercredentials', apiParams)
         }
     }
@@ -309,7 +309,7 @@ const Login = (props) => {
             const saltRounds= 10
             let pass = '123'
             bcryptjs.hash(password.value, saltRounds, function (err, hash) {
-                let apiParams = {"user_name":username.value, "user_pass": hash}
+                let apiParams = {"user_name":username.value, "user_pass": hash, "next_week":false}
                 APICall('postnewuser', apiParams)
             });
 
