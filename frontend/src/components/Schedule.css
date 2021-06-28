@@ -114,9 +114,15 @@ td {
     z-index: -100;
     text-overflow: ellipsis;
     overflow: hidden ;
-    white-space: nowrap;
+    /*white-space: nowrap;*/
     padding-left: 2px;
     padding-right: 2px;
+    line-height: 1.5em;
+    height: 3em;
+    overflow: hidden;
+
+
+
 }
 
 .heb_class {
