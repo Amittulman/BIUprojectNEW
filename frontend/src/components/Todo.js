@@ -277,14 +277,16 @@ const Todo = (props) => {
   }
 
   const showInputError = (e, enter) => {
+    // debugger
     let x = e.target.childNodes
     let y = e.target.childNodes.length;
     let shnips;
     // //debugger
-    let err = e.target.classList.contains('task_error') || e.currentTarget.classList.contains('task_error') || e.target.classList.contains('thumbtack_error')
+    let err = e.target.classList.contains('task_error') || e.target.parentNode.classList.contains('task_error') || e.currentTarget.classList.contains('task_error') || e.target.classList.contains('thumbtack_error')
     if (!err) return;
     //TODO add parent and then child as well
     let chosen_class;
+    // debugger
     if (e.target.childNodes.length > 1) {
       chosen_class = e.target.childNodes[e.target.childNodes.length-1]
       shnips = e.target.childNodes
@@ -303,16 +305,16 @@ const Todo = (props) => {
     // this function will be called when hovering a certain task element (added when error received)
     if (enter) {
       chosen_class.className = 'task_element_input_error'
-      setTimeout(()=> {
-        if (chosen_class.classList === undefined) return
-        chosen_class.classList.replace('task_element_input_error','hidden_task_element_input_error')
-      }, 3000)
+      // setTimeout(()=> {
+      //   if (chosen_class.classList === undefined) return
+      //   chosen_class.classList.replace('task_element_input_error','hidden_task_element_input_error')
+      // }, 3000)
     }
-    else
-      setTimeout(()=> {
-        if (chosen_class.classList === undefined) return
-        chosen_class.classList.replace('task_element_input_error','hidden_task_element_input_error')
-      }, 0)
+    else {
+      if (chosen_class.classList === undefined) return
+      console.log('bye!')
+      chosen_class.classList.replace('task_element_input_error','hidden_task_element_input_error')
+    }
     // let x = document.getElementsByClassName('task_elm');
     // //debugger;
     // let y = document.getElementsByClassName('hidden_task_element_input_error')
@@ -356,7 +358,7 @@ const Todo = (props) => {
     let heb_class = ''
     if (hebrew)
       heb_class = 'heb_class_title '
-    let task_title = <span onMouseOver={(e)=>showInputError(e, true)} onMouseLeave={(e)=>showInputError(e, false)} key={'task_title'+index} id={'task_title'+index} className=' col-sm-3' onChange={(e) => handleChange(e, i)}><span className= 'task_elm'>Title:&nbsp;</span><input id={'title_textbox'+index} className={'title_input'} name='task_title' type='text' defaultValue={values['task_title']}/><div id={'title_error_message'} className={'hidden_task_element_input_error'}>Title is too long.</div></span>
+    let task_title = <span key={'task_title'+index} id={'task_title'+index} className=' col-sm-3' onChange={(e) => handleChange(e, i)}><span onMouseOver={(e)=>showInputError(e, true)} onMouseLeave={(e)=>showInputError(e, false)} className= 'task_elm'>Title:&nbsp;</span><input id={'title_textbox'+index} className={'title_input'} name='task_title' type='text' defaultValue={values['task_title']}/><div id={'title_error_message'} className={'hidden_task_element_input_error'}>Title is too long.</div></span>
     let recurrence = <div onMouseOver={(e)=>showInputError(e, true)} onMouseLeave={(e)=>showInputError(e, false)}><input key={'recurrence'+index} autoComplete={'off'} id={'recurrings'+index} name='recurrings' onClick={(e)=> {
       if (document.getElementById('thumbtack'+index).className !== 'thumbtack_done') {
         handleChange(e, i);
@@ -367,9 +369,9 @@ const Todo = (props) => {
     </div>;
     let rec_pin = <div className={'row rec_pin'}>{recurrence}{thumbtack}</div>
     let title_and_thumbtack = <span key={'title_and_thumbtack'+index} className='row justify-content-between'>{task_title}{rec_pin}</span>;
-    let duration = <div onMouseOver={(e)=>showInputError(e, true)} onMouseLeave={(e)=>showInputError(e, false)} key={'duration'+index} id={'duration'+index} className='row ttt '><div className={'task_elm'}>Duration:</div>
+    let duration = <div key={'duration'+index} id={'duration'+index} className='row ttt '><div onMouseOver={(e)=>showInputError(e, true)} onMouseLeave={(e)=>showInputError(e, false)}  className={'task_elm'}>Duration:</div>
       <div className={'first_row'}>
-        <div id='duration_options_arrow'/>&nbsp;
+        <div className='wrapper_options'><div id='duration_options_arrow'/>&nbsp;</div>
         <select key={'duration_options'+index} size='1' id={'duration_options'+index} className={getDuration(values['duration']) === 'null'?'duration_options_hidden':'duration_options'} name='duration' defaultValue={getDuration(values['duration'])} onChange={(e) => handleChange(e, i)}>
           <option value="0.5">0.5</option>
           <option value="1">1</option>
@@ -382,7 +384,7 @@ const Todo = (props) => {
         <input placeholder='___' maxLength={3} id={'input_duration'+i} className={getDuration(values['duration']) === 'null'?'input_duration':'input_duration_hidden'} name='duration' type='text' defaultValue={getDuration(values['duration']) === 'null'?values['duration']/60:''} onChange={(e) => handleChange(e, i)}/>
       </div>
       <div>hours</div>
-      <div id={'duration_error_message'} className={'hidden_task_element_input_error'}>Duration is too long.</div>
+      <div id={'duration_error_message'} className={'hidden_task_element_input_error'}>Please use a number in the range 0-7.</div>
     </div>;
     let priority = <div key={'priority'+index} id={'priority'+index} className='priority_elm'><span className='task_elm'>Priority:</span>
       <div className='wrapper_options'><div id='priority_options_arrow'/>&nbsp;</div>
@@ -400,14 +402,14 @@ const Todo = (props) => {
       else
         options.push(<option id={'option_'+j+'_'+index} key={'option_'+j+'_'+index} value={j} style={{display:'none'}}/>)
     }
-    let category_id = <div onMouseOver={(e)=>showInputError(e, true)} onMouseLeave={(e)=>showInputError(e, false)} key={'category_id'+index} id={'category_id'+index} className={'cat_elm'} onChange={(e) => handleChange(e, i)}><span className='task_elm' >Category:&nbsp;</span>
+    let category_id = <div key={'category_id'+index} id={'category_id'+index} className={'cat_elm'} onChange={(e) => handleChange(e, i)}><span onMouseOver={(e)=>showInputError(e, true)} onMouseLeave={(e)=>showInputError(e, false)}  className='task_elm' >Category:&nbsp;</span>
       <div className='wrapper_options'><div id='category_options_arrow'/>&nbsp;</div>
       <select key={'category_options'+index}  className='category_options' name='category_id' defaultValue={values['category_id']} onChange={(e) => handleChange(e, i)}>
         {options}
       </select>
       <div id={'category_error_message'} className={'hidden_task_element_input_error'}>No slots available for<br/>chosen category..</div>
     </div>;
-    let constraints = <div key={'constraints'+index} id={'constraints'+index}  onChange={(e) => handleChange(e, i)}><div onMouseOver={(e)=>showInputError(e, true)} onMouseLeave={(e)=>showInputError(e, false)} className='task_elm'>Day of Week:&nbsp;</div><div className={'constraints_element'} >{constraints_params}</div><div id={'daysofweek_error_message'} className={'hidden_task_element_input_error'}>Cannot schedule chosen<br/>days of week.</div></div>;
+    let constraints = <div key={'constraints'+index} id={'constraints'+index}  onChange={(e) => handleChange(e, i)}><div onMouseOver={(e)=>showInputError(e, true)} onMouseLeave={(e)=>showInputError(e, false)}  className='task_elm dayofweekline' >Day of week:&nbsp;</div><div className={'constraints_element'} >{constraints_params}</div><div id={'daysofweek_error_message'} className={'hidden_task_element_input_error'}>Cannot schedule chosen<br/>days of week.</div></div>;
     let task = <div key={'task'+index} id={'task'+index} className='closed_task'>{[pinned_calendar, title_and_thumbtack, duration, priority, category_id, constraints]}</div>
     let sign = <div id={'expand_icon'+index} className={'expand_icon'} onClick={(e) =>  expandTask(e, task, index)} key='plus_sign'/>
     let pastDue = <div key={'pastDue'+index} id={'pastDue_'+index} className={'past_due_hidden'}>
@@ -626,8 +628,16 @@ const Todo = (props) => {
       // Check duration length.
       let duration = document.getElementById('duration' + task_index)
       // If duration is more than 7 hours
-      if (props.updated_tasks[task_index]['duration'] > 7*60) {
+      if (!Number.isInteger(props.updated_tasks[task_index]['duration']) || props.updated_tasks[task_index]['duration'] > 7*60 ||
+          props.updated_tasks[task_index]['duration'] <= 0) {
+        if (props.updated_tasks[task_index]['duration'] <= 0)
+          duration.childNodes[duration.childNodes.length-1].textContent = 'Please use a positive number';
+        else if (props.updated_tasks[task_index]['duration'] > 7*60)
+          duration.childNodes[duration.childNodes.length-1].textContent = 'Duration should be less than 7 hours';
+        else
+          duration.childNodes[duration.childNodes.length-1].textContent = 'Please use a numeric value.'
         duration.classList.add('task_error')
+
         task_err = true
         total_err = true
       } else {
