@@ -509,6 +509,7 @@ export class SchedulerService {
     }
 
     private static async FindTaskWithThisCategory(categoryProblem: string, tasks: Array<Task>) {
+        // find an appropriate task
         for(let indexTask = 0; indexTask < tasks.length; indexTask ++) {
             if(tasks[indexTask].category_id === Number(categoryProblem)) {
                 return tasks[indexTask];
