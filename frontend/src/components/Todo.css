@@ -186,7 +186,7 @@
 }
 
 @keyframes hovered {
-  50% {box-shadow: 1px 0 3px 5px #feff7b}
+  50% {box-shadow: 1px 0 3px 5px #e98000}
 }
 
 @keyframes error {
