@@ -85,7 +85,7 @@ const Table = (props) => {
                     }
                     content.push(<td key={'cell_' + (slots_per_day * (i - 1) + j)} className={class_name} style={{backgroundColor:color}}
                                      id={'cell_' + (slots_per_day * (i - 1) + j) + '_taskID_' + tasksID[j + (i - 1) * slots_per_day]}
-                                     draggable='true' onClick={()=>foo(tasksID[j + (i - 1) * slots_per_day])}  onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop}
+                                     draggable='true' onMouseLeave={()=>hide_task_details()} onMouseOver={(e)=>{show_task_details(e)}} onClick={()=>foo(tasksID[j + (i - 1) * slots_per_day])}  onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop}
                                      onDragLeave={leaveDropArea}><div className={passed_day + ' hidden_overflow ' + heb_class}>{data}</div></td>);//{data}
                 }
                 jsx.push(<tr key={'tr' + i}><div className={'th_parent'}><th key={'th' + i}>{props.days[i]}</th></div>{content}</tr>);
@@ -118,9 +118,13 @@ const Table = (props) => {
         let date = new Date()
         let today_slot = props.scheduleMoment;
         today_slot -= (Math.ceil(today_slot/slots_per_day)-1) * slots_per_day
-        // console.log('BOOM! ', today_slot)
+        console.log('BOOM! ', today_slot)
+        if (isNaN(today_slot)) {
+            let date = new Date();
+            today_slot = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
+        }
         // document.getElementById('schedule_component1').scrollTop += (window.innerHeight * 0.06) * today_slot;
-        document.getElementById('schedule_component1').scrollTo({top:(window.innerHeight * 0.06) * today_slot, behavior:'smooth' })
+        document.getElementById('schedule_component1').scrollTo({top:(window.innerHeight * 0.06) * (today_slot-(48*date.getDay())), behavior:'smooth' })
     }
 
     const getClass = (number) => {
@@ -333,20 +337,54 @@ const Table = (props) => {
             });
     }
 
-    const task_label = () => {
-        return (<div className={'task_label'}>
+    const show_task_details = (e) => {
+        let urgencies = {0:'not ', 1:'not ', 2:'', 3:'very '}
+        let elm = document.querySelector('[class^=task_label'+']')
+        let task_label_title = document.getElementsByClassName('task_label_title')[0];
+        let task_label_urgency = document.getElementsByClassName('task_label_priority')[0];
+        let task_label_duration = document.getElementsByClassName('task_label_duration')[0];
+        let task = props.updating_tasks[e.target.id.split('_')[e.target.id.split('_').length-1]]
+        if (e.target.textContent === '') return;
+        task_label_title.textContent = e.target.textContent;
+        let hebrew = (/[\u0590-\u05FF]/).test(e.target.textContent)
+        debugger
+        // If title in hebrew
+        if (hebrew) {
+            task_label_title.style.textAlign = 'right';
+            task_label_title.style.paddingRight = '20px';
+        } else {
+            task_label_title.style.textAlign = 'left';
+            task_label_title.style.paddingRight = '0';
+        }
+        task_label_urgency.textContent = '• '+urgencies[task['priority']]+'urgent';
+        task_label_duration.textContent = '• '+task['duration']/60+' hours';
+        elm.style.position = 'absolute';
+        elm.style.left = e.target.offsetLeft-(e.target.offsetWidth/2)+'px';
+        elm.style.top = e.target.offsetTop-elm.clientHeight-2+'px';
+        elm.style.animation = 'label_appear 1s';
+        elm.className = 'task_label'
+    }
+
+    const hide_task_details = () => {
+        let elm = document.querySelector('[class^=task_label'+']')
+        elm.style.animation = 'label_disappear 1s';
+        elm.className = 'task_label_hidden'
+    }
+
+    const task_label = (bool=false) => {
+        return (<div className={'task_label_hidden'}>
             <div className={'task_label_title'}>Eat food and asdfadsfadsfds</div>
             <div className={'row task_label_details'}>
                 <div className={'task_label_priority'}>• Urgent</div>
                 <div className={'task_label_duration'}>• 2.5 hours</div>
             </div>
-            <div className={'task_label_arrow'}/>
+            {/*<div className={'task_label_arrow'}/>*/}
 
         </div>)
     }
 
-    // return (<div id='schedule_component1'>{task_label()}{props.table1}</div>);
-    return (<div id='schedule_component1'>{props.table1}</div>);
+    return (<div id='schedule_component1'>{task_label()}{props.table1}</div>);
+    // return (<div id='schedule_component1'>{props.table1}</div>);
 }
 
 export default Table;

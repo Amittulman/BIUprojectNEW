@@ -76,13 +76,47 @@ td {
     position: sticky;
 }
 
-.task_label {
+.task_label, .task_label_hidden {
+    position: absolute;
     margin-bottom: 150px;
     height: auto;
     width: 200px;
     padding-bottom: 10px;
     background-color: beige;
     border-radius: 10%;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    /*margin-top: 780px;*/
+    /*margin-left: 320px;*/
+    /*position: absolute;*/
+    display: block;
+    user-select: none;
+    pointer-events: none;
+    text-wrap: normal;
+    /*animation: label_appear 1s;*/
+}
+
+@keyframes label_appear {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes label_disappear {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.task_label_hidden {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 1s;
 }
 
 .task_label_arrow {
@@ -134,12 +168,14 @@ td {
     text-align: left;
     padding-left: 15px;
     padding-top: 5px;
+    word-wrap: break-word;
 }
 
 .task_label_details {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: space-evenly;
+
 }
 
 .hidden_overflow {
