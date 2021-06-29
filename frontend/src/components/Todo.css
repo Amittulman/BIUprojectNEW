@@ -127,6 +127,11 @@
   height: 40px;
 }
 
+.dayofweekline {
+  width: 10px !important;
+
+}
+
 .task_element_input_error {
   visibility: visible;
   border-radius: 15px;

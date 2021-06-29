@@ -409,7 +409,7 @@ const Todo = (props) => {
       </select>
       <div id={'category_error_message'} className={'hidden_task_element_input_error'}>No slots available for<br/>chosen category..</div>
     </div>;
-    let constraints = <div key={'constraints'+index} id={'constraints'+index}  onChange={(e) => handleChange(e, i)}><div onMouseOver={(e)=>showInputError(e, true)} onMouseLeave={(e)=>showInputError(e, false)} className='task_elm'>Day of Week:&nbsp;</div><div className={'constraints_element'} >{constraints_params}</div><div id={'daysofweek_error_message'} className={'hidden_task_element_input_error'}>Cannot schedule chosen<br/>days of week.</div></div>;
+    let constraints = <div key={'constraints'+index} id={'constraints'+index}  onChange={(e) => handleChange(e, i)}><div onMouseOver={(e)=>showInputError(e, true)} onMouseLeave={(e)=>showInputError(e, false)}  className='task_elm dayofweekline' >Day of week:&nbsp;</div><div className={'constraints_element'} >{constraints_params}</div><div id={'daysofweek_error_message'} className={'hidden_task_element_input_error'}>Cannot schedule chosen<br/>days of week.</div></div>;
     let task = <div key={'task'+index} id={'task'+index} className='closed_task'>{[pinned_calendar, title_and_thumbtack, duration, priority, category_id, constraints]}</div>
     let sign = <div id={'expand_icon'+index} className={'expand_icon'} onClick={(e) =>  expandTask(e, task, index)} key='plus_sign'/>
     let pastDue = <div key={'pastDue'+index} id={'pastDue_'+index} className={'past_due_hidden'}>
