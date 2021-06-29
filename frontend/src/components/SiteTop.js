@@ -347,7 +347,11 @@ const SiteTop = (props) => {
         for (i=1 ; i<8;i++) {
             for (j=1 ; j < slots_per_day+1 ; j++) {
                 // let class_name = getClass( categoryTypes[slots_per_day * (i - 1) + (j-1)])
-                let node = sched.childNodes.item(0).childNodes.item(0).childNodes.item(0).childNodes.item(i).childNodes.item(j)
+                let a = sched.childNodes
+                let b = sched.childNodes.item(0)
+                let c = sched.childNodes.item(0).childNodes.item(1)
+                debugger
+                let node = sched.childNodes.item(0).childNodes.item(1).childNodes.item(0).childNodes.item(i).childNodes.item(j)
                 // node.className = class_name//class_name
                 node.ondragstart = dragStartCat
                 node.ondragover = allowDropCat
@@ -364,7 +368,7 @@ const SiteTop = (props) => {
         //console.log(sched.length)
         for (i=1 ; i<8;i++) {
             for (j=1 ; j < slots_per_day+1 ; j++) {
-                let node = sched.childNodes.item(0).childNodes.item(0).childNodes.item(0).childNodes.item(i).childNodes.item(j)
+                let node = sched.childNodes.item(0).childNodes.item(1).childNodes.item(0).childNodes.item(i).childNodes.item(j)
                 // node.className = 'empty_slot';
                 node.ondragstart = null
                 node.ondragover = null
@@ -421,7 +425,7 @@ const SiteTop = (props) => {
         // else {
         //     unpaintSlots(sched)
         // }
-        let node = sched.childNodes.item(0).childNodes.item(0).childNodes.item(0).childNodes.item(5).childNodes.item(7)
+        let node = sched.childNodes.item(0).childNodes.item(1).childNodes.item(0).childNodes.item(5).childNodes.item(7)
         if (node.ondragover && node.ondragover.name === 'allowDropCat')
             unpaintSlots(sched)
     }
