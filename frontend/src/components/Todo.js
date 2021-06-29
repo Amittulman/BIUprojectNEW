@@ -384,7 +384,7 @@ const Todo = (props) => {
         <input placeholder='___' maxLength={3} id={'input_duration'+i} className={getDuration(values['duration']) === 'null'?'input_duration':'input_duration_hidden'} name='duration' type='text' defaultValue={getDuration(values['duration']) === 'null'?values['duration']/60:''} onChange={(e) => handleChange(e, i)}/>
       </div>
       <div>hours</div>
-      <div id={'duration_error_message'} className={'hidden_task_element_input_error'}>Duration is too long.</div>
+      <div id={'duration_error_message'} className={'hidden_task_element_input_error'}>Please use a number in the range 0-7.</div>
     </div>;
     let priority = <div key={'priority'+index} id={'priority'+index} className='priority_elm'><span className='task_elm'>Priority:</span>
       <div className='wrapper_options'><div id='priority_options_arrow'/>&nbsp;</div>
@@ -628,8 +628,16 @@ const Todo = (props) => {
       // Check duration length.
       let duration = document.getElementById('duration' + task_index)
       // If duration is more than 7 hours
-      if (props.updated_tasks[task_index]['duration'] > 7*60) {
+      if (!Number.isInteger(props.updated_tasks[task_index]['duration']) || props.updated_tasks[task_index]['duration'] > 7*60 ||
+          props.updated_tasks[task_index]['duration'] <= 0) {
+        if (props.updated_tasks[task_index]['duration'] <= 0)
+          duration.childNodes[duration.childNodes.length-1].textContent = 'Please use a positive number';
+        else if (props.updated_tasks[task_index]['duration'] > 7*60)
+          duration.childNodes[duration.childNodes.length-1].textContent = 'Duration should be less than 7 hours';
+        else
+          duration.childNodes[duration.childNodes.length-1].textContent = 'Please use a numeric value.'
         duration.classList.add('task_error')
+
         task_err = true
         total_err = true
       } else {
