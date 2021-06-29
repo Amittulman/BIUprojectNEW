@@ -599,6 +599,20 @@ const SiteTop = (props) => {
         }
     }
 
+    const turnDisplayMode = () => {
+        // let e1 = document.getElementsByClassName(signup_container)
+        // Get all spans
+        let spans = document.querySelectorAll('div');
+        let x = document.getElementsByClassName('closed_task');
+// Convert spans nodeslist to array
+        spans = Array.from( spans );
+
+// Filter spans array
+// Get CSS properties object of selected element - [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Window/getComputedStyle)
+        let arr = spans.filter( span => String( document.defaultView.getComputedStyle( span, null ).backgroundColor ) == '#fefcf3' );
+        debugger
+    }
+
     let sched = document.getElementById('schedule_component')
 
     let time_of_day = new Date().getHours()
@@ -695,7 +709,7 @@ const SiteTop = (props) => {
                 <span id='category_decline_changes'/>
             </div>
             <div id='cap_msg'>Cannot add more than 5 categories.</div>
-            {/*<div className='col-4'>{login}</div>*/}
+            {/*<div onClick={turnDisplayMode} id={'nightmode'}/>*/}
             <div id='logout' onClick={LogoutWrapper}>Log out</div>
         </div>
     );
