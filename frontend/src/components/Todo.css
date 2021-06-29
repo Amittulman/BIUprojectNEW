@@ -17,17 +17,40 @@
   font-family: "Kristen ITC", serif;
   font-size: 35px;
   width: 100%;
+  box-shadow: 0 6px 8px -4px lightgray;
+
 }
 
 .App-link {
   color: #61dafb;
 }
 
+#bump1, #bump2 {
+  position: absolute;
+  height: 30px;
+  width: 80px;
+  right: 172px;
+  top: -30px;
+  z-index: -1;
+  background-color: #fefcf3;
+  border-top-left-radius: 50px;  /* 100px of height + 10px of border */
+  border-top-right-radius: 50px; /* 100px of height + 10px of border */
+  border: 1px solid gray;
+  border-bottom: 0;
+}
+
+#bump2 {
+  right: 20px;
+  border-top-left-radius: 10%;  /* 100px of height + 10px of border */
+  border-top-right-radius: 10%; /* 100px of height + 10px of border */
+}
+
 #add_a_new_task {
+  position: absolute;
   width: 50px;
   height: 50px;
-  margin-top: -3px;
-  margin-left: 40%;
+  top: -22px;
+  right: 185px;
   background: url("../images/plus_sign.svg") no-repeat;
   transition: background 0.1s ease-in;
   cursor: pointer;
@@ -186,7 +209,7 @@
 }
 
 @keyframes hovered {
-  50% {box-shadow: 1px 0 3px 5px #feff7b}
+  50% {box-shadow: 1px 0 3px 5px #e98000}
 }
 
 @keyframes error {
@@ -550,6 +573,7 @@ margin-left: 20px;
   background-clip: content-box;
   min-height: 100px;
   background-color: #fefcf3;
+  /*background-color: red;*/
   background-color: transparent;
 
 /*  lala*/
@@ -687,7 +711,7 @@ margin-left: 20px;
   overflow-y: scroll;
   width: 100%;
   top: 50px;
-  height: 80%;
+  height: 90%;
 }
 
 .expand_icon {
@@ -720,6 +744,9 @@ margin-left: 20px;
 }
 
 #submit_button {
+  position: absolute;
+  margin-top: -40px;
+  right: 30px;
   height: 40px;
   background-color: #faffa2;
   border-color: #555555;
@@ -739,6 +766,8 @@ margin-left: 20px;
 }
 
 #bottom_content {
+  box-shadow: rgba(17, 17, 26, 0.1) 0px 4px 16px, rgba(17, 17, 26, 0.1) 0px 8px 24px, rgba(17, 17, 26, 0.1) 0px 16px 56px;
+  /*box-shadow: 0px -4px 3px rgba(50, 50, 50, 0.75);*/
   position: relative;
   margin-right: 40px;
   display: flex;
@@ -746,11 +775,12 @@ margin-left: 20px;
   justify-content: space-around;
   width: 114%;
   height: 20%;
-  min-height: 150px;
+  min-height: 100px;
   padding-top: 20px;
   margin-bottom: 20px;
   z-index: 100000;
-  background-color: transparent;
+  background-color: #fefcf3;
+  border: 1px solid rgba(0,0,0,.2);
 }
 
 .past_due, .past_due_hidden {

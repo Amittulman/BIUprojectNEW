@@ -960,6 +960,8 @@ const Todo = (props) => {
             <div id='loading_todo'/>
           </form><br/>
           <div id={'bottom_content'}>
+            <div id={'bump1'}/>
+            <div id={'bump2'}/>
             <div id='add_a_new_task' onClick={() => {
               addTask(task_number,null, true)
             }}/>
