@@ -325,6 +325,31 @@ export class SchedulerService {
         const leftDays = 7-day;
         const problemTasks = [];
 
+
+        let categoriesMap = new Map();
+        categoriesMap.set(-1, 0);
+        categoriesMap.set(0, 0);
+        categoriesMap.set(1, 0);
+        categoriesMap.set(2, 0);
+        categoriesMap.set(3, 0);
+        categoriesMap.set(4, 0);
+        categoriesMap.set(5, 0);
+
+        let categoriesTaskCounterMap = new Map();
+        categoriesTaskCounterMap.set(-1, 0);
+        categoriesTaskCounterMap.set(0, 0);
+        categoriesTaskCounterMap.set(1, 0);
+        categoriesTaskCounterMap.set(2, 0);
+        categoriesTaskCounterMap.set(3, 0);
+        categoriesTaskCounterMap.set(4, 0);
+        categoriesTaskCounterMap.set(5, 0);
+
+        for(let catIndex = timeStamp; catIndex < categories.length; catIndex++) {
+            let cat = categories[catIndex];
+            let newValueForCategory = categoriesMap.get(cat) + 1;
+            categoriesMap.set(cat , newValueForCategory);
+        }
+
         for (let taskIndex = 0; taskIndex < tasks.length; taskIndex++) {
             const tempTask = tasks[taskIndex];
             const currentTaskRecurring = tempTask.recurrings;
@@ -340,6 +365,9 @@ export class SchedulerService {
             let isCaregoriesEnough = false;
             let counterTodayConstraintsSlots = 0;
             let counterAllConstraintsSlotForCurTask = 0;
+
+            let newValueForCategoryTaskCounter = categoriesTaskCounterMap.get(tempTask.category_id) + numberOfSlotsTaskNeedAllWeek;
+            categoriesTaskCounterMap.set(tempTask.category_id , newValueForCategoryTaskCounter);
 
             if(currentTaskRecurring > leftDays) {
                 //problem with this task - reccuringg
@@ -384,9 +412,7 @@ export class SchedulerService {
                 //problem with this task - constraints
                 tempErrorTask[2] = 1;
             }
-
-            let isConstraintForPartOfTheDayIsCompatible = false;
-            let counterForConstraintsCompatibleWithCategory = 0;
+            
             let constarintsWithCategoreiesByDaysAndParts = [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]];
 
             while (rightPointer < categories.length){
@@ -437,6 +463,23 @@ export class SchedulerService {
                 problemTasks.push(tempErrorTask)
             }
         }
+        let errorCategories = []
+
+
+        for(let indexForMaps = -1; indexForMaps < 6; indexForMaps ++) {
+            let valueTempAllCategories = categoriesMap.get(indexForMaps);
+            let valueTempAllTasksCategiries = categoriesTaskCounterMap.get(indexForMaps);
+
+            if(valueTempAllCategories < valueTempAllTasksCategiries) {
+                errorCategories.push(indexForMaps);
+            }
+        }
+
+        for(let indexErrorCategory = 0; indexErrorCategory < errorCategories.length; indexErrorCategory ++) {
+            let errorTaskWithThisCategory = await SchedulerService.FindTaskWithThisCategory(errorCategories[indexErrorCategory], tasks);
+            problemTasks.push([errorTaskWithThisCategory.task_id,0,0,1]);
+        }
+
         return problemTasks;
     }
 
@@ -463,5 +506,13 @@ export class SchedulerService {
         let partOftheDay = await SchedulerService.convertSlotToPartOfDay(slot);
         let curConstraints = tempTask.constraints;
         return curConstraints[day][partOftheDay] === 1;
+    }
+
+    private static async FindTaskWithThisCategory(categoryProblem: string, tasks: Array<Task>) {
+        for(let indexTask = 0; indexTask < tasks.length; indexTask ++) {
+            if(tasks[indexTask].category_id === Number(categoryProblem)) {
+                return tasks[indexTask];
+            }
+        }
     }
 }
