@@ -347,7 +347,6 @@ const Table = (props) => {
         if (e.target.textContent === '') return;
         task_label_title.textContent = e.target.textContent;
         let hebrew = (/[\u0590-\u05FF]/).test(e.target.textContent)
-        debugger
         // If title in hebrew
         if (hebrew) {
             task_label_title.style.textAlign = 'right';
@@ -359,8 +358,14 @@ const Table = (props) => {
         task_label_urgency.textContent = '• '+urgencies[task['priority']]+'urgent';
         task_label_duration.textContent = '• '+task['duration']/60+' hours';
         elm.style.position = 'absolute';
-        elm.style.left = e.target.offsetLeft-(e.target.offsetWidth/2)+'px';
-        elm.style.top = e.target.offsetTop-elm.clientHeight-2+'px';
+        if (e.target.getBoundingClientRect().x + e.target.getBoundingClientRect().width+(elm.clientWidth/2) < window.innerWidth)
+            elm.style.left = e.target.offsetLeft-(e.target.offsetWidth/2)+'px';
+        else
+            elm.style.left = e.target.offsetLeft-(e.target.offsetWidth)-10+'px';
+        if (e.target.offsetTop-elm.clientHeight >= 24)
+            elm.style.top = e.target.offsetTop-elm.clientHeight+'px';
+        else
+            elm.style.top = e.target.offsetTop+elm.clientHeight-4+'px';
         elm.style.animation = 'label_appear 1s';
         elm.className = 'task_label'
     }
@@ -373,7 +378,7 @@ const Table = (props) => {
 
     const task_label = (bool=false) => {
         return (<div className={'task_label_hidden'}>
-            <div className={'task_label_title'}>Eat food and asdfadsfadsfds</div>
+            <div className={'task_label_title'}/>
             <div className={'row task_label_details'}>
                 <div className={'task_label_priority'}>• Urgent</div>
                 <div className={'task_label_duration'}>• 2.5 hours</div>
