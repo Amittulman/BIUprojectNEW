@@ -628,7 +628,7 @@ const Todo = (props) => {
       // Check duration length.
       let duration = document.getElementById('duration' + task_index)
       // If duration is more than 7 hours
-      if (!Number.isInteger(props.updated_tasks[task_index]['duration']) || props.updated_tasks[task_index]['duration'] > 7*60 ||
+      if (!Number.isInteger(parseInt(props.updated_tasks[task_index]['duration'])) || props.updated_tasks[task_index]['duration'] > 7*60 ||
           props.updated_tasks[task_index]['duration'] <= 0) {
         if (props.updated_tasks[task_index]['duration'] <= 0)
           duration.childNodes[duration.childNodes.length-1].textContent = 'Please use a positive number';

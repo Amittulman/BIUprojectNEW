@@ -6,7 +6,6 @@
     background-color: #fefcf3;
     white-space:pre-wrap;
     user-select: none;
-/*    lala*/
 }
 
 .category_button {
@@ -35,6 +34,7 @@
 .col-8_start {
     animation: appear_from_right 0.7s cubic-bezier(.55,.19,.46,1.06), opac 1.5s ease-out;
 }
+
 .disappear {
     animation: disappear 0.4s ease;
     opacity: 1;
@@ -79,7 +79,6 @@
     transition: background-color 0.4s ease-out, margin-left 0.4s ease-out, opacity 0.4s ease-out, visibility 0.4s ease-out;
     opacity: 1;
     visibility: visible;
-    /*margin-left: -30px;*/
     margin-left: 2px;
     user-select: none;
 }
@@ -103,18 +102,15 @@
 #site_top {
     position: -webkit-sticky;
     position: sticky;
-    background-color: white;
     z-index: 2;
     margin-left: 10px;
     height: auto;
     background-color: #fefcf3;
-/*    lalala*/
 }
 
 #site_body {
     display: flex !important;
 }
-
 
 #todo_component, #schedule_component {
     position: absolute;
@@ -151,7 +147,6 @@
     z-index: 10000;
     background: url("../images/left_sign.svg") 110% 50% no-repeat;
     cursor: pointer;
-
 }
 
 .show_hide_todo {
@@ -197,11 +192,6 @@
     content: 'type a';
     transition: background-color 0.2s ease;
     opacity: 1;
-}
-
-.type_a:before {
-    /*content:'TYPE A';*/
-    /*transition: opacity 0.2s ease;*/
 }
 
 @keyframes slide-aside_a {

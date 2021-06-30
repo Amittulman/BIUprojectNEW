@@ -10,41 +10,42 @@ import '../components/App.css';
 const slots_per_day = 24*2
 
 const App = () => {
-    const [tasks, setTasks] = useState([])
-    const [tasksID, setTaskID] = useState([])
-    const [toOptimize, setToOptimize] = useState(false)
-    const [categoryTrigger, setCategoryTrigger] = useState(false)
-    const [categoryTable, setCategoryTable] = useState([])
-    const [categories, setCategories] = useState([]);
-    const [rememberMe, setRememberMe] = useState();
-    const [option, setOption] = useState(0)
+    const [tasks, setTasks] = useState([]) // Dictionary of all user tasks, received from DB.
+    const [tasksID, setTaskID] = useState([]) // List of all tasks ids, needed to put in schedule.
+    const [categoryTrigger, setCategoryTrigger] = useState(false) // A flag for category change(add/mod/rem).
+    const [categoryTable, setCategoryTable] = useState([]) // A list of all categories for each table cell.
+    const [categories, setCategories] = useState([]); // A list of all user's categories (types).
+    const [rememberMe, setRememberMe] = useState(); // A state for remember me checkbox.
+    const [option, setOption] = useState(0) // A chosen color to paint slots (resembles a category).
+    // A state for weekdays. changes according to screen size.
     const [days, setDays] = useState(['Time', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'])
-    const [todoMinimized, setTodoMinimized] = useState(false);
-    const [todoIsLoaded, setTodoIsLoaded] = useState(false);
-    const [updated_tasks, setUpdatedTasks] = useState({})
-    const updatedRef = useRef();
+    const [todoMinimized, setTodoMinimized] = useState(false); // State for size of to do list.
+    const [todoIsLoaded, setTodoIsLoaded] = useState(false); // State for loaded status of to do list.
+    const [updated_tasks, setUpdatedTasks] = useState({}) // Dictionary of all updated tasks (add/mod/rem).
+    const updatedRef = useRef(); // Gives updated value of updated tasks.
     updatedRef.current = updated_tasks;
-    const optionRef = useRef();
+    const optionRef = useRef(); // Gives updated value of chosen category option.
     optionRef.current = option;
-    const taskRef = useRef();
+    const taskRef = useRef(); // Gives updated tasks.
     taskRef.current = tasks;
-    const [scheduleTrigger, setScheduleTrigger] = useState(false)
-    const [table1, setTable] = useState([])
-    const [scheduleTable, setScheduleTable] = useState([])
-    const schedRef = useRef()
+    const [scheduleTrigger, setScheduleTrigger] = useState(false) // State for change in schedule (dragging).
+    const [table1, setTable] = useState([]) //TODO remove
+    const [scheduleTable, setScheduleTable] = useState([]) // A list of all table elements.
+    const schedRef = useRef() // Gives updated schedule elements.
     schedRef.current = scheduleTable;
-    const [ categoryTypes, setCategoryTypes] = useState(Array(slots_per_day*7).fill(-1))
-    const timeRef = useRef();
+    // A list with all category types.
+    const [categoryTypes, setCategoryTypes] = useState(Array(slots_per_day*7).fill(-1))
+    const timeRef = useRef(); // Gives updated category types elements.
     timeRef.current =  categoryTypes;
+    // A state of all schedule jsx elements (how they appear on screen).
     const [scheduleJsx, setScheduleJsx] = useState([])
-    const [userID, setUserID] = useState()
-    const [categoryChanged, setCategoryChanged] = useState(false);
+    const [userID, setUserID] = useState() // State of user id (info).
+    const [categoryChanged, setCategoryChanged] = useState(false); // State for changing categories.
+    // State for this moment (this week=this moment, next week=sunday, 00:00).
     const [scheduleMoment, setScheduleMoment] = useState();
-    const [nextWeekChanged, setNextWeekChanged] = useState(false);
 
     // On main page load, get userID and "remember me" from local storage.
     useEffect(() => {
-        console.log('kfar kasem ', document.getElementById('schedule_for_next_week_text'))
         window.addEventListener('click', detectOutsideClicking)
         console.log('useid ', localStorage.getItem('userID'))
         console.log('rememberme ', localStorage.getItem('rememberMe'))
@@ -54,8 +55,10 @@ const App = () => {
         let date = new Date();
         let slot = timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
         setScheduleMoment(slot);
-        // localStorage.setItem('nextWeek', 'f')
+        // In case the element does not contain any text (login phase for exapmle).
         if (document.getElementById('schedule_for_next_week_text') === null) return null;
+
+        // update relevant time according to local storage.
         if (localStorage.getItem('nextWeek') === null || localStorage.getItem('nextWeek').includes('f')) {
             let slot = timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
             setScheduleMoment(slot);
@@ -68,13 +71,6 @@ const App = () => {
             document.getElementById('schedule_for_next_week_text').innerText = 'Next Week'
         }
     }, [])
-
-    useEffect(() => {
-        let x = categoryTypes
-        // debugger
-    }, [categoryTypes])
-
-
 
     // Hides a pinned popup.
     const checkClick = (e,i) => {
@@ -106,7 +102,6 @@ const App = () => {
 
     // Calling trig API, with current day as beginning slot parameter.
     const taskIDTrig = () => {
-        let date = new Date()
         trigTasks(scheduleMoment)
         return tasksID
     }
@@ -179,9 +174,8 @@ const App = () => {
         }, 3000)
     }
 
+    // Remove red marking on all elements and tasks.
     const unmarkTasksWithErrors = () => {
-        let i;
-
         for (let id in taskRef.current) {
             let recurrences = document.getElementById('recurrings' + id);
             let constraints = document.getElementById('constraints' + id);
@@ -222,7 +216,6 @@ const App = () => {
 
     // Trig API. Receiving calculated schedule.
     const trigTasks = (slot) => {
-
         fetch("http://localhost:5000/tasks/trig/"+userID+"/"+slot)
             .then(res => res.json())
             .then(
@@ -256,13 +249,15 @@ const App = () => {
         { 'opacity': 0, transform: 'translateY(50px)', visibility:'hidden', zIndex:'0'}
     ], { duration: 500, fill: 'forwards', easing: 'ease-in'}];
 
-    // TODO - check if redundant
+    // Actions taken when submitting categories changes.
     const handleCategoriesSubmission = () => {
+        // Removing deleted categories from DB.
         removeCategories()
         setScheduleJsx(initialSchedule())
         setScheduleTrigger(!scheduleTrigger)
     }
 
+    // Removing category from DB.
     const removeCategories = () => {
         fetch('http://localhost:5000/tasks/DeleteUserCategories/'+userID, {
             method: 'DELETE',
@@ -273,48 +268,38 @@ const App = () => {
         })
             .then((response) => {
                 if (response.status === 200) {
-                    //debugger
-                    //console.log("User's tasks hes been removed successfully.");
-                    // setCategoryTypes([])
                     PostCategorySlots()
-                    // setCategoryTable()
-                } else {
-                    //console.log("Request status code: " + response.status);
                 }
-                //console.log('promise of remove: ',response.text())
             })
             .catch((error) => {
                 console.error("Error while submitting task: " + error.message);
             });
     }
 
-    //TODO - check how to send the data without receiving an error.
-    const PostCategorySlots = (event) => {
-        debugger
-
+    // Post updated categories.
+    const PostCategorySlots = () => {
+        console.log('slots sent ', categoryTypes)
         fetch('http://localhost:5000/tasks/PostCategorySlots/'+userID, {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify( categoryTypes)
+            body: JSON.stringify(categoryTypes)
         })
             .then((response) => {
-                // setCategoryTable(response)
                 if (response.status === 201) {
-                    //console.log("User's tasks hes been sent successfully.");
+                    console.log("User's tasks hes been sent successfully.");
                 } else {
-                    //console.log("User's tasks hes been sent. HTTP request status code: " + response.status);
+                    console.error("User's tasks hes been sent. HTTP request status code: " + response.status);
                 }
-                //console.log(response.text())
             })
             .catch((error) => {
                 console.error("Error while submitting task: " + error.message);
             });
     }
 
-
+    // Closing task pane (minimizing).
     const closeTaskPane = () => {
         let todo_element = document.getElementById('todo_parent')
         let schedule_element = document.getElementById('schedule_parent')
@@ -333,11 +318,13 @@ const App = () => {
         }
     }
 
+    // Creating initial table jsx of time in schedule.
     const initialSchedule = () => {
         let jsx = []
         let hour;
         let minute = 0;
         let content = []
+        // creating value for each time of day and updating in the relevant slot..
         for (let j = 0; j < slots_per_day; j++) {
             hour = Math.floor(j / 2);
             minute = 30 * (j % 2);
@@ -349,11 +336,12 @@ const App = () => {
         return jsx
     }
 
+    // Fix representation, according to screen size.
     const fixPresentation = (mobile) => {
         let sched = document.getElementById('schedule_parent')
         let todo = document.getElementById('todo_component')
-        // let todo_parent = document.getElementById('todo_parent')
         if (!sched || !todo) return
+        // Suited for mobile.
         if (mobile.matches){
             sched.className = 'collapsed_row2'
             todo.className = 'sticky-top row tst2'
@@ -363,36 +351,33 @@ const App = () => {
             todo.className = 'sticky-top row'
             setDays(['Time', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'])
         }
-        //TODO - move cat brush to the left, change arrow direction, when expanding it open todo, make sure todo looks
-        // good when opening it (above sched).
     }
 
+    // Dynamically resizing screen.
     const resizeResponse = () => {
         let mobile = window.matchMedia('(max-width: 800px)')
         fixPresentation(mobile)
         mobile.addEventListener('load',fixPresentation)
     }
 
+    // Main website page.
     const mainPage = () => {
-        // //////debugger
-
-        // console.log('main page, userid ', userID)
         window.onresize = resizeResponse;
        return (
            <div className="App d-flex flex-column">
-               <SiteTop setScheduleJsx={setScheduleJsx} scheduleJsx={scheduleJsx} timeRef={timeRef} setNextWeekChanged={setNextWeekChanged} setScheduleMoment={setScheduleMoment} timeToSlot={timeToSlot} setCategoryChanged={setCategoryChanged} categories={categories} setCategories={setCategories} optionRef={optionRef} setCategoryTypes={setCategoryTypes}  categoryTypes={categoryTypes} userID={userID} setUserID={setUserID} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setOption={setOption}/>
+               <SiteTop setScheduleJsx={setScheduleJsx} scheduleJsx={scheduleJsx} timeRef={timeRef} setScheduleMoment={setScheduleMoment} timeToSlot={timeToSlot} setCategoryChanged={setCategoryChanged} categories={categories} setCategories={setCategories} optionRef={optionRef} setCategoryTypes={setCategoryTypes}  categoryTypes={categoryTypes} userID={userID} setUserID={setUserID} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setOption={setOption}/>
                <div id='site_body' className='row flex-grow-1'>
                    {/*<div id='show_hide_todo' className='show_hide_todo' onClick={closeTaskPane}/>*/}
                    <div id='todo_parent' className='col-4'>
                        <div id='todo_component' className='sticky-top row'>
                        <div className='tst col-12'>
-                           <Todo setCategoryChanged={setCategoryChanged} nextWeekChanged={nextWeekChanged} scheduleMoment={scheduleMoment} categoryChanged={categoryChanged} categories={categories} setUpdatedTasks={setUpdatedTasks} updated_tasks={updated_tasks} tasksID={tasksID} timeToSlot={timeToSlot} userID={userID} isLoaded={todoIsLoaded} setIsLoaded={setTodoIsLoaded} errorAnimation={errorAnimation} endErrorAnimation={endErrorAnimation} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setToOptimize={setToOptimize} updating_tasks={tasks} trigTasks={taskIDTrig} getTasks={taskGetter} setTasks={setTasks}/>
+                           <Todo setCategoryChanged={setCategoryChanged} scheduleMoment={scheduleMoment} categoryChanged={categoryChanged} categories={categories} setUpdatedTasks={setUpdatedTasks} updated_tasks={updated_tasks} tasksID={tasksID} timeToSlot={timeToSlot} userID={userID} isLoaded={todoIsLoaded} setIsLoaded={setTodoIsLoaded} errorAnimation={errorAnimation} endErrorAnimation={endErrorAnimation} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} updating_tasks={tasks} trigTasks={taskIDTrig} getTasks={taskGetter} setTasks={setTasks}/>
                        </div>
                        </div>
                    </div>
                    <div id='schedule_parent' className='col col-8_start'>
                        <div id='schedule_component'>
-                           <Schedule scheduleMoment={scheduleMoment} days={days} setDays={setDays} categories={categories} setCategories={setCategories} timeToSlot={timeToSlot} userID={userID} categoryTrigger={categoryTrigger} setCategoryTypes={setCategoryTypes}  categoryTypes={categoryTypes} schedRef={schedRef} scheduleTable={scheduleTable} setScheduleTable={setScheduleTable} setScheduleJsx={setScheduleJsx} scheduleJsx={scheduleJsx} initialSchedule={initialSchedule} table1={table1} setTable={setTable} getCategoryTable={categoryTable} setCategoryTable={setCategoryTable} setToOptimize={setToOptimize} toOptimize={toOptimize} tasksID={tasksID} getTasksID={taskIDGetter} trigTasksID={taskIDTrig} updating_tasks={tasks} getTasks={taskGetter} setTasks={setTasks}/>
+                           <Schedule scheduleMoment={scheduleMoment} days={days} setDays={setDays} categories={categories} setCategories={setCategories} timeToSlot={timeToSlot} userID={userID} categoryTrigger={categoryTrigger} setCategoryTypes={setCategoryTypes}  categoryTypes={categoryTypes} schedRef={schedRef} scheduleTable={scheduleTable} setScheduleTable={setScheduleTable} setScheduleJsx={setScheduleJsx} scheduleJsx={scheduleJsx} initialSchedule={initialSchedule} table1={table1} setTable={setTable} getCategoryTable={categoryTable} setCategoryTable={setCategoryTable} tasksID={tasksID} getTasksID={taskIDGetter} trigTasksID={taskIDTrig} updating_tasks={tasks} getTasks={taskGetter} setTasks={setTasks}/>
                            {/*<Categories userID={userID} setCategoryTrigger={setCategoryTrigger} categoryTrigger={categoryTrigger} setScheduleTrigger={setScheduleTrigger} scheduleTrigger={scheduleTrigger} table1={table1} categoryTable={categoryTable} setTable={setTable} optionRef={optionRef} setCategoryTable={setCategoryTable} setCategoryTypes={setCategoryTypes}  categoryTypes={ categoryTypes} initialScedule={initialSchedule} scheduleJsx={scheduleJsx} setScheduleJsx={setScheduleJsx} />*/}
                        </div>
                        <div id='category_component'>
@@ -404,13 +389,12 @@ const App = () => {
        );
     }
 
+    // Routing between login/signup pages to main page.
     return (
         <div className='app-routes'>
-            {/*<Login setUserID={setUserID}/>*/}
             <Switch>
                 <Route path='/mainPage' render={mainPage}/>
                 <Route path='/' component={()=><Login setScheduleMoment={setScheduleMoment} timeToSlot={timeToSlot} rememberMe={rememberMe} setRememberMe={setRememberMe} userID={userID} setUserID={setUserID}/>}/>
-                {/*<Route path='/signup' component={()=><div>HELLO</div>}/>*/}
             </Switch>
         </div>
 

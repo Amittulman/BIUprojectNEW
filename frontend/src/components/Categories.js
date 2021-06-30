@@ -10,7 +10,6 @@ const Categories = (props) => {
 
     useEffect(() => {
         if (props.userID === undefined || props.userID === 'null') return
-        // console.log('FETCH CAT ',  props.userID, props.userID === null, props.userID === 'null')
         getCategories()
         props.setScheduleJsx(props.initialScedule())
     }, [props.userID]);
@@ -21,7 +20,6 @@ const Categories = (props) => {
     }, [props.categoryTypes,props.scheduleTrigger])
 
     const getClass = (number) => {
-        // console.log('DEF')
         switch(number) {
             case 0:
                 return 'type_a'
@@ -60,12 +58,10 @@ const Categories = (props) => {
     }
 
     const dragStart = (event) => {
-        // console.log('start1')
         event.dataTransfer.setData('text/plain', event.target.id);
     }
 
     const allowDropCategory = (event) => {
-        // console.log('ALLOW DROP CATEGORY')
         let ref = props.optionRef.current
         event.preventDefault();
         switch (props.optionRef.current){
@@ -83,14 +79,12 @@ const Categories = (props) => {
                 break;
         }
         let event_slot = event.target.id.split('_')[1]
-        // debugger
         props.categoryTypes[event_slot] = ref
         props.setCategoryTypes(props.categoryTypes)
     }
 
     useEffect(() => {
         props.setCategoryTable( [<table key='category_table' id='category_table'><tbody>{props.scheduleJsx}</tbody></table>])
-
     }, [props.scheduleJsx])
 
     const getCategories = () => {
@@ -103,15 +97,12 @@ const Categories = (props) => {
             .then(res => res.json())
             .then(
                 (result) => {
-                    //console.log(result)
                     if (result['statusCode'] === 500) throw new Error('Internal server error.');
-                    // debugger
                     props.setCategoryTypes(result)
                     props.setCategoryTrigger(true)
-                    // setCategoryTable(result)
                 })
             .catch((error) => {
-                //console.log(error)
+                console.log(error)
             });
     }
     return (<div id='category_component1'>{props.categoryTable}</div>);

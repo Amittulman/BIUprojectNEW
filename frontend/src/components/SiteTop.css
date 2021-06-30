@@ -208,11 +208,11 @@
 .userContainer {
     position: absolute;
     top: 55px;
-    left: 330px;
+    left: 80%;
     width: 220px;
     animation: username_appear 4s ease-in forwards ;
     user-select: none;
-    z-index: 100;
+    z-index: 0;
 }
 @keyframes username_appear {
     0% {

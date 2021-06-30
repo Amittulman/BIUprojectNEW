@@ -74,7 +74,7 @@ const Table = (props) => {
                     if (hebrew)
                         heb_class = 'heb_class'
 
-                    if (today_slot >= (j + (i - 1) * slots_per_day))
+                    if (today_slot >= (j + (i - 1) * slots_per_day) && !(props.scheduleMoment === 0))
                         passed_day = ' passed'
                     let class_name = getClass(props.categoryTypes[slots_per_day * (i - 1) + j])
                     let color = props.categories[dct[class_name.split('_')[1]]]
@@ -382,8 +382,8 @@ const Table = (props) => {
 
         </div>)
     }
-
     return (<div id='schedule_component1'>{task_label()}{props.table1}</div>);
+    // return (<div id='schedule_component1'>{task_label()}{props.scheduleTable}</div>);
     // return (<div id='schedule_component1'>{props.table1}</div>);
 }
 
