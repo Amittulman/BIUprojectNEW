@@ -53,7 +53,7 @@ export class SchedulerService {
     }
 
     // algorithm is running for each priority list separately
-    async calcBackTracking(tasks: Array<Array<Task>>, slots: any): Promise<any> {
+    async calcBackTracking(tasks: Array<Array<Task>>, slots: Array<any>): Promise<any> {
         for(const currPriorityTasks of tasks) {
             if (await this.solveScedule(currPriorityTasks, slots) == false) {
                 console.log("Full Solution does not exist");
@@ -64,7 +64,7 @@ export class SchedulerService {
     }
 
     // backtracking algorithm
-    async solveScedule(tasks: Array<Task>, slots: any): Promise<boolean> {
+    async solveScedule(tasks: Array<Task>, slots: Array<any>): Promise<boolean> {
         if (tasks.length == 0) { // success - no more tasks
             return true;
         }
@@ -89,7 +89,7 @@ export class SchedulerService {
     }
 
     // find all the options to put this task.
-    private async findSpotsForThisTask(task: Task, slots: any) {
+    private async findSpotsForThisTask(task: Task, slots: Array<any>) {
         const numOfSlotsNeeded = Math.ceil(task.duration/30); // calc how many slots this task needs
         let start = 0; // pointer to the start of the sliding window
         let end = 0; // pointer to the end of the sliding window
@@ -114,7 +114,7 @@ export class SchedulerService {
     }
 
     // check if the task compatible to be in this slot (constraints + empty + category)
-    async canScheduleHere(task:Task , slot: number, slots: any) {
+    async canScheduleHere(task:Task , slot: number, slots: Array<any>) {
         const slotIsEmpty = (slots[slot][0] === -1);
         const isRightCategory = (task.category_id === slots[slot][1]);
 
@@ -139,7 +139,7 @@ export class SchedulerService {
     }
 
     // locate the task in the slots array - put the task ID
-    private static async locateTask(spots: any, taskID: any, slots: any) {
+    private static async locateTask(spots: Array<any>, taskID: number, slots: Array<any>) {
         for (const slotNum of spots) {
             slots[slotNum][0] = taskID;
         }
@@ -147,7 +147,7 @@ export class SchedulerService {
     }
 
     // if there is no answer - clear the slots from this task ID
-    private static async removeFromThisSpot(slotsToReset: any, slots: any) {
+    private static async removeFromThisSpot(slotsToReset: any, slots: Array<any>) {
         for (const slotNum of slotsToReset) {
             slots[slotNum][0] = [-1];
         }
@@ -164,7 +164,7 @@ export class SchedulerService {
     }
 
     // check if schedule is full
-    private static async slotsIsFull(slots: any) {
+    private static async slotsIsFull(slots: Array<any>) {
         for(let slotIndex = 0; slotIndex < slots.length; slotIndex++) {
             if(slots[slotIndex][0] == -1) {
                 return false;
@@ -176,12 +176,6 @@ export class SchedulerService {
     //
     private static createSlotsWithCategory(categorySlots: Array<number>, current_time_slot: number) {
         const slots_and_catagory = Array(SLOTS_SIZE);
-
-/*
-        for(let i = 0;i<slots_and_catagory.length;i++) {
-            slots_and_catagory[i] = [-1, 1]
-        }
-*/
 
         // initialize the slots to be [empty, category[
         for (let i = 0; i < categorySlots.length; i++) {
@@ -196,7 +190,7 @@ export class SchedulerService {
     }
 
     // remove the categories. return only the slots to be the algorithm result
-    private static async createSlotsFromResult(resultCalc: any) {
+    private static async createSlotsFromResult(resultCalc: Array<any>) {
         const slots = Array(SLOTS_SIZE);
         for (let i = 0; i < resultCalc.length; i++) {
             slots[i] = resultCalc[i][0];
@@ -261,7 +255,7 @@ export class SchedulerService {
     // Wen: 156-204
     // Th: 204-252
     // Fr: 252 su:300 - 336
-    private static async slotToConstraint(slot: any) {
+    private static async slotToConstraint(slot: number) {
         slot = slot-12; // 12 first slots belong to Saturday night
         const day = Math.floor(slot/48);
         const toMinus = day*48;
@@ -274,7 +268,7 @@ export class SchedulerService {
     }
 
     // tasks with recurring > 1 we want to duplicate
-    private static async createTaskWithDup(tasks: any) {
+    private static async createTaskWithDup(tasks: Array<Task>) {
         const taskWithDuplicate = [];
         for (let taskIndex = 0; taskIndex < tasks.length; taskIndex++) {
             const recForThisTask = tasks[taskIndex].recurrings;
@@ -287,7 +281,7 @@ export class SchedulerService {
     }
 
     // the algorithm doesn't locate same task in the same day
-    private static async checkIfSameTaskThisDay(task:Task , day: number, slots: any) {
+    private static async checkIfSameTaskThisDay(task:Task , day: number, slots: Array<any>) {
         const firstSlotForToday = day*48;
         let downMargin = 12 + firstSlotForToday; // there is a gap for 12 slots
         let upMargin = downMargin + 48;
@@ -306,7 +300,7 @@ export class SchedulerService {
     }
 
     // locate the pin tasks outside of the algorithm
-    private static async putPinnedTasks(pinnedTasks: Array<Task>, slots: any) {
+    private static async putPinnedTasks(pinnedTasks: Array<Task>, slots: Array<any>) {
         for (const task of pinnedTasks) {
             const numOfSlots = Math.ceil(task.duration/30); // calc how many slots the task needs
             for(let i=task.pinned_slot; i < task.pinned_slot + numOfSlots; i++) {
@@ -326,10 +320,35 @@ export class SchedulerService {
 
     // optimizations to the algorithm. we check before sending to calc backtracking, if can be problems with
     // recurring / constraints or categories
-    public async checkTasksErrors(tasks: Array<any>, timeStamp: number, userID : string, categories : Array<number>): Promise<any> {
+    public async checkTasksErrors(tasks: Array<any>, timeStamp: number, userID : string, categories : Array<number>): Promise<Array<any>> {
         const day = Math.floor(timeStamp/48);
         const leftDays = 7-day;
         const problemTasks = [];
+
+
+        let categoriesMap = new Map();
+        categoriesMap.set(-1, 0);
+        categoriesMap.set(0, 0);
+        categoriesMap.set(1, 0);
+        categoriesMap.set(2, 0);
+        categoriesMap.set(3, 0);
+        categoriesMap.set(4, 0);
+        categoriesMap.set(5, 0);
+
+        let categoriesTaskCounterMap = new Map();
+        categoriesTaskCounterMap.set(-1, 0);
+        categoriesTaskCounterMap.set(0, 0);
+        categoriesTaskCounterMap.set(1, 0);
+        categoriesTaskCounterMap.set(2, 0);
+        categoriesTaskCounterMap.set(3, 0);
+        categoriesTaskCounterMap.set(4, 0);
+        categoriesTaskCounterMap.set(5, 0);
+
+        for(let catIndex = timeStamp; catIndex < categories.length; catIndex++) {
+            let cat = categories[catIndex];
+            let newValueForCategory = categoriesMap.get(cat) + 1;
+            categoriesMap.set(cat , newValueForCategory);
+        }
 
         for (let taskIndex = 0; taskIndex < tasks.length; taskIndex++) {
             const tempTask = tasks[taskIndex];
@@ -346,6 +365,9 @@ export class SchedulerService {
             let isCaregoriesEnough = false;
             let counterTodayConstraintsSlots = 0;
             let counterAllConstraintsSlotForCurTask = 0;
+
+            let newValueForCategoryTaskCounter = categoriesTaskCounterMap.get(tempTask.category_id) + numberOfSlotsTaskNeedAllWeek;
+            categoriesTaskCounterMap.set(tempTask.category_id , newValueForCategoryTaskCounter);
 
             if(currentTaskRecurring > leftDays) {
                 //problem with this task - reccuringg
@@ -390,9 +412,7 @@ export class SchedulerService {
                 //problem with this task - constraints
                 tempErrorTask[2] = 1;
             }
-
-            let isConstraintForPartOfTheDayIsCompatible = false;
-            let counterForConstraintsCompatibleWithCategory = 0;
+            
             let constarintsWithCategoreiesByDaysAndParts = [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]];
 
             while (rightPointer < categories.length){
@@ -437,14 +457,34 @@ export class SchedulerService {
             }
 
             if(tempErrorTask[1] != 0 || tempErrorTask[2] != 0 || tempErrorTask[3] != 0) {
+                if(tempErrorTask[2] === 1 && tempErrorTask[3] === 1) {
+                    tempErrorTask[2] = 0;
+                }
                 problemTasks.push(tempErrorTask)
             }
         }
+        let errorCategories = []
+
+
+        for(let indexForMaps = -1; indexForMaps < 6; indexForMaps ++) {
+            let valueTempAllCategories = categoriesMap.get(indexForMaps);
+            let valueTempAllTasksCategiries = categoriesTaskCounterMap.get(indexForMaps);
+
+            if(valueTempAllCategories < valueTempAllTasksCategiries) {
+                errorCategories.push(indexForMaps);
+            }
+        }
+
+        for(let indexErrorCategory = 0; indexErrorCategory < errorCategories.length; indexErrorCategory ++) {
+            let errorTaskWithThisCategory = await SchedulerService.FindTaskWithThisCategory(errorCategories[indexErrorCategory], tasks);
+            problemTasks.push([errorTaskWithThisCategory.task_id,0,0,1]);
+        }
+
         return problemTasks;
     }
 
     // get slot and jump from current day to the next
-    private static async jumpNextDay(curSlot: number): Promise<any> {
+    private static async jumpNextDay(curSlot: number): Promise<number> {
         const day = Math.floor(curSlot/48);
         return (day + 1) * 48;
     }
@@ -466,5 +506,14 @@ export class SchedulerService {
         let partOftheDay = await SchedulerService.convertSlotToPartOfDay(slot);
         let curConstraints = tempTask.constraints;
         return curConstraints[day][partOftheDay] === 1;
+    }
+
+    private static async FindTaskWithThisCategory(categoryProblem: string, tasks: Array<Task>) {
+        // find an appropriate task
+        for(let indexTask = 0; indexTask < tasks.length; indexTask ++) {
+            if(tasks[indexTask].category_id === Number(categoryProblem)) {
+                return tasks[indexTask];
+            }
+        }
     }
 }
