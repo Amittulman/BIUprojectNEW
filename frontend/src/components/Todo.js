@@ -616,7 +616,9 @@ const Todo = (props) => {
       // let temp_task = document.getElementById('title_textbox' + task_index)
       let title_item = document.getElementById('task_title' + task_index)
       // If title is too long
-      if (props.updated_tasks[task_index]['task_title'].length > 30) {
+      if (props.updated_tasks[task_index]['task_title'].length > 30 || props.updated_tasks[task_index]['task_title'].length === 0) {
+        if (props.updated_tasks[task_index]['task_title'].length === 0)
+          title_item.childNodes[title_item.childNodes.length-1].textContent = 'Title cannot be empty';
         // temp_task.classList.add('task_error')
         title_item.classList.add('task_error')
         task_err = true
