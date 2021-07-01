@@ -367,7 +367,7 @@ const Table = (props) => {
         if (e.target.offsetTop-elm.clientHeight >= 24)
             elm.style.top = e.target.offsetTop-elm.clientHeight+'px';
         else
-            elm.style.top = e.target.offsetTop+elm.clientHeight-4+'px';
+            elm.style.top = e.target.offsetTop+e.target.offsetHeight+'px';
         elm.style.animation = 'label_appear 1s';
         elm.className = 'task_label'
     }
