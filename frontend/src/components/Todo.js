@@ -427,8 +427,11 @@ const Todo = (props) => {
     }
     let task_container = <div style={{zIndex:100000-index}} key={'task_container'+index} id={'task_container'+index} className={'task_container'+animation} >{[sign, pastDue, task,trash_bin]}</div>
     containerRef.current = task_container
-    if (add === true)
-      setTasksJsx(prevArr => [...prevArr,task_container])
+    if (add === true) {
+      let task_container_height = document.getElementById('container').scrollHeight
+      document.getElementById('container').scrollTo({top: task_container_height, behavior:'smooth' })
+      setTasksJsx(prevArr => [...prevArr, task_container])
+    }
     setTaskNumber(task_number+1)
     return task_container;
   }
