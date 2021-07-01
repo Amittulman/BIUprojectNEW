@@ -358,10 +358,12 @@ const Table = (props) => {
         task_label_urgency.textContent = '• '+urgencies[task['priority']]+'urgent';
         task_label_duration.textContent = '• '+task['duration']/60+' hours';
         elm.style.position = 'absolute';
+        console.log('1', e.target.getBoundingClientRect().x + e.target.getBoundingClientRect().width+(elm.clientWidth/2) )
+        console.log('2',window.innerWidth)
         if (e.target.getBoundingClientRect().x + e.target.getBoundingClientRect().width+(elm.clientWidth/2) < window.innerWidth)
             elm.style.left = e.target.offsetLeft-(e.target.offsetWidth/2)+'px';
         else
-            elm.style.left = e.target.offsetLeft-(e.target.offsetWidth)-10+'px';
+            elm.style.left = e.target.offsetLeft-(elm.clientWidth)+e.target.offsetWidth+'px';
         if (e.target.offsetTop-elm.clientHeight >= 24)
             elm.style.top = e.target.offsetTop-elm.clientHeight+'px';
         else
