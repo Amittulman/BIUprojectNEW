@@ -5,7 +5,6 @@ import { Link, useLocation, useHistory } from 'react-router-dom';
 import { TransitionGroup, CSSTransition} from "react-transition-group";
 import siteLogo from '../images/BEEZEELOGO.png';
 
-// import 'bcrypt'
 const bcryptjs = require('bcryptjs');
 
 const Login = (props) => {
@@ -13,51 +12,25 @@ const Login = (props) => {
     const [loginUserClicked, setLoginUserClicked] = useState(false);
     const [loginPassClicked, setLoginPassClicked] = useState(false);
     const [rePassClicked, setRePassClicked] = useState(false);
-    // const [emailClicked, setEmailClicked] = useState(false);
     const [signUpUserClicked, setSignUpUserClicked] = useState(false);
     const [signUpPassClicked, setSignUpPassClicked] = useState(false);
     const [loginAnswer, setLoginAnswer] = useState();
     const [signUpAnswer, setSignUpAnswer] = useState();
-    const [loggedIn, setLoggedIn] = useState(false);
     const history = useHistory();
     const login_userNode = useRef();
     const login_passNode = useRef();
     const signup_userNode = useRef();
     const signup_passNode = useRef();
     const signup_rePassNode = useRef();
-    // const signup_emailNode = useRef();
 
-
+    // Logging in based on existence of user credentials and "rememeber me".
     useEffect(() => {
-        let date = new Date();
-        // let slot = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
-        // props.setScheduleMoment(slot);
-        // localStorage.setItem('nextWeek', 'f')
-        // if (localStorage.getItem('nextWeek') === null || localStorage.getItem('nextWeek') === 'f') {
-        //     let date = new Date();
-        //     let slot = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
-        //     props.setScheduleMoment(slot);
-        //     localStorage.setItem('nextWeek', 'f')
-        // }
-        // else {
-        //     props.setScheduleMoment(0);
-        // }
         if (localStorage.getItem('rememberMe') === 'true' && localStorage.getItem('userID') > 0) {
-            // console.log('YUPS')
             history.push('/mainPage')
         }
     }, [])
 
-    useEffect(() => {
-        // console.log('login user cliced: ', loginUserClicked)
-    }, [loginUserClicked])
-
-
-    const loginAppearAnimation = [[
-        { 'opacity': 0, 'visibility': 'none'},
-        { 'opacity': 1, 'visibility': 'visible'}
-    ], {duration: 350, fill: 'forwards', easing: 'ease-in'}];
-
+    // Highlighting login page text boxes.
     useEffect(() => {
         // add when mounted
         document.addEventListener("mousedown", highlightTextBox);
@@ -69,7 +42,6 @@ const Login = (props) => {
 
     // When login value changes (after pressing 'log in' with credentials).
     useEffect(() => {
-        console.log('LOGIN ANSWER ', loginAnswer)
         let username = document.getElementById('username')
         let password = document.getElementById('password')
         if (loginAnswer === undefined) return
@@ -79,38 +51,32 @@ const Login = (props) => {
         else
             loginAnswer[1] = 'f';
         let next_week = loginAnswer[1];
-        let text_to_client;
-        ////////debugger
+        // Handling user's credentials correctness.
         switch(userID) {
+            // Wrong username
             case -1:
-                text_to_client = 'Wrong username.';
                 removeInputError(password)
                 showInputError(username)
                 break;
+            // Wrong password
             case -2:
-                text_to_client = 'Wrong password';
                 removeInputError(username)
                 showInputError(password)
                 break;
             default:
                 removeInputError(username);
                 removeInputError(password);
-                text_to_client = 'Success!';
                 props.setUserID(userID);
                 props.setRememberMe(document.getElementById('remember_me_input').checked);
                 localStorage.setItem('userID', userID);
-                // console.log('this will be added: ', document.getElementById('remember_me_input').checked)
                 localStorage.setItem('rememberMe', document.getElementById('remember_me_input').checked === true)
-
+                // Checking if new logging in is a new week (considering previously clicking on "next week").
                 let date = new Date();
-                let x = parseInt(props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes()))
-                let y = parseInt(localStorage.getItem('nextWeek').split('_')[1])
-
                 let slot = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
                 if (parseInt(props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())) < parseInt(localStorage.getItem('nextWeek').split('_')[1])) {
                     props.setScheduleMoment(slot);
                 }
-
+                // Update week choice based on response data.
                 localStorage.setItem('nextWeek', next_week);
                 if (next_week === 't') {
                     props.setScheduleMoment(0);
@@ -120,37 +86,35 @@ const Login = (props) => {
 
                 break;
         }
-        // console.log(text_to_client)
     },[loginAnswer])
 
     //When sign up value changes
     useEffect(() => {
         if (signUpAnswer === undefined) return
-        let text_to_client;
         let username = document.getElementById('username')
+        // Handling user's credentials correctness.
         switch(signUpAnswer) {
+            //Error in username (already taken)
             case -1:
-                text_to_client = 'Username already taken.';
                 markAsError(true, username)
                 showInputError(username)
                 break;
+            // Connection error/other error
             case -2:
-                text_to_client = 'An error occurred. Please try again late.';
                 removeInputError(username)
                 break;
+            // Successful login.
             default:
                 removeInputError(username)
-                // TODO change f to storage value check
                 let date = new Date();
                 let now = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
                 localStorage.setItem('nextWeek', 'f_'+now);
-                text_to_client = 'Signed up successfully.';
                 props.setUserID(signUpAnswer);
                 break;
         }
-        // console.log(text_to_client)
     }, [signUpAnswer])
 
+    //Unmarking login fields.
     const unmarkLoginFields = () => {
         login_passNode.current.childNodes[1].classList.remove('input_clicked')
         login_userNode.current.childNodes[1].classList.remove('input_clicked')
@@ -158,54 +122,55 @@ const Login = (props) => {
         setLoginUserClicked(false)
     }
 
+    //Marking login fields.
     const unmarkSignUpFields = () => {
-        // signup_emailNode.current.childNodes[1].classList.remove('input_clicked')
         signup_rePassNode.current.childNodes[1].classList.remove('input_clicked')
         signup_passNode.current.childNodes[1].classList.remove('input_clicked')
         signup_userNode.current.childNodes[1].classList.remove('input_clicked')
         setSignUpPassClicked(false)
         setSignUpUserClicked(false)
-        // setEmailClicked(false)
         setRePassClicked(false)
     }
 
+    // Highlighting text boxes.
     const highlightTextBox = (e) => {
         if(!signup_passNode.current && !login_passNode.current) return
-        // if (e.target.className !== 'signing_up' && e.target.className !== 'log_in') return
         if (!!login_userNode.current)
             unmarkLoginFields()
         if (!!signup_rePassNode.current)
             unmarkSignUpFields()
         switch (e.target) {
+            //Clicking on login username.
             case login_userNode.current && login_userNode.current.childNodes[3]:
                 login_userNode.current.childNodes[1].classList.add('input_clicked')
                 setLoginUserClicked(true);
                 break;
+            // Clicking on login pass.
             case login_passNode.current && login_passNode.current.childNodes[3]:
                 login_passNode.current.childNodes[1].classList.add('input_clicked')
                 setLoginPassClicked(true);
                 break;
+            // Clicking username on signup.
             case signup_userNode.current && signup_userNode.current.childNodes[3]:
                 signup_userNode.current.childNodes[1].classList.add('input_clicked')
                 setSignUpUserClicked(true);
                 break;
+            // Clicking on password on signup.
             case signup_passNode.current && signup_passNode.current.childNodes[3]:
                 signup_passNode.current.childNodes[1].classList.add('input_clicked')
                 setSignUpPassClicked(true);
                 break;
+            // Clicking on re-password on signup.
             case signup_rePassNode.current && signup_rePassNode.current.childNodes[3]:
                 signup_rePassNode.current.childNodes[1].classList.add('input_clicked')
                 setRePassClicked(true);
                 break;
-            // case signup_emailNode.current && signup_emailNode.current.childNodes[3]:
-            //     signup_emailNode.current.childNodes[1].classList.add('input_clicked')
-            //     setEmailClicked(true);
-            //     break;
             default:
                 break;
         }
     }
 
+    //Checking login input. If correct, send it.
     const checkLoginInputAndSend = () => {
         let input_indicator = true
         let username = document.getElementById('username_text')
@@ -248,12 +213,10 @@ const Login = (props) => {
                 name2 = element.id + '_input_error_signup'
         }
         if (error) {
-            // ////debugger
             document.getElementById(name).className = 'error_sign'
             if (location.pathname === '/signup') {
                 document.getElementById(name2).textContent = msg
             }
-            // document.getElementById(name).textContent = 'msgmsg'
         } else {
             document.getElementById(name).className = 'no_error_sign'
             if (location.pathname === '/signup')
@@ -266,8 +229,6 @@ const Login = (props) => {
         let username = document.getElementById('username_text')
         let password = document.getElementById('password_text')
         let confirmPassword = document.getElementById('confirm_password_text')
-        // ////////debugger
-        // let email = document.getElementById('email_text')
         // Removing all previous error tooltips.
         removeInputError(document.getElementById('username'))
         removeInputError(document.getElementById('password'))
@@ -294,7 +255,6 @@ const Login = (props) => {
         }
         //validating username
         if (username.value.length > 12 || username.value.length < 3) {
-            // ////////debugger
             markAsError(true, username, 'Please use 4-8 characters')
             let user = document.getElementById('username')
             showInputError(user)
@@ -302,19 +262,9 @@ const Login = (props) => {
         } else {
             markAsError(false, username, 'Username is already taken.')
         }
-        // valid email
-        // if (!email.value.includes('@')) {
-        //     markAsError(true, email)
-        //     showInputError(document.getElementById('email'))
-        //     input_indicator = false
-        // } else {
-        //     markAsError(false, email)
-        // }
-
         // If indicator is true, some fields are not valid, so do not sign up with given data.
         if (input_indicator) {
             const saltRounds= 10
-            let pass = '123'
             bcryptjs.hash(password.value, saltRounds, function (err, hash) {
                 let apiParams = {"user_name":username.value, "user_pass": hash, "next_week":false}
                 APICall('postnewuser', apiParams)
@@ -323,6 +273,7 @@ const Login = (props) => {
         }
     }
 
+    // Using API for signup and login phase.
     const APICall = (requestName, apiParams) => {
         fetch('http://localhost:5000/tasks/'+requestName+'/', {
             method: 'POST',
@@ -341,7 +292,6 @@ const Login = (props) => {
                         bcryptjs.compare(apiParams['user_pass'], response['user_pass'], function(err, result) {
                             if (result) {
                                 console.log('response after success: ', response['user_id'])
-                                    setLoggedIn(true)
                                     setLoginAnswer(undefined)
                                     setLoginAnswer([response['user_id'], response['next_week']])
                                     history.push('/mainPage')
@@ -370,12 +320,9 @@ const Login = (props) => {
 
                                 return;
                             }
-                        // //////debugger
                         setSignUpAnswer(undefined)
                         setSignUpAnswer(response['user_id'])
                         history.push('/')
-                        // if (response['user_id'] > 0)
-                        //     {}
                     }
                     return response;
                 } else {
@@ -387,17 +334,17 @@ const Login = (props) => {
             });
     }
 
+    // Showing error when erroneous input was entered.
     const showInputError = (e) => {
         debugger
-        // e.target.parentNode.childNodes[2].classList.replace('hidden_input_error', 'input_error')
         if (e.target !== undefined)
             e.target.parentNode.childNodes[2].classList.replace('hidden_input_error', 'input_error')
         else
             e.childNodes[2].classList.replace('hidden_input_error', 'input_error')
     }
 
+    // Removing the input error.
     const removeInputError = (e) => {
-        // console.log(e.target.parentNode.childNodes[2])
         if (e.target !== undefined)
             setTimeout(() => {
                 e.target.parentNode.childNodes[2].classList.replace('input_error', 'hidden_input_error')

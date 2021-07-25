@@ -19,6 +19,7 @@ const Categories = (props) => {
         markCategories()
     }, [props.categoryTypes,props.scheduleTrigger])
 
+    //Getting class number by its index number.
     const getClass = (number) => {
         switch(number) {
             case 0:
@@ -38,6 +39,7 @@ const Categories = (props) => {
         }
     }
 
+    //Creating table jsx elements and marking each slot, considering category type.
     const markCategories = () => {
         return;
         if (!props.scheduleJsx.length) return
@@ -57,10 +59,12 @@ const Categories = (props) => {
         props.setCategoryTable(empty_table)
     }
 
+    // Start drag event handler.
     const dragStart = (event) => {
         event.dataTransfer.setData('text/plain', event.target.id);
     }
 
+    //On drag event handler.
     const allowDropCategory = (event) => {
         let ref = props.optionRef.current
         event.preventDefault();
@@ -83,6 +87,7 @@ const Categories = (props) => {
         props.setCategoryTypes(props.categoryTypes)
     }
 
+    //Whenever something have changed in schedule table, update it in UI.
     useEffect(() => {
         props.setCategoryTable( [<table key='category_table' id='category_table'><tbody>{props.scheduleJsx}</tbody></table>])
     }, [props.scheduleJsx])
@@ -92,6 +97,7 @@ const Categories = (props) => {
         props.setTable(props.categoryTable)
     }
 
+    // Fetching categories list from DB.
     const fetchCategories = (type) => {
         fetch("http://localhost:5000/tasks/"+type+"/"+props.userID)
             .then(res => res.json())

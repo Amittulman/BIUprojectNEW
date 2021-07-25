@@ -121,7 +121,6 @@ input:focus {
     border-radius: 15px;
     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
     padding: 5px 10px;
-    /*margin-right: 10px;*/
     width: 200px;
     box-sizing: border-box;
     transition: background-color 0.2s linear;

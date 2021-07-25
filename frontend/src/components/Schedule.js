@@ -10,21 +10,22 @@ const Table = (props) => {
     tasksRef.current = tasks;
     const [tasksID, setTasksID] = useState([])
     const [tasksDict, setTasksDict] = useState([])
-    const [draggedGroup, setDraggedGroup] = useState([])
     const prevs = useRef({tasksID, tasksDict, tasks})
 
+    // Auto scrolling schedule to current date and time slot.
     useEffect(() => {
-        setTimeout(() => {
-            scrollToThisMoment();
-        }, 400)
+        // setTimeout(() => {
+        //     scrollToThisMoment();
+        // }, 800)
     }, [])
 
+    // Retrieve tasks id list when page loads.
     useEffect(() => {
-        console.log('In sched, user id: ', props.userID)
         if (props.userID === undefined || props.userID === null || props.userID === 'null') return
         props.getTasksID();
     }, [props.userID])
 
+    //Update tasks list.
     useEffect(() => {
         if (props.updating_tasks.length === 0) return
         setTasks(props.updating_tasks)
@@ -39,41 +40,39 @@ const Table = (props) => {
     }, [tasks])
 
     useEffect(() => {
-        // ////debugger
         setTasksID(props.tasksID)
     }, [props.tasksID, tasksID])
 
+    // Adding schedule table with its content.
     useEffect(() => {
-
-         //debugger
         if (props.categories === undefined) return;
         let dct = {'a':0, 'b':1,'c':2,'d':3,'e':4,'f':5};
-        let date = new Date();
         let today_slot = props.scheduleMoment;
-        console.log('today is: ', today_slot)
         let passed_day = ''
-        // ////debugger
         if (tasksID[0] === undefined) return;
-        // ////debugger
-        //console.log(props.categoryTrigger)
         if (!props.categoryTrigger) return
         let time_jsx = props.initialSchedule()
         jsx = []
+        // Only if there was a change in either tasks ids or tasks.
         if (prevs.current.tasksID.toString() !== tasksID.toString() && prevs.current.tasks.toString() !== tasks.toString()) {
+            // Update all tasks slots.
             for (let i = 0; i < slots_per_day * 7; i++) {
                 if (tasks[tasksID[i]])
                     tasks_id[i] = tasks[tasksID[i]]['task_title']
             }
+            // Columns
             for (let i = 1; i < 8; i++) {
                 let content = [];
+                // Rows
                 for (let j = 0; j < slots_per_day; j++) {
                     passed_day = ''
+                    // Get data from task_id content
                     let data = tasks_id[j + (i - 1) * slots_per_day]
+                    //
                     let hebrew = (/[\u0590-\u05FF]/).test(data)
                     let heb_class = ''
                     if (hebrew)
                         heb_class = 'heb_class'
-
                     if (today_slot >= (j + (i - 1) * slots_per_day) && !(props.scheduleMoment === 0))
                         passed_day = ' passed'
                     let class_name = getClass(props.categoryTypes[slots_per_day * (i - 1) + j])
@@ -109,26 +108,30 @@ const Table = (props) => {
         },(3000))
     }
 
-    let content = [];
     let jsx = [];
-    let morning = new Set()
     let tasks_id = Array(slots_per_day * 7).fill(null);
 
     const scrollToThisMoment = () => {
         let date = new Date()
         let today_slot = props.scheduleMoment;
+        console.log('SAFAMM ', today_slot)
         today_slot -= (Math.ceil(today_slot/slots_per_day)-1) * slots_per_day
         console.log('BOOM! ', today_slot)
-        if (isNaN(today_slot)) {
-            let date = new Date();
+        //if (isNaN(today_slot)) {
+            //let date = new Date();
             today_slot = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
-        }
-        // document.getElementById('schedule_component1').scrollTop += (window.innerHeight * 0.06) * today_slot;
+        //}
         document.getElementById('schedule_component1').scrollTo({top:(window.innerHeight * 0.06) * (today_slot-(48*date.getDay())), behavior:'smooth' })
     }
 
+    useEffect(() => {
+        if (!props.scheduleMoment) return
+        setTimeout(() => {
+            scrollToThisMoment();
+        }, 800)
+    }, [props.scheduleMoment])
+
     const getClass = (number) => {
-        // console.log('ABC')
         switch(number) {
             case 0:
                 return 'type_a'
@@ -165,12 +168,10 @@ const Table = (props) => {
             res.push(toPush);
             index++;
         }
-        setDraggedGroup(res)
         return res
     }
 
     const dragStart = (event) => {
-        // console.log('start2')
         //create an array of all ids in an increasing slots order (starting from event.target.id backward and forward).
         let similarTasks = JSON.stringify(getSimilarTasks(event.target.id))
         //putting it as second parameter in setData.
@@ -189,10 +190,6 @@ const Table = (props) => {
         // do the same for all moved slots.
         event.target.style.boxShadow = 'none';
         event.target.style.transition = 'box-shadow .2s linear';
-    }
-
-    const droppedOnOneCat = () => {
-
     }
 
     const drop = (event) => {
@@ -217,7 +214,6 @@ const Table = (props) => {
             if (ids[0].split('_')[3].startsWith('-1')) return;
             // If out of range for any slot in array, or dropped on an occupied slot, do not drop.
             if (!availableSlots(ids, distance, event)) return
-            // let diff = parseInt(dragged_element.id.split('_')[1]) - parseInt(target_element.id.split('_')[1])
             //Drop all slots with the same ID.
             let tasks_id = tasksID
             for (let i=0; i<ids.length; i++) {
@@ -231,7 +227,6 @@ const Table = (props) => {
                 target_element = document.querySelector('[id^='+target_id+']')
                 // If not an empty slot, not being dropped on an occupied slot and not being dropped to the same slot.
                 if (dragged_element.textContent && target_element !== dragged_element) {
-                    let temp_target_element_text = target_element.textContent
                     // Swapping text contents between source and destination slots.
                     target_element.childNodes[0].textContent = dragged_element.textContent;
                     let src_data = ids[i].split('_')
@@ -247,13 +242,14 @@ const Table = (props) => {
                     target_element.id = (target_element.id.split('_').slice(0,3) + '_' + src_task_id).replaceAll(',','_');
                     setTasksID(tasks_id)
                     slots_to_update.push({'slot_id':src_slot, 'task_id':src_task_id, 'user_id':props.userID, 'new_slot':dest_slot})
+                    props.updatePastDueTasks()
                 }
             }
             updateTasksLocation(slots_to_update)
             // Update new category after dropping task, if was dropped into one.
-            setTimeout(()=> {
-                updateTaskCategory(tasks[target_element.id.split('_')[3]])
-            }, 500)
+            // setTimeout(()=> {
+            //     updateTaskCategory(tasks[target_element.id.split('_')[3]])
+            // }, 500)
             let temp_tasks = {...props.updating_tasks}
             // If task is dragged into a different category slot, change category and send changed to DB.
             if (temp_tasks[ids[0].split('_')[3]]['category_id'] !== parseInt(props.categoryTypes[event.target.id.split('_')[1]])) {
@@ -283,7 +279,6 @@ const Table = (props) => {
                     console.log("User's tasks hes been sent. HTTP request status code: " + response.status);
                     console.log(response.text())
                 }
-                //console.log('respones: ', response)
             })
             .catch((error) => {
                 console.error("Error while submitting task: " + error.message);
@@ -297,7 +292,6 @@ const Table = (props) => {
         // Get category of cell to be dropped in (a/b/c/d/e/slot).
         let dropped_cat = document.querySelector('[id^='+partial_target_id+']').className.split('_')[1]
         if (ids[0].split('_')[3].split('"')[0] === '-1' || ids[0]-distance < 0 || ids[ids.length-1] > slots_per_day*7) return false
-
         // Check all ids drop area
         let i;
         for (i=0;i<ids.length;i++) {
@@ -330,7 +324,6 @@ const Table = (props) => {
                     console.log("User's tasks hes been sent. HTTP request status code: " + response.status);
                     console.log(response.text())
                 }
-                //console.log('respones: ', response)
             })
             .catch((error) => {
                 console.error("Error while submitting task: " + error.message);
@@ -355,15 +348,16 @@ const Table = (props) => {
             task_label_title.style.textAlign = 'left';
             task_label_title.style.paddingRight = '0';
         }
+        // Create task hover label.
         task_label_urgency.textContent = '• '+urgencies[task['priority']]+'urgent';
         task_label_duration.textContent = '• '+task['duration']/60+' hours';
         elm.style.position = 'absolute';
-        console.log('1', e.target.getBoundingClientRect().x + e.target.getBoundingClientRect().width+(elm.clientWidth/2) )
-        console.log('2',window.innerWidth)
+        // If label inside screen boundaries (horizontal).
         if (e.target.getBoundingClientRect().x + e.target.getBoundingClientRect().width+(elm.clientWidth/2) < window.innerWidth)
             elm.style.left = e.target.offsetLeft-(e.target.offsetWidth/2)+'px';
         else
             elm.style.left = e.target.offsetLeft-(elm.clientWidth)+e.target.offsetWidth+'px';
+        // If label inside screen boundaries (vertical).
         if (e.target.offsetTop-elm.clientHeight >= 24)
             elm.style.top = e.target.offsetTop-elm.clientHeight+'px';
         else
@@ -372,12 +366,13 @@ const Table = (props) => {
         elm.className = 'task_label'
     }
 
+    // Hiding task hover label.
     const hide_task_details = () => {
         let elm = document.querySelector('[class^=task_label'+']')
-        elm.style.animation = 'label_disappear 1s';
         elm.className = 'task_label_hidden'
     }
 
+    // Task label (the label which appears on hovering a task on schedule.).
     const task_label = (bool=false) => {
         return (<div className={'task_label_hidden'}>
             <div className={'task_label_title'}/>
@@ -390,8 +385,6 @@ const Table = (props) => {
         </div>)
     }
     return (<div id='schedule_component1'>{task_label()}{props.table1}</div>);
-    // return (<div id='schedule_component1'>{task_label()}{props.scheduleTable}</div>);
-    // return (<div id='schedule_component1'>{props.table1}</div>);
 }
 
 export default Table;

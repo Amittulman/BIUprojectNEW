@@ -16,6 +16,7 @@ const App = () => {
     const [categoryTable, setCategoryTable] = useState([]) // A list of all categories for each table cell.
     const [categories, setCategories] = useState([]); // A list of all user's categories (types).
     const [rememberMe, setRememberMe] = useState(); // A state for remember me checkbox.
+    const [pastDue, setPastDue] = useState({})
     const [option, setOption] = useState(0) // A chosen color to paint slots (resembles a category).
     // A state for weekdays. changes according to screen size.
     const [days, setDays] = useState(['Time', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'])
@@ -33,6 +34,7 @@ const App = () => {
     const [scheduleTable, setScheduleTable] = useState([]) // A list of all table elements.
     const schedRef = useRef() // Gives updated schedule elements.
     schedRef.current = scheduleTable;
+    const [week, setWeek] = useState(false);
     // A list with all category types.
     const [categoryTypes, setCategoryTypes] = useState(Array(slots_per_day*7).fill(-1))
     const timeRef = useRef(); // Gives updated category types elements.
@@ -60,6 +62,7 @@ const App = () => {
 
         // update relevant time according to local storage.
         if (localStorage.getItem('nextWeek') === null || localStorage.getItem('nextWeek').includes('f')) {
+
             let slot = timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
             setScheduleMoment(slot);
             localStorage.setItem('nextWeek', 'f_'+slot)
@@ -114,14 +117,73 @@ const App = () => {
         return tasksID
     }
 
+    //Graying out an element (css design wise)
+    const grayIt = (elm) => {
+        elm.style.pointerEvents = 'none';
+        elm.style.opacity = '0.3';
+    }
+
+    //Graying out an element (css design wise)
+    const ungrayIt = (elm) => {
+        elm.style.pointerEvents = '';
+        elm.style.opacity = '1';
+    }
+
+    // Graying out elements, depending on place clicked.
+    const grayOutElements = (edit_cat=false) => {
+        // If on edit category pane.
+        if (edit_cat) {
+            grayIt(document.getElementById('schedule_parent'));
+            grayIt(document.getElementById('category_send_button'));
+            grayIt(document.getElementById('category_button'));
+            grayIt(document.getElementById('add_category_button'));
+            grayIt(document.getElementById('clear_category_button'));
+            grayIt(document.getElementById('added_button_0'));
+            grayIt(document.getElementById('added_button_1'));
+            grayIt(document.getElementById('added_button_2'));
+            grayIt(document.getElementById('added_button_3'));
+            grayIt(document.getElementById('added_button_4'));
+            grayIt(document.getElementById('added_button_5'));
+        }
+        grayIt(document.getElementById('schedule_for_next_week'));
+        grayIt(document.getElementById('schedule_for_next_week_text'));
+        grayIt(document.getElementById('site_logo'));
+        grayIt(document.getElementById('todo_parent'));
+    }
+
+    // Graying out elements, depending on place clicked.
+    const ungrayOutElements = (icons=false) => {
+        // Ungraying rest of grayed out areas (exiting category editing mode).
+        if (icons) {
+            ungrayIt(document.getElementById('schedule_for_next_week'));
+            ungrayIt(document.getElementById('schedule_for_next_week_text'));
+            ungrayIt(document.getElementById('site_logo'));
+            ungrayIt(document.getElementById('todo_parent'));
+        }
+        ungrayIt(document.getElementById('schedule_parent'));
+        ungrayIt(document.getElementById('add_category_button'));
+        ungrayIt(document.getElementById('clear_category_button'));
+        ungrayIt(document.getElementById('category_send_button'));
+        ungrayIt(document.getElementById('category_button'));
+        ungrayIt(document.getElementById('added_button_0'));
+        ungrayIt(document.getElementById('added_button_1'));
+        ungrayIt(document.getElementById('added_button_2'));
+        ungrayIt(document.getElementById('added_button_3'));
+        ungrayIt(document.getElementById('added_button_4'));
+        ungrayIt(document.getElementById('added_button_5'));
+        ungrayIt(document.getElementById('add_category_button'));
+    }
+
     //Converting time to a slot number.
     const timeToSlot = (day, time, hours=null, minutes=null) => {
         if (hours == null) {
             hours = parseInt(time.substr(0, 2));
             minutes = parseInt(time.substr(3, 2));
         }
+        // Round minutes down.
         if (minutes <= 30 && minutes > 0)
             minutes = 1
+        // Round hour up and minutes down (in case minutes > 30).
         else if (minutes !== 0) {
             hours += 1
             minutes = 0
@@ -222,7 +284,6 @@ const App = () => {
                 (result) => {
                     if (result['statusCode'] === 500) throw new Error('Internal server error.');
                     // If it was not possible to generate schedule.
-                    console.log('HEYYY ', result)
                     if (result[0] === null) {
                         console.error('Error in trig: ', result)
                         showErrorMessage();
@@ -278,7 +339,6 @@ const App = () => {
 
     // Post updated categories.
     const PostCategorySlots = () => {
-        console.log('slots sent ', categoryTypes)
         fetch('http://localhost:5000/tasks/PostCategorySlots/'+userID, {
             method: 'POST',
             headers: {
@@ -336,6 +396,20 @@ const App = () => {
         return jsx
     }
 
+    // Iterate slots and track all past due tasks.
+    const updatePastDueTasks = () => {
+        let todays_slot = scheduleMoment
+        let i = 0;
+        while (i < todays_slot) {
+            if (tasksID[i] !== -1) {
+                let past_due_task_id = tasksID[i]
+                console.log('Past due task is: ', past_due_task_id)
+                setPastDue(data=>({...data,[past_due_task_id]:1}))
+            }
+            i += 1
+        }
+    }
+
     // Fix representation, according to screen size.
     const fixPresentation = (mobile) => {
         let sched = document.getElementById('schedule_parent')
@@ -365,19 +439,19 @@ const App = () => {
         window.onresize = resizeResponse;
        return (
            <div className="App d-flex flex-column">
-               <SiteTop setScheduleJsx={setScheduleJsx} scheduleJsx={scheduleJsx} timeRef={timeRef} setScheduleMoment={setScheduleMoment} timeToSlot={timeToSlot} setCategoryChanged={setCategoryChanged} categories={categories} setCategories={setCategories} optionRef={optionRef} setCategoryTypes={setCategoryTypes}  categoryTypes={categoryTypes} userID={userID} setUserID={setUserID} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setOption={setOption}/>
+               <SiteTop ungrayOutElements={ungrayOutElements} grayOutElements={grayOutElements} setWeek={setWeek} week={week} setScheduleJsx={setScheduleJsx} scheduleJsx={scheduleJsx} timeRef={timeRef} setScheduleMoment={setScheduleMoment} timeToSlot={timeToSlot} setCategoryChanged={setCategoryChanged} categories={categories} setCategories={setCategories} optionRef={optionRef} setCategoryTypes={setCategoryTypes}  categoryTypes={categoryTypes} userID={userID} setUserID={setUserID} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} setOption={setOption}/>
                <div id='site_body' className='row flex-grow-1'>
                    {/*<div id='show_hide_todo' className='show_hide_todo' onClick={closeTaskPane}/>*/}
                    <div id='todo_parent' className='col-4'>
                        <div id='todo_component' className='sticky-top row'>
                        <div className='tst col-12'>
-                           <Todo setCategoryChanged={setCategoryChanged} scheduleMoment={scheduleMoment} categoryChanged={categoryChanged} categories={categories} setUpdatedTasks={setUpdatedTasks} updated_tasks={updated_tasks} tasksID={tasksID} timeToSlot={timeToSlot} userID={userID} isLoaded={todoIsLoaded} setIsLoaded={setTodoIsLoaded} errorAnimation={errorAnimation} endErrorAnimation={endErrorAnimation} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} updating_tasks={tasks} trigTasks={taskIDTrig} getTasks={taskGetter} setTasks={setTasks}/>
+                           <Todo updatePastDueTasks={updatePastDueTasks} pastDue={pastDue} setPastDue={setPastDue} week={week} setWeek={setWeek} setCategoryChanged={setCategoryChanged} scheduleMoment={scheduleMoment} categoryChanged={categoryChanged} categories={categories} setUpdatedTasks={setUpdatedTasks} updated_tasks={updated_tasks} tasksID={tasksID} timeToSlot={timeToSlot} userID={userID} isLoaded={todoIsLoaded} setIsLoaded={setTodoIsLoaded} errorAnimation={errorAnimation} endErrorAnimation={endErrorAnimation} categoryTrigger={categoryTrigger} setCategoryTrigger={setCategoryTrigger} handleCategoriesSubmission={handleCategoriesSubmission} updating_tasks={tasks} trigTasks={taskIDTrig} getTasks={taskGetter} setTasks={setTasks}/>
                        </div>
                        </div>
                    </div>
                    <div id='schedule_parent' className='col col-8_start'>
                        <div id='schedule_component'>
-                           <Schedule scheduleMoment={scheduleMoment} days={days} setDays={setDays} categories={categories} setCategories={setCategories} timeToSlot={timeToSlot} userID={userID} categoryTrigger={categoryTrigger} setCategoryTypes={setCategoryTypes}  categoryTypes={categoryTypes} schedRef={schedRef} scheduleTable={scheduleTable} setScheduleTable={setScheduleTable} setScheduleJsx={setScheduleJsx} scheduleJsx={scheduleJsx} initialSchedule={initialSchedule} table1={table1} setTable={setTable} getCategoryTable={categoryTable} setCategoryTable={setCategoryTable} tasksID={tasksID} getTasksID={taskIDGetter} trigTasksID={taskIDTrig} updating_tasks={tasks} getTasks={taskGetter} setTasks={setTasks}/>
+                           <Schedule updatePastDueTasks={updatePastDueTasks} pastDue={pastDue} setPastDue={setPastDue} scheduleMoment={scheduleMoment} days={days} setDays={setDays} categories={categories} setCategories={setCategories} timeToSlot={timeToSlot} userID={userID} categoryTrigger={categoryTrigger} setCategoryTypes={setCategoryTypes}  categoryTypes={categoryTypes} schedRef={schedRef} scheduleTable={scheduleTable} setScheduleTable={setScheduleTable} setScheduleJsx={setScheduleJsx} scheduleJsx={scheduleJsx} initialSchedule={initialSchedule} table1={table1} setTable={setTable} getCategoryTable={categoryTable} setCategoryTable={setCategoryTable} tasksID={tasksID} getTasksID={taskIDGetter} trigTasksID={taskIDTrig} updating_tasks={tasks} getTasks={taskGetter} setTasks={setTasks}/>
                            {/*<Categories userID={userID} setCategoryTrigger={setCategoryTrigger} categoryTrigger={categoryTrigger} setScheduleTrigger={setScheduleTrigger} scheduleTrigger={scheduleTrigger} table1={table1} categoryTable={categoryTable} setTable={setTable} optionRef={optionRef} setCategoryTable={setCategoryTable} setCategoryTypes={setCategoryTypes}  categoryTypes={ categoryTypes} initialScedule={initialSchedule} scheduleJsx={scheduleJsx} setScheduleJsx={setScheduleJsx} />*/}
                        </div>
                        <div id='category_component'>
