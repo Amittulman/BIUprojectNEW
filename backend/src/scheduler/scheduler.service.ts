@@ -95,7 +95,7 @@ export class SchedulerService {
         return slots;
     }
 
-    // backtracking algorithm
+    //  backtracking algorithm
     async solveScedule(tasks: Array<Task>, slots: Array<number>): Promise<boolean> {
         if (tasks.length == ZERO_TASKS) { // success - no more tasks
             return true;
