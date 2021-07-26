@@ -1,8 +1,9 @@
 import React, {useEffect, useState, useRef} from 'react';
 import './Schedule.css';
 
-const slots_per_day = 24*2
-
+const SLOTS_PER_DAY = 24*2
+const DAILY_HOURS = 24
+const WEEKDAYS = 7
 
 const Table = (props) => {
     const [tasks, setTasks] = useState([])
@@ -11,6 +12,7 @@ const Table = (props) => {
     const [tasksID, setTasksID] = useState([])
     const [tasksDict, setTasksDict] = useState([])
     const prevs = useRef({tasksID, tasksDict, tasks})
+
 
     // Auto scrolling schedule to current date and time slot.
     useEffect(() => {
@@ -56,35 +58,35 @@ const Table = (props) => {
         // Only if there was a change in either tasks ids or tasks.
         if (prevs.current.tasksID.toString() !== tasksID.toString() && prevs.current.tasks.toString() !== tasks.toString()) {
             // Update all tasks slots.
-            for (let i = 0; i < slots_per_day * 7; i++) {
+            for (let i = 0; i < SLOTS_PER_DAY * WEEKDAYS; i++) {
                 if (tasks[tasksID[i]])
                     tasks_id[i] = tasks[tasksID[i]]['task_title']
             }
             // Columns
-            for (let i = 1; i < 8; i++) {
+            for (let i = 1; i < WEEKDAYS+1; i++) {
                 let content = [];
                 // Rows
-                for (let j = 0; j < slots_per_day; j++) {
+                for (let j = 0; j < SLOTS_PER_DAY; j++) {
                     passed_day = ''
                     // Get data from task_id content
-                    let data = tasks_id[j + (i - 1) * slots_per_day]
+                    let data = tasks_id[j + (i - 1) * SLOTS_PER_DAY]
                     //
                     let hebrew = (/[\u0590-\u05FF]/).test(data)
                     let heb_class = ''
                     if (hebrew)
                         heb_class = 'heb_class'
-                    if (today_slot >= (j + (i - 1) * slots_per_day) && !(props.scheduleMoment === 0))
+                    if (today_slot >= (j + (i - 1) * SLOTS_PER_DAY) && !(props.scheduleMoment === 0))
                         passed_day = ' passed'
-                    let class_name = getClass(props.categoryTypes[slots_per_day * (i - 1) + j])
+                    let class_name = getClass(props.categoryTypes[SLOTS_PER_DAY * (i - 1) + j])
                     let color = props.categories[dct[class_name.split('_')[1]]]
                     if (color !== undefined) {
                         color = color['color']
                     } else {
                         color = '#fefcf3';
                     }
-                    content.push(<td key={'cell_' + (slots_per_day * (i - 1) + j)} className={class_name} style={{backgroundColor:color}}
-                                     id={'cell_' + (slots_per_day * (i - 1) + j) + '_taskID_' + tasksID[j + (i - 1) * slots_per_day]}
-                                     draggable='true' onMouseLeave={()=>hide_task_details()} onMouseOver={(e)=>{show_task_details(e)}} onClick={()=>foo(tasksID[j + (i - 1) * slots_per_day])}  onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop}
+                    content.push(<td key={'cell_' + (SLOTS_PER_DAY * (i - 1) + j)} className={class_name} style={{backgroundColor:color}}
+                                     id={'cell_' + (SLOTS_PER_DAY * (i - 1) + j) + '_taskID_' + tasksID[j + (i - 1) * SLOTS_PER_DAY]}
+                                     draggable='true' onMouseLeave={()=>hide_task_details()} onMouseOver={(e)=>{show_task_details(e)}} onClick={()=>foo(tasksID[j + (i - 1) * SLOTS_PER_DAY])}  onDragStart={dragStart} onDrop={drop} onDragOver={allowDrop}
                                      onDragLeave={leaveDropArea}><div className={passed_day + ' hidden_overflow ' + heb_class}>{data}</div></td>);//{data}
                 }
                 jsx.push(<tr key={'tr' + i}><div className={'th_parent'}><th key={'th' + i}>{props.days[i]}</th></div>{content}</tr>);
@@ -109,13 +111,13 @@ const Table = (props) => {
     }
 
     let jsx = [];
-    let tasks_id = Array(slots_per_day * 7).fill(null);
+    let tasks_id = Array(SLOTS_PER_DAY * WEEKDAYS).fill(null);
 
     const scrollToThisMoment = () => {
         let date = new Date()
         let today_slot = props.scheduleMoment;
         console.log('SAFAMM ', today_slot)
-        today_slot -= (Math.ceil(today_slot/slots_per_day)-1) * slots_per_day
+        today_slot -= (Math.ceil(today_slot/SLOTS_PER_DAY)-1) * SLOTS_PER_DAY
         console.log('BOOM! ', today_slot)
         //if (isNaN(today_slot)) {
             //let date = new Date();
@@ -291,7 +293,7 @@ const Table = (props) => {
         let partial_target_id = 'cell_' + (parseInt(ids[0].split('_')[1]) + distance)
         // Get category of cell to be dropped in (a/b/c/d/e/slot).
         let dropped_cat = document.querySelector('[id^='+partial_target_id+']').className.split('_')[1]
-        if (ids[0].split('_')[3].split('"')[0] === '-1' || ids[0]-distance < 0 || ids[ids.length-1] > slots_per_day*7) return false
+        if (ids[0].split('_')[3].split('"')[0] === '-1' || ids[0]-distance < 0 || ids[ids.length-1] > SLOTS_PER_DAY*WEEKDAYS) return false
         // Check all ids drop area
         let i;
         for (i=0;i<ids.length;i++) {
@@ -358,7 +360,7 @@ const Table = (props) => {
         else
             elm.style.left = e.target.offsetLeft-(elm.clientWidth)+e.target.offsetWidth+'px';
         // If label inside screen boundaries (vertical).
-        if (e.target.offsetTop-elm.clientHeight >= 24)
+        if (e.target.offsetTop-elm.clientHeight >= DAILY_HOURS)
             elm.style.top = e.target.offsetTop-elm.clientHeight+'px';
         else
             elm.style.top = e.target.offsetTop+e.target.offsetHeight+'px';

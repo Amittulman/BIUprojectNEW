@@ -6,6 +6,8 @@ import { TransitionGroup, CSSTransition} from "react-transition-group";
 import siteLogo from '../images/BEEZEELOGO.png';
 
 const bcryptjs = require('bcryptjs');
+const USERNAME_MAX_LENGTH = 8
+const USERNAME_MIN_LENGTH = 3
 
 const Login = (props) => {
     const location = useLocation();
@@ -184,7 +186,7 @@ const Login = (props) => {
             markAsError(false, password)
         }
         //validating username
-        if (username.value.length > 8 || username.value.length < 4) {
+        if (username.value.length > USERNAME_MAX_LENGTH || username.value.length < USERNAME_MIN_LENGTH) {
             markAsError(true, username)
             input_indicator = false
         } else {
@@ -254,7 +256,7 @@ const Login = (props) => {
             markAsError(false, confirmPassword)
         }
         //validating username
-        if (username.value.length > 12 || username.value.length < 3) {
+        if (username.value.length > USERNAME_MAX_LENGTH || username.value.length < USERNAME_MIN_LENGTH) {
             markAsError(true, username, 'Please use 4-8 characters')
             let user = document.getElementById('username')
             showInputError(user)

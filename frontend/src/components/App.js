@@ -7,7 +7,8 @@ import React, {useState, useEffect, useRef} from 'react';
 import { Switch, Route } from 'react-router-dom';
 import '../components/App.css';
 
-const slots_per_day = 24*2
+const SLOTS_PER_DAY = 24*2
+const HALF_HOUR = 30
 
 const App = () => {
     const [tasks, setTasks] = useState([]) // Dictionary of all user tasks, received from DB.
@@ -36,7 +37,7 @@ const App = () => {
     schedRef.current = scheduleTable;
     const [week, setWeek] = useState(false);
     // A list with all category types.
-    const [categoryTypes, setCategoryTypes] = useState(Array(slots_per_day*7).fill(-1))
+    const [categoryTypes, setCategoryTypes] = useState(Array(SLOTS_PER_DAY*7).fill(-1))
     const timeRef = useRef(); // Gives updated category types elements.
     timeRef.current =  categoryTypes;
     // A state of all schedule jsx elements (how they appear on screen).
@@ -181,7 +182,7 @@ const App = () => {
             minutes = parseInt(time.substr(3, 2));
         }
         // Round minutes down.
-        if (minutes <= 30 && minutes > 0)
+        if (minutes <= HALF_HOUR && minutes > 0)
             minutes = 1
         // Round hour up and minutes down (in case minutes > 30).
         else if (minutes !== 0) {
@@ -384,10 +385,10 @@ const App = () => {
         let hour;
         let minute = 0;
         let content = []
-        // creating value for each time of day and updating in the relevant slot..
-        for (let j = 0; j < slots_per_day; j++) {
+        // creating value for each time of day and updating in the relevant slot.
+        for (let j = 0; j < SLOTS_PER_DAY; j++) {
             hour = Math.floor(j / 2);
-            minute = 30 * (j % 2);
+            minute = HALF_HOUR * (j % 2);
             if (hour < 10) hour = '0' + hour
             if (minute === 0) minute = '00'
             content.push(<td className='td1' key={'time' + hour + ':' + minute}>{hour}:{minute}</td>);

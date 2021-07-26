@@ -3,10 +3,16 @@ import React, {useState, useEffect, useRef} from 'react';
 import "react-datepicker/dist/react-datepicker.css";
 import "react-datetime/css/react-datetime.css";
 
-const slots_per_day = 24*2
-
+// Constants
+const SLOTS_PER_DAY = 24*2
+const HOUR = 60
+const CLOSED_TASK_TIMER = 380
+const OPENED_TASK_TIMER = 600
+const FULLY_OPENED_TASK_TIMER = 580
+const MAX_TITLE_LENGTH = 30
 
 const Todo = (props) => {
+  // Hooks
   const [tasks_jsx, setTasksJsx] = useState(new Set())
   const [tasks, setTasks] = useState([])
   const [removed_tasks, setRemovedTasks] = useState([])
@@ -96,13 +102,13 @@ const Todo = (props) => {
     // Animation deletion, depending on closed/opened task.
     if (reschedule || event.currentTarget.parentNode.childNodes[2].className.startsWith('closed')) {
       document.getElementById('task_container'+i).classList.add('removed_container')
-      timer = 380
+      timer = CLOSED_TASK_TIMER
     } else if (event.currentTarget.parentNode.childNodes[2].className.endsWith('daytime')) {
       document.getElementById('task_container'+i).classList.add('removed_container_expanded_daytime')
-      timer = 600
+      timer = OPENED_TASK_TIMER
     } else {
       document.getElementById('task_container'+i).classList.add('removed_container_expanded')
-      timer = 580
+      timer = FULLY_OPENED_TASK_TIMER
     }
     // Removing presented task from screen.
     setTimeout(()=> {
@@ -201,13 +207,13 @@ const Todo = (props) => {
   //Given slot number, return day of week.
   const getDay = (slot_number) => {
     if (slot_number === null) return ''
-    return parseInt(parseInt(slot_number)/48)
+    return parseInt(parseInt(slot_number)/SLOTS_PER_DAY)
   }
 
   // given slot number, translate into time and return it.
   const getTime = (slot_number) => {
-    let day = parseInt(parseInt(slot_number)/48)
-    let daily_task_number = slot_number - slots_per_day * day
+    let day = parseInt(parseInt(slot_number)/SLOTS_PER_DAY)
+    let daily_task_number = slot_number - SLOTS_PER_DAY * day
     let hour = Math.floor(daily_task_number/2)
     let minute;
     if (daily_task_number % 2 === 0) minute = '00'
@@ -226,10 +232,10 @@ const Todo = (props) => {
 
   // Convert time from minutes to hours.
   const getDuration = (value) => {
-    if (value/60 > 3 || value/60 < 0.5){
+    if (value/HOUR > 3 || value/HOUR < 0.5){
       return 'null'
     }
-    return value/60
+    return value/HOUR
   }
 
   // Converting slot number to the time it represents.
@@ -240,11 +246,11 @@ const Todo = (props) => {
       event.target.title = '';
       return;
     }
-    let day = Math.floor(slot / 48);
-    let day_name = days_dct[Math.floor(slot / 48)]
-    let hour = Math.floor((slot - (day * 48)) / 2);
+    let day = Math.floor(slot / SLOTS_PER_DAY);
+    let day_name = days_dct[Math.floor(slot / SLOTS_PER_DAY)]
+    let hour = Math.floor((slot - (day * SLOTS_PER_DAY)) / 2);
     let minute;
-    if ((slot - (day * 48) / 2 ) % 2 === 0)
+    if ((slot - (day * SLOTS_PER_DAY) / 2 ) % 2 === 0)
       minute = '00';
     else
       minute = '30';
@@ -330,7 +336,7 @@ const Todo = (props) => {
           <option value="3">3</option>
           <option value="null">More</option>
         </select>
-        <input placeholder='___' maxLength={3} id={'input_duration'+i} className={getDuration(values['duration']) === 'null'?'input_duration':'input_duration_hidden'} name='duration' type='text' defaultValue={getDuration(values['duration']) === 'null'?values['duration']/60:''} onChange={(e) => handleChange(e, i)}/>
+        <input placeholder='___' maxLength={3} id={'input_duration'+i} className={getDuration(values['duration']) === 'null'?'input_duration':'input_duration_hidden'} name='duration' type='text' defaultValue={getDuration(values['duration']) === 'null'?values['duration']/HOUR:''} onChange={(e) => handleChange(e, i)}/>
       </div>
       <div>hours</div>
       <div id={'duration_error_message'} className={'hidden_task_element_input_error'}>Please use a number in the range 0-7.</div>
@@ -539,7 +545,6 @@ const Todo = (props) => {
 
   // Checks inputs, returns true if should not sent, false to send. //TODO maybe swap bools?
   const checkInputs = () => {
-    console.log('aa ', props.week)
     // Do not send anything if no change has occurred in to-do list.
     if (!props.week && Object.keys(props.updated_tasks).length === 0 && removed_tasks.length === 0 && !props.categoryChanged) return true
     props.setWeek(false);
@@ -562,7 +567,7 @@ const Todo = (props) => {
       // Check title length.
       let title_item = document.getElementById('task_title' + task_index)
       // If title is too long
-      if (props.updated_tasks[task_index]['task_title'].length > 30 || props.updated_tasks[task_index]['task_title'].length === 0) {
+      if (props.updated_tasks[task_index]['task_title'].length > MAX_TITLE_LENGTH || props.updated_tasks[task_index]['task_title'].length === 0) {
         if (props.updated_tasks[task_index]['task_title'].length === 0)
           title_item.childNodes[title_item.childNodes.length-1].textContent = 'Title cannot be empty';
         title_item.classList.add('task_error')
@@ -574,11 +579,11 @@ const Todo = (props) => {
       // Check duration length.
       let duration = document.getElementById('duration' + task_index)
       // If duration is more than 7 hours
-      if (!Number.isInteger(parseInt(props.updated_tasks[task_index]['duration'])) || props.updated_tasks[task_index]['duration'] > 7*60 ||
+      if (!Number.isInteger(parseInt(props.updated_tasks[task_index]['duration'])) || props.updated_tasks[task_index]['duration'] > 7*HOUR ||
           props.updated_tasks[task_index]['duration'] <= 0) {
         if (props.updated_tasks[task_index]['duration'] <= 0)
           duration.childNodes[duration.childNodes.length-1].textContent = 'Please use a positive number';
-        else if (props.updated_tasks[task_index]['duration'] > 7*60)
+        else if (props.updated_tasks[task_index]['duration'] > 7*HOUR)
           duration.childNodes[duration.childNodes.length-1].textContent = 'Duration should be less than 7 hours';
         else
           duration.childNodes[duration.childNodes.length-1].textContent = 'Please use a numeric value.'
@@ -780,7 +785,7 @@ const Todo = (props) => {
         event.target.className = 'duration_options'
         input_text.className = 'input_duration_hidden'
       }
-      val *= 60;
+      val *= HOUR;
     }
     else if (nam === 'recurrings') {
       debugger

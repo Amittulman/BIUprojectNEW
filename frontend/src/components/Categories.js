@@ -1,13 +1,11 @@
 import React, {useEffect} from 'react';
 import './Schedule.css';
 
-const slots_per_day = 24*2
-
+const SLOTS_PER_DAY = 24*2
+const day = ['Time', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const WEEKDAYS = 7
 
 const Categories = (props) => {
-    let day = ['Time', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
-
     useEffect(() => {
         if (props.userID === undefined || props.userID === 'null') return
         getCategories()
@@ -43,12 +41,12 @@ const Categories = (props) => {
     const markCategories = () => {
         return;
         if (!props.scheduleJsx.length) return
-        for (let i = 1; i < 8; i++) {
+        for (let i = 1; i < WEEKDAYS+1; i++) {
             let empty_content = []
-            for (let j = 0; j < slots_per_day; j++) {
-                let class_name = getClass(props.categoryTypes[slots_per_day * (i - 1) + j])
-                empty_content.push(<td key={'cell_' + (slots_per_day * (i - 1) + j) + '_empty'}
-                                       id={'cell_' + (slots_per_day * (i - 1) + j) + '_empty'} className={class_name}
+            for (let j = 0; j < SLOTS_PER_DAY; j++) {
+                let class_name = getClass(props.categoryTypes[SLOTS_PER_DAY * (i - 1) + j])
+                empty_content.push(<td key={'cell_' + (SLOTS_PER_DAY * (i - 1) + j) + '_empty'}
+                                       id={'cell_' + (SLOTS_PER_DAY * (i - 1) + j) + '_empty'} className={class_name}
                                        draggable='true' onDragStart={dragStart} onClick={allowDropCategory} onDragOver={allowDropCategory}/>);
             }
             props.scheduleJsx.push(<tr key={'tr_cat_' + i + '_empty'}>

@@ -2,7 +2,11 @@ import './SiteTop.css'
 import React, {useEffect, useRef, useState} from 'react';
 import siteLogo from '../images/BEEZEELOGO.png';
 
-const slots_per_day = 24*2;
+const SLOTS_PER_DAY = 24*2;
+const MAX_CAT_NAME_LENGTH = 10
+const WEEKDAYS = 7
+const NOON_TIME = 12
+const EVENING_TIME = 18
 
 const SiteTop = (props) => {
     const [username, setUsername] = useState();
@@ -194,7 +198,7 @@ const SiteTop = (props) => {
         }
         // Do not save changes if title is empty.
         let dialog_length = document.getElementById('category_dialog').value.length
-        if (dialog_length === 0 || dialog_length > 10 || catColorRef.current === 0) return;
+        if (dialog_length === 0 || dialog_length > MAX_CAT_NAME_LENGTH || catColorRef.current === 0) return;
         if (props.categories[currentCatRef.current]['category_name'] === '') {
             let new_cat = document.getElementById('added_button_' + currentCatRef.current)
             new_cat.style.opacity = '1';
@@ -333,8 +337,8 @@ const SiteTop = (props) => {
     // Painting mode
     const paintSlots = (sched) => {
         let i, j;
-        for (i=1 ; i<8;i++) {
-            for (j=1 ; j < slots_per_day+1 ; j++) {
+        for (i=1 ; i<WEEKDAYS + 1;i++) {
+            for (j=1 ; j < SLOTS_PER_DAY+1 ; j++) {
                 let node = sched.childNodes.item(0).childNodes.item(1).childNodes.item(0).childNodes.item(i).childNodes.item(j)
                 node.ondragstart = dragStartCat
                 node.ondragover = allowDropCat
@@ -348,8 +352,8 @@ const SiteTop = (props) => {
     // Exiting painting mode.
     const unpaintSlots = (sched) => {
         let i, j;
-        for (i=1 ; i<8;i++) {
-            for (j=1 ; j < slots_per_day+1 ; j++) {
+        for (i=1 ; i<WEEKDAYS + 1;i++) {
+            for (j=1 ; j < SLOTS_PER_DAY+1 ; j++) {
                 let node = sched.childNodes.item(0).childNodes.item(1).childNodes.item(0).childNodes.item(i).childNodes.item(j)
                 node.ondragstart = null
                 node.ondragover = null
@@ -507,8 +511,8 @@ const SiteTop = (props) => {
 
     let time_of_day = new Date().getHours()
     let greeting;
-    if (time_of_day < 12) greeting = 'Good morning'
-    else if (time_of_day < 18) greeting = 'Good afternoon'
+    if (time_of_day < NOON_TIME) greeting = 'Good morning'
+    else if (time_of_day < EVENING_TIME) greeting = 'Good afternoon'
     else greeting = 'Good evening'
     return (
         <div id='site_top' className='row flex-grow-0'>
