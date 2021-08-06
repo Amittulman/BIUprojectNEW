@@ -3,4 +3,3 @@ export interface User {
   user_pass: string;
   next_week: boolean;
 }
-
