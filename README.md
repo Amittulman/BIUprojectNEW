@@ -1,4 +1,5 @@
 BeeZee scheduling app
+
 In order to run the app, you will have to follow these steps: 
   1. Clone this repository 
   2. Run "npm install" on 'frontend' directory
