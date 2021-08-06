@@ -10,10 +10,26 @@ import {CreateUserDto} from "../Dto's/createUser.dto";
 import {CreateCategoryDto} from "../Dto's/createCategoryDto";
 
 const default_category = -1;
-const default_recurrings = 1;
 const empty_slot = -1;
 const slots_in_week = 336;
 const default_category_slots = [2,2,2,2,2,2,2,2,2,2,2,2,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,2,2,2,2,2,2,2,2,2,2,2,2,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,2,2,2,2,2,2,2,2,2,2,2,2,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,2,2,2,2,2,2,2,2,2,2,2,2,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,2,2,2,2,2,2,2,2,2,2,2,2,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,2,2,2,2,2,2,2,2,2,2,2,2,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,2,2,2,2,2,2,2,2,2,2,2,2,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1];
+const USER_ID = 'user_id';
+const USER_NAME = 'user_name';
+const CATEGORY_ID = 'category_id';
+const TASK_ID = 'task_id';
+const SLOT_ID = 'slot_id';
+const TASK_TITLE = 'task_title';
+const PRIORITY = 'priority';
+const DURATION = 'duration';
+const CONSTRAINTS = 'constraints';
+const RECURRINGS = 'recurrings';
+const DUPLICATE_ENTRY_ERROR = 'ER_DUP_ENTRY';
+const CODE = 'code';
+const USER_PASS = 'user_pass';
+const NEXT_WEEK = 'next_week';
+const PINNED_SLOT = 'pinned_slot';
+const SUCCESS = 'Success';
+const ERROR_CODE = '-1';
 
 
 @Injectable()
@@ -37,17 +53,17 @@ export class TasksService {
     for(const task in tasks_array){
       const schedule_task:CreateTaskDto = {
         task_id : null,
-        user_id : tasks_array[task]['user_id'],
-        task_title : tasks_array[task]['task_title'],
-        duration: tasks_array[task]['duration'],
-        priority: tasks_array[task]['priority'],
-        category_id: tasks_array[task]['category_id'],
-        constraints: tasks_array[task]['constraints'],
-        recurrings: tasks_array[task]['recurrings'],
-        pinned_slot: tasks_array[task]['pinned_slot']
+        user_id : tasks_array[task][USER_ID],
+        task_title : tasks_array[task][TASK_TITLE],
+        duration: tasks_array[task][DURATION],
+        priority: tasks_array[task][PRIORITY],
+        category_id: tasks_array[task][CATEGORY_ID],
+        constraints: tasks_array[task][CONSTRAINTS],
+        recurrings: tasks_array[task][RECURRINGS],
+        pinned_slot: tasks_array[task][PINNED_SLOT]
 
       };
-      if (tasks_array[task]['recurrings'] === undefined){
+      if (tasks_array[task][RECURRINGS] === undefined){
         schedule_task.recurrings = 1;
       }
       tasks.push(schedule_task);
@@ -59,9 +75,9 @@ export class TasksService {
     const tasks:Array<any> = [];
     for(const task in tasks_array){
       const schedule_task:any = {
-        task_id : tasks_array[task]['task_id'],
-        user_id : tasks_array[task]['user_id'],
-        slot_id : tasks_array[task]['slot_id'],
+        task_id : tasks_array[task][TASK_ID],
+        user_id : tasks_array[task][USER_ID],
+        slot_id : tasks_array[task][SLOT_ID],
         new_slot : tasks_array[task]['new_slot']
       };
       tasks.push(schedule_task);
@@ -73,21 +89,21 @@ export class TasksService {
     const tasks:Array<CreateTaskDto> = [];
     for(const task in tasks_array){
       const schedule_task:CreateTaskDto = {
-        task_id : tasks_array[task]['task_id'],
-        user_id : tasks_array[task]['user_id'],
-        task_title : tasks_array[task]['task_title'],
-        duration: tasks_array[task]['duration'],
-        priority: tasks_array[task]['priority'],
-        category_id: tasks_array[task]['category_id'],
-        constraints: tasks_array[task]['constraints'],
-        recurrings: tasks_array[task]['recurrings'],
-        pinned_slot: tasks_array[task]['pinned_slot']
+        task_id : tasks_array[task][TASK_ID],
+        user_id : tasks_array[task][USER_ID],
+        task_title : tasks_array[task][TASK_TITLE],
+        duration: tasks_array[task][DURATION],
+        priority: tasks_array[task][PRIORITY],
+        category_id: tasks_array[task][CATEGORY_ID],
+        constraints: tasks_array[task][CONSTRAINTS],
+        recurrings: tasks_array[task][RECURRINGS],
+        pinned_slot: tasks_array[task][PINNED_SLOT]
 
       };
-      if (tasks_array[task]['recurrings'] === undefined){
+      if (tasks_array[task][RECURRINGS] === undefined){
         schedule_task.recurrings = 1;
       }
-      if (tasks_array[task]['pinned_slot'] === undefined){
+      if (tasks_array[task][PINNED_SLOT] === undefined){
         schedule_task.pinned_slot = null;
       }
       tasks.push(schedule_task);
@@ -102,7 +118,7 @@ export class TasksService {
     const schedule_array = new Array<number>(slots_in_week);
     schedule_array.fill(empty_slot)
     for (const slot in result){
-      schedule_array[result[slot]['slot_id']] = result[slot]['task_id']
+      schedule_array[result[slot][SLOT_ID]] = result[slot][TASK_ID]
     }
 
     return schedule_array;
@@ -155,7 +171,7 @@ export class TasksService {
     const category_slots_array = new Array<number>(slots_in_week);
     category_slots_array.fill(default_category)
     for (const slot in result){
-      category_slots_array[result[slot]['slot_id']]   = result[slot]['category_id']
+      category_slots_array[result[slot][SLOT_ID]]   = result[slot][CATEGORY_ID]
     }
     return category_slots_array;
   }
@@ -176,28 +192,28 @@ export class TasksService {
     let ret_user = await this.tasksDal.checkUserCredentials(user);
     ret_user = ret_user[0];
     if(ret_user === undefined){
-      return "-1";
+      return ERROR_CODE;
     }
     //Return a JSON object
-    return "{\"user_pass\":\""+ret_user['user_pass']+"\"," +
-        "\"user_id\":\""+ret_user['user_id']+"\","+
-        "\"next_week\":\""+ret_user['next_week']+"\"}";
+    return "{\"user_pass\":\""+ret_user[USER_PASS]+"\"," +
+        "\"user_id\":\""+ret_user[USER_ID]+"\","+
+        "\"next_week\":\""+ret_user[NEXT_WEEK]+"\"}";
   }
 
   async postNewUser(user: CreateUserDto): Promise<string>{
-    user["next_week"] = false;
+    user[NEXT_WEEK] = false;
     const res = await this.tasksDal.postNewUser(user);
-    if(res === "Success"){
-      const user_id:string = await this.getUserIdByName(user['user_name']);
+    if(res === SUCCESS){
+      const user_id:string = await this.getUserIdByName(user[USER_NAME]);
       console.log(user_id);
       await this.postCategorySlotsFromArray(default_category_slots,user_id)
       return this.checkUserCredentials(user);
     }
-    else if(res['code'] === 'ER_DUP_ENTRY'){
-      return "-1";
+    else if(res[CODE] === DUPLICATE_ENTRY_ERROR){
+      return ERROR_CODE;
     }
     else{
-      return res['code'];
+      return res[CODE];
     }
 
   }
@@ -235,7 +251,7 @@ export class TasksService {
         slot_id : parseInt(index)
       })
     }
-    console.log("Posting this categorys: "+array_of_category_slots)
+    console.log("Posting these categories: "+array_of_category_slots)
     return this.tasksDal.postCategorySlots(array_of_category_slots);
   }
 
