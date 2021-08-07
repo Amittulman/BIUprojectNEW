@@ -25,7 +25,7 @@ const CATEGORY_ID = 'category_id';
 const TASK_ID = 'task_id';
 const SLOT_ID = 'slot_id';
 const NEXT_WEEK = 'next_week';
-const ERROR = '-1';
+const ERROR_CODE = '-1';
 @Injectable()
 export class TasksDal {
 
@@ -296,7 +296,7 @@ export class TasksDal {
 
     const res = await this.db.from(USERS_TABLE).select(USER_NAME).where(USER_ID,parseInt(user_id));
     if(res[0] === undefined){
-      return ERROR;
+      return ERROR_CODE;
     }
     return "{\"user_name\":\""+res[0][USER_NAME]+"\"}";
   }

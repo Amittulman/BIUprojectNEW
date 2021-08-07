@@ -8,10 +8,6 @@ import {CreateScheduledTaskDto} from "../Dto's/createScheduledTask.dto";
 import {CreateUserDto} from "../Dto's/createUser.dto";
 import {CreateCategoryDto} from "../Dto's/createCategoryDto";
 
-//constants:
-const default_category = -1;
-const empty_slot = -1;
-
 @Controller('tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService, private readonly schedulerService: SchedulerService) {

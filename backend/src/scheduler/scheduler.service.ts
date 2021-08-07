@@ -23,10 +23,6 @@ const SLOT_VAL_INDEX = 0;
 const CATEGORY_VAL_INDEX = 1;
 const DAY_INDEX = 0;
 const PART_OF_THE_DAY_INDEX = 1;
-const AFTER_MIDNIGHT = 3;
-const NIGHT = 2;
-const NOON = 1;
-const MORNING = 0;
 const VALID_CONSTRAINT = 1;
 const DAYS_IN_WEEK = 7;
 const ERROR_CONSTRAINTS_INDEX = 2;
@@ -34,6 +30,14 @@ const ERROR_RECCURING_INDEX = 1;
 const ERROR_CATEGORIES_INDEX = 3;
 const ZERO_COUNER = 0;
 const ERROR = 1;
+const HOURS_FOR_PART_OF_THE_DAY = 12;
+enum PART_OF_THE_DAY {
+    MORNING,
+    NOON,
+    NIGHT,
+    AFTER_MIDNIGHT,
+}
+
 
 
 @Injectable()
@@ -157,8 +161,8 @@ export class SchedulerService {
         const constraint = await SchedulerService.slotToConstraint(slot);
         const day = constraint[DAY_INDEX];
         let hour = constraint[PART_OF_THE_DAY_INDEX];
-        if (hour === AFTER_MIDNIGHT) { // we want the next morning will be this night (example - 4:00)
-            hour = NIGHT;
+        if (hour === PART_OF_THE_DAY.AFTER_MIDNIGHT) { // we want the next morning will be this night (example - 4:00)
+            hour = PART_OF_THE_DAY.NIGHT;
         }
         if (task.recurrings > 1) { // dont want the same task will be twice in the same day
             const isInThisDayAlready =  await SchedulerService.checkIfSameTaskThisDay(task, day, slots);
@@ -261,6 +265,14 @@ export class SchedulerService {
         return taskWithDuplicate;
     }
 
+
+    // at the end we want to clear the slots array from blocking number we put for timestamp
+    private static async removeTimeStampSlots(resultsOnlySlots: Array<number>, current_time_slot:number) : Promise<Array<number>> {
+        for(let j = FIRST_INDEX; j <= current_time_slot; j++) {
+            resultsOnlySlots[j] = DEFAULT_EMPTY_SLOT;
+        }
+        return resultsOnlySlots;
+    }
     // the algorithm doesn't locate same task in the same day
     private static async checkIfSameTaskThisDay(task:Task , day: number, slots: Array<number>) : Promise<boolean> {
         const firstSlotForToday = day*SLOTS_PER_DAY;
@@ -291,14 +303,6 @@ export class SchedulerService {
         return slots;
     }
 
-    // at the end we want to clear the slots array from blocking number we put for timestamp
-    private static async removeTimeStampSlots(resultsOnlySlots: Array<number>, current_time_slot:number) : Promise<Array<number>> {
-        for(let j = FIRST_INDEX; j <= current_time_slot; j++) {
-            resultsOnlySlots[j] = DEFAULT_EMPTY_SLOT;
-        }
-        return resultsOnlySlots;
-    }
-
     // optimizations to the algorithm. we check before sending to calc backtracking, if can be problems with
     // recurring / constraints or categories
     public async checkTasksErrors(tasks: Array<any>, timeStamp: number, userID : string, categories : Array<number>): Promise<Array<any>> {
@@ -309,6 +313,7 @@ export class SchedulerService {
         let categoriesMap = await SchedulerService.createCategoriesMap(categories , timeStamp);
         let categoriesTaskCounterMap = await SchedulerService.createCategoriesTaskCounterMap();
 
+        // iterate over the tasks and check if there is error for one of them or more
         for (let taskIndex = FIRST_INDEX; taskIndex < tasks.length; taskIndex++) {
             const tempTask = tasks[taskIndex];
             const currentTaskRecurring = tempTask.recurrings;
@@ -325,35 +330,34 @@ export class SchedulerService {
             let counterTodayConstraintsSlots = ZERO_COUNER;
             let counterAllConstraintsSlotForCurTask = ZERO_COUNER;
             let constarintsWithCategoreiesByDaysAndParts = [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]];
-            let countDaysIsOkByConstraintsAndCategories = ZERO_COUNER;
 
 
             let newValueForCategoryTaskCounter = categoriesTaskCounterMap.get(tempTask.category_id) + numberOfSlotsTaskNeedAllWeek;
             categoriesTaskCounterMap.set(tempTask.category_id , newValueForCategoryTaskCounter);
 
+            //check if there is a problem with the reccuring
             if(currentTaskRecurring > leftDays) {
-                //problem with this task - reccuring
                 tempErrorTask[ERROR_RECCURING_INDEX] = ERROR;
             }
 
             // check constraints and if there is 1 from current day to the end.
             for(let constraintIndex = day; constraintIndex < tempTask.constraints.length ; constraintIndex++) {
-                const isMorningConstraint = currentTaskConstraint[constraintIndex][MORNING] === VALID_CONSTRAINT;
-                const isNoonConstraint = currentTaskConstraint[constraintIndex][NOON] === VALID_CONSTRAINT;
-                const isNightConstraint = currentTaskConstraint[constraintIndex][NIGHT] === VALID_CONSTRAINT;
+                const isMorningConstraint = currentTaskConstraint[constraintIndex][PART_OF_THE_DAY.MORNING] === VALID_CONSTRAINT;
+                const isNoonConstraint = currentTaskConstraint[constraintIndex][PART_OF_THE_DAY.NOON] === VALID_CONSTRAINT;
+                const isNightConstraint = currentTaskConstraint[constraintIndex][PART_OF_THE_DAY.NIGHT] === VALID_CONSTRAINT;
 
                 if (constraintIndex === day) { // for today , check start only from timeStamp
-                    if (partOfTheDay === NIGHT) { // night now
+                    if (partOfTheDay === PART_OF_THE_DAY.NIGHT) { // night now
                         if (isNightConstraint) {
                             constraintEnough = true;
                             CounterForDaysConstraints += 1;
                         }
-                    } else if (partOfTheDay === NOON) { //noon now
+                    } else if (partOfTheDay === PART_OF_THE_DAY.NOON) { //noon now
                         if (isNoonConstraint || isNightConstraint) {
                             constraintEnough = true;
                             CounterForDaysConstraints += 1;
                         }
-                    } else if (partOfTheDay === MORNING) { // morning now
+                    } else if (partOfTheDay === PART_OF_THE_DAY.MORNING) { // morning now
                         if (isNoonConstraint || isNightConstraint || isMorningConstraint) {
                             constraintEnough = true;
                             CounterForDaysConstraints += 1;
@@ -374,22 +378,24 @@ export class SchedulerService {
                 tempErrorTask[ERROR_CONSTRAINTS_INDEX] = ERROR;
             }
 
+            // check if there are enough categories
             while (rightPointer < categories.length){
-                if (tempTask.category_id === categories[rightPointer]) {
+                if (tempTask.category_id === categories[rightPointer]) { // this slot is the same category as the task
                     counterTodayConstraintsSlots += 1;
                     if (counterTodayConstraintsSlots === numberOfSlotsTaskNeed) {
+                        // check also the constraint in this slot
                         let isConstraintForPartOfTheDayIsCompatibletemp = await SchedulerService.checkConstraintBySlot(rightPointer, tempTask);
                         const day = Math.floor(rightPointer/48);
                         let partOftheDay = await SchedulerService.convertSlotToPartOfDay(rightPointer);
                         if (isConstraintForPartOfTheDayIsCompatibletemp) {
                             constarintsWithCategoreiesByDaysAndParts[day][partOftheDay] = 1;
+                            counterAllConstraintsSlotForCurTask += counterTodayConstraintsSlots;
+                            rightPointer = await SchedulerService.jumpNextDay(rightPointer) // if we found compatible slots this day we need to stop the counting for this day
                         }
-                        counterAllConstraintsSlotForCurTask += counterTodayConstraintsSlots;
                         if(counterAllConstraintsSlotForCurTask === numberOfSlotsTaskNeedAllWeek) {
                             isCaregoriesEnough = true;
                             //break;
                         }
-                        //rightPointer = await SchedulerService.jumpNextDay(rightPointer)
                         counterTodayConstraintsSlots = 0;
                     }
                 } else {
@@ -404,19 +410,10 @@ export class SchedulerService {
                 tempErrorTask[ERROR_CATEGORIES_INDEX] = ERROR;
             }
 
-            for (var dayIndex = FIRST_INDEX; dayIndex < constarintsWithCategoreiesByDaysAndParts.length; dayIndex++) {
-                if(constarintsWithCategoreiesByDaysAndParts[dayIndex][MORNING] === VALID_CONSTRAINT || constarintsWithCategoreiesByDaysAndParts[dayIndex][NOON] === VALID_CONSTRAINT ||constarintsWithCategoreiesByDaysAndParts[dayIndex][NIGHT] === VALID_CONSTRAINT) {
-                    countDaysIsOkByConstraintsAndCategories += 1 ;
-                }
-            }
-
-            if (countDaysIsOkByConstraintsAndCategories < currentTaskRecurring) {
-                tempErrorTask[ERROR_CONSTRAINTS_INDEX] = ERROR;
-            }
 
             if(tempErrorTask[ERROR_RECCURING_INDEX] != 0 || tempErrorTask[ERROR_CONSTRAINTS_INDEX] != 0 || tempErrorTask[ERROR_CATEGORIES_INDEX] != 0) {
                 if(tempErrorTask[ERROR_CONSTRAINTS_INDEX] === 1 && tempErrorTask[ERROR_CATEGORIES_INDEX] === 1) {
-                    tempErrorTask[ERROR_CONSTRAINTS_INDEX] = 0;
+                    tempErrorTask[ERROR_CATEGORIES_INDEX] = 0;
                 }
                 problemTasks.push(tempErrorTask)
             }
@@ -426,7 +423,10 @@ export class SchedulerService {
 
         for(let indexErrorCategory = FIRST_INDEX; indexErrorCategory < errorCategories.length; indexErrorCategory ++) {
             let errorTaskWithThisCategory = await SchedulerService.FindTaskWithThisCategory(errorCategories[indexErrorCategory], tasks);
-            problemTasks.push([errorTaskWithThisCategory.task_id,0,0,1]);
+            let taskAlreadyIn = await SchedulerService.CheckIfTaskAlreadyIn(errorTaskWithThisCategory.task_id, problemTasks);
+            if (!taskAlreadyIn) {
+                problemTasks.push([errorTaskWithThisCategory.task_id,0,0,1]);
+            }
         }
 
         return problemTasks;
@@ -434,24 +434,24 @@ export class SchedulerService {
 
     // get slot and jump from current day to the next
     private static async jumpNextDay(curSlot: number): Promise<number> {
-        const day = Math.floor(curSlot/48);
-        return (day + 1) * 48;
+        const day = Math.floor(curSlot/SLOTS_PER_DAY);
+        return (day + 1) * SLOTS_PER_DAY;
     }
 
     private static async convertSlotToPartOfDay(curSlot: number): Promise<number> {
         curSlot = curSlot-12;
-        const day = Math.floor(curSlot/48);
-        const toMinus = day*48;
+        const day = Math.floor(curSlot/SLOTS_PER_DAY);
+        const toMinus = day*SLOTS_PER_DAY;
         const temp = curSlot-toMinus;
-        let partOfTheDay = Math.floor(temp/12);
-        if (partOfTheDay === 3) {
-            partOfTheDay = 2;
+        let partOfTheDay = Math.floor(temp/HOURS_FOR_PART_OF_THE_DAY);
+        if (partOfTheDay === PART_OF_THE_DAY.AFTER_MIDNIGHT) {
+            partOfTheDay = PART_OF_THE_DAY.NIGHT;
         }
         return partOfTheDay;
     }
 
     private static async checkConstraintBySlot(slot: number, tempTask : any) : Promise<boolean> {
-        const day = Math.floor(slot/48);
+        const day = Math.floor(slot/SLOTS_PER_DAY);
         let partOftheDay = await SchedulerService.convertSlotToPartOfDay(slot);
         let curConstraints = tempTask.constraints;
         return curConstraints[day][partOftheDay] === 1;
@@ -459,7 +459,7 @@ export class SchedulerService {
 
     private static async FindTaskWithThisCategory(categoryProblem: string, tasks: Array<Task>) {
         // find an appropriate task
-        for(let indexTask = 0; indexTask < tasks.length; indexTask ++) {
+        for(let indexTask = FIRST_INDEX; indexTask < tasks.length; indexTask ++) {
             if(tasks[indexTask].category_id === Number(categoryProblem)) {
                 return tasks[indexTask];
             }
@@ -510,5 +510,14 @@ export class SchedulerService {
         }
 
         return errorCategories;
+    }
+
+    private static async CheckIfTaskAlreadyIn(task_id: number, problemTasks: Array<Task>) {
+        for (let taskIndex = FIRST_INDEX; taskIndex < problemTasks.length; taskIndex++) {
+            if(problemTasks[taskIndex][0] === task_id) {
+                return true;
+            }
+        }
+        return false;
     }
 }
