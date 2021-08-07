@@ -63,7 +63,7 @@ const SiteTop = (props) => {
             .then(res => res.json())
             .then(
                 (result) => {
-                    console.log('Get categories result: ', result);
+                    // console.log('Get categories result: ', result);
                     if (result.length === 0)
                         result = getDefaultCategories();
                     props.setCategories(result);
@@ -78,7 +78,6 @@ const SiteTop = (props) => {
             .then(res => res.json())
             .then(
                 (result) => {
-                    console.log('Username received: ', result);
                     setUsername(result['user_name']);
                 })
             .catch((error) => {
@@ -343,7 +342,7 @@ const SiteTop = (props) => {
                 node.ondragstart = dragStartCat
                 node.ondragover = allowDropCat
                 node.onclick = allowDropCat
-                node.ondrop = () => {console.log('DROP CAT!')}
+                node.ondrop = null;
                 node.draggable = true
             }
         }

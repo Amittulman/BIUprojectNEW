@@ -462,7 +462,6 @@ const Todo = (props) => {
 
   //change day and time icons, based on different clicking options.
   const changeDayTimeIcon = (e, index) =>  {
-    console.log('change day ', e.target.className.includes('noon'))
     let temp_arr = daysRef.current
     let clicked = '_clicked'
     let no_click = ''
@@ -695,7 +694,6 @@ const Todo = (props) => {
 
   // Sending tasks that are supposet to be saved.
   const sendTasksToPost = () => {
-    console.log('updated tasks: ', props.updated_tasks)
     let s = 'temp_task_id'
     // Update recurrence counter to 1 if task is pinned, and remove temporary task ID.
     for (const key of Object.keys(props.updated_tasks)){

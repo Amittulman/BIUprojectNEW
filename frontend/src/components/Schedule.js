@@ -116,9 +116,7 @@ const Table = (props) => {
     const scrollToThisMoment = () => {
         let date = new Date()
         let today_slot = props.scheduleMoment;
-        console.log('SAFAMM ', today_slot)
         today_slot -= (Math.ceil(today_slot/SLOTS_PER_DAY)-1) * SLOTS_PER_DAY
-        console.log('BOOM! ', today_slot)
         //if (isNaN(today_slot)) {
             //let date = new Date();
             today_slot = props.timeToSlot(date.getDay(), null, date.getHours(), date.getMinutes())
@@ -309,7 +307,6 @@ const Table = (props) => {
     }
 
     const updateTasksLocation = (dragged_tasks) => {
-        console.log('dragged tasks: ', dragged_tasks)
         fetch('http://localhost:5000/tasks/UpdateScheduledTasks/{tasks}', {
             method: 'POST',
             headers: {

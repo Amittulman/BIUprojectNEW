@@ -50,8 +50,6 @@ const App = () => {
     // On main page load, get userID and "remember me" from local storage.
     useEffect(() => {
         window.addEventListener('click', detectOutsideClicking)
-        console.log('useid ', localStorage.getItem('userID'))
-        console.log('rememberme ', localStorage.getItem('rememberMe'))
         setUserID(localStorage.getItem('userID'))
         setRememberMe(localStorage.getItem('rememberMe'))
 
@@ -404,7 +402,6 @@ const App = () => {
         while (i < todays_slot) {
             if (tasksID[i] !== -1) {
                 let past_due_task_id = tasksID[i]
-                console.log('Past due task is: ', past_due_task_id)
                 setPastDue(data=>({...data,[past_due_task_id]:1}))
             }
             i += 1

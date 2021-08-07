@@ -288,15 +288,13 @@ const Login = (props) => {
             .then(res=>res.json())
             .then((response) => {
                 if (response.status !== 201) {
-                    console.log('response: ', response)
                     // If successful logging in
                         if (requestName === 'checkusercredentials') {
                         bcryptjs.compare(apiParams['user_pass'], response['user_pass'], function(err, result) {
                             if (result) {
-                                console.log('response after success: ', response['user_id'])
-                                    setLoginAnswer(undefined)
-                                    setLoginAnswer([response['user_id'], response['next_week']])
-                                    history.push('/mainPage')
+                                setLoginAnswer(undefined)
+                                setLoginAnswer([response['user_id'], response['next_week']])
+                                history.push('/mainPage')
                             } else {
                                 let username = document.getElementById('username_input_error_login')
                                 let password = document.getElementById('password_input_error_login')
