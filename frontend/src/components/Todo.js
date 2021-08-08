@@ -735,19 +735,17 @@ const Todo = (props) => {
     let time = document.getElementById('pinned_choose_time'+index).value;
     let pin = document.getElementById('thumbtack'+index);
     // If not chosen a full day and time to pin, do not pin.
-    if (day === '') {
+    if (day === '' || time === '') {
       return null;
     }
     // Else, make as pinned, change icon and save changes.
-    else if (time !== '') {
-      pin.className = 'thumbtack_done';
-      // If pinned, reset value of recurrence (cannot happen simultaneously).
-      document.getElementById('recurrings'+index).className = 'recurrence recurrence1'
-      let nam = 'pinned_slot';
-      pin.title = days_dct[day] + ', ' + time;
-      let val = props.timeToSlot(day, time);
-      return [nam, val];
-    } else return null;
+    pin.className = 'thumbtack_done';
+    // If pinned, reset value of recurrence (cannot happen simultaneously).
+    document.getElementById('recurrings'+index).className = 'recurrence recurrence1'
+    let nam = 'pinned_slot';
+    pin.title = days_dct[day] + ', ' + time;
+    let val = props.timeToSlot(day, time);
+    return [nam, val];
   }
 
   // Handle every change in any element of a task.
